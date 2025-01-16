@@ -1,6 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation, Link, useNavigate } from "react-router-dom";
-import logo from './logo.svg';
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import './App.css';
 import AuthPage from "./page/AuthPage";
 import MasterPayroll from "./page/MasterPayroll";
@@ -13,11 +12,11 @@ const Layout = ({children}) => {
   const isLoginPage = location.pathname === "/login";
 
   return (
-    <div style={!isLoginPage ? { display: "flex", height: "100vh" } : {}}>
+    <div style={!isLoginPage ? { height: "100vh", display: "flex", flexDirection: "column" } : {}}>
       {!isLoginPage && <Sidebar />}
-      <div style={!isLoginPage ? { flex: 1, display: "flex", flexDirection: "column" } : {}}>
+      <div style={!isLoginPage ? { flex: 1, display: "flex", flexDirection: "column", marginLeft: '12.5rem', zIndex: 999 } : {}}>
         {!isLoginPage && <Navbar />}
-        <div style={!isLoginPage ? { padding: "20px", flex: 1 } : {}}>
+        <div style={!isLoginPage ? { padding: "20px", paddingTop: '4rem', flex: 1, overflowY: 'auto' } : {}}>
           {children}
         </div>
         {!isLoginPage && <Footer />}
