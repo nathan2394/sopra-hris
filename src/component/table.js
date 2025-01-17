@@ -1,4 +1,4 @@
-import { formatHeader, formatText } from "../config/helper";
+import { checkType, formatHeader, formatText } from "../config/helper";
 
 const Table = ({ dataTable = []}) => {
     if(dataTable?.length > 0){
@@ -20,7 +20,7 @@ const Table = ({ dataTable = []}) => {
                         {dataTable?.map((row, index) => (
                             <tr className="bg-[#f6f6f6] border-b last:rounded-b-lg" key={index}>
                                 {Object.values(row)?.map((val, idx) =>(
-                                    <th scope="row" key={idx} className="px-6 py-4 font-normal text-black whitespace-nowrap">
+                                    <th scope="row" key={idx} className={`px-6 py-4 font-normal text-black whitespace-nowrap ${checkType(val) === 'number' ? 'text-right' : 'text-left'}`}>
                                         {formatText(val)}
                                     </th>
                                 ))}

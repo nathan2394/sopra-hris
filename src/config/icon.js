@@ -7,4 +7,5 @@ export const close = '/icon/close.svg';
 
 //logo
 export const sopra = '/logo/sopra.png';
-export const sopra_full = '/logo/sopra_full.png'
+export const sopra_full = '/logo/sopra_full.png';
+export const google = '/logo/google.png';

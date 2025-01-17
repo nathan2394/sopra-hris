@@ -14,7 +14,7 @@ const Navbar = () => {
             <Link to="/" className="ml-4">
               <IconImage size={'normal'} source={user} />
             </Link>
-            <Link to="/" className="ml-4">
+            <Link to="/login" className="ml-4">
               <IconImage size={'normal'} source={logout} />
             </Link>
           </div>
