@@ -10,14 +10,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 🔨 Get latest code
+      - name: 🔨 Get latest code
         uses: actions/checkout@v3
+
+      - name: 🔨 Set up Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: "16"
 
-    - name: 🔨 Build Project
+      - name: 🔨 Install dependencies and build project
         run: |
-          npm init
           npm install --force
           npm run build
         env:
