@@ -10,9 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+    - name: 🔨 Get latest code
+        uses: actions/checkout@v3
         with:
           node-version: "16"
-      - run: npm init
-      - run: npm install --force
-      - run: npm run build
+
+    - name: 🔨 Build Project
+        run: |
+          npm init
+          npm install --force
+          npm run build
+        env:
+          CI: false
