@@ -98,7 +98,7 @@ const MasterPayroll = () => {
   return (
     <div className="px-4 max-w-full">
       <div className="flex flex-col">
-        <Button text={'Download Template'} bgcolor={'#ddd'} isLoading={isLoading} handleAction={() => downloadTemplate()} icon={download} />
+        <Button text={'Download Template'} setWidth={'auto'} bgcolor={'#ddd'} isLoading={isLoading} handleAction={() => downloadTemplate()} icon={download} />
         <div className="flex flex-col mt-3 mb-4">
           <p className="text-xs text-black" id="file_input_help">Upload Payroll Data:</p>
           <div className="flex items-center justify-center w-full">

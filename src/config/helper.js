@@ -55,4 +55,8 @@ export const formatText = (value) => {
         return value;
     }
 }
-  
+
+export const checkType = (value) => {
+    const checkType = typeof value;
+    return checkType;
+}
