@@ -3,7 +3,7 @@ name: SOPRA-HRIS FE
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   test:
