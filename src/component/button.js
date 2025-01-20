@@ -7,7 +7,7 @@ const Button = ({type = 'button', setWidth = 'full', position = 'left', text = '
     return (
         <div className="py-2">
             {/* <button className={`rounded-lg p-1 font-bold`} style={{background: bgcolor, color: color}} type="submit">{text}</button> */}
-            <button className={`${type === 'inputFile' ? 'rounded-l-lg' : 'rounded-lg' } ${buttonLength} p-2 font-bold cursor-pointer ${showBorder ? `border border-[${borderColor}]` : '' }`} style={{background: bgcolor, color: color}} onClick={handleAction}>
+            <button className={`${type === 'inputFile' ? 'rounded-l-lg' : 'rounded-lg' } ${buttonLength} p-2 font-bold cursor-pointer ${showBorder ? `border-2 border-[${borderColor}]` : '' }`} style={{background: bgcolor, color: color}} onClick={handleAction}>
                 {isLoading ? 
                     <LoadingIndicator showText={true} label={"Loading"} position={'left'} /> 
                     : 

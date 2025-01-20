@@ -2,25 +2,25 @@ import Button from "../component/button";
 import Input from "../component/input";
 import { google, sopra_full } from "../config/icon";
 import { Link, useNavigate } from 'react-router-dom';
-import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 
-const AuthPage = () => {
+const AuthPage = ({setAuth}) => {
     const [ user, setUser ] = useState([]);
-    const [ profile, setProfile ] = useState([]);
+    // const [ profile, setProfile ] = useState([]);
 
     const login = useGoogleLogin({
         onSuccess: (codeResponse) => setUser(codeResponse),
         onError: (error) => console.log('Login Failed:', error)
     });
 
-    const responseMessage = (response) => {
-        console.log(response);
-    };
-    const errorMessage = (error) => {
-        console.log(error);
-    };
+    // const responseMessage = (response) => {
+    //     console.log(response);
+    // };
+    // const errorMessage = (error) => {
+    //     console.log(error);
+    // };
 
     const navigate = useNavigate();
 
@@ -30,20 +30,27 @@ const AuthPage = () => {
 
     useEffect(
         () => {
-            if (user) {
-                console.log(user);
-                axios
-                    .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
-                        headers: {
-                            Authorization: `Bearer ${user.access_token}`,
-                            Accept: 'application/json'
-                        }
-                    })
-                    .then((res) => {
-                        console.log(res.data);
-                        setProfile(res.data);
-                    })
-                    .catch((err) => console.log(err));
+            try {
+                if (user) {
+                    console.log(user);
+                    axios
+                        .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+                            headers: {
+                                Authorization: `Bearer ${user.access_token}`,
+                                Accept: 'application/json'
+                            }
+                        })
+                        .then((res) => {
+                            if(res.data){
+                                setAuth(true);
+                                navigate('/');
+                                // setProfile(res.data);
+                            }
+                        })
+                        .catch((err) => console.log(err));
+                }
+            } catch (err) {
+                console.log(err)
             }
         },
         [ user ]
@@ -53,10 +60,10 @@ const AuthPage = () => {
     <div className="bg-gray-50">
         {/* <img className="w-[12%]" src={sopra_full} /> */}
         <div className="w-full h-screen flex flex-col items-center justify-center">
-            <div className="border border-[#ddd] bg-white rounded-lg py-6">
+            <div className="border border-[#ddd] bg-white rounded-lg py-6 w-[400px]">
                 <div className="px-4 pb-6">
                     <div className="flex flex-col justify-center items-center">
-                        <img className="w-[28%] mx-auto" src={sopra_full} />
+                        <img className="w-[28%] mx-auto" alt="logo" src={sopra_full} />
                         <p className="text-sm font-bold text-gray-500 mt-2">Master Payroll</p>
                     </div>
                 </div>
@@ -74,18 +81,17 @@ const AuthPage = () => {
                                 </div>
                                 <label for="remember" className="ms-2 text-sm font-medium text-black">Remember me</label>
                             </div>
-                            <Link to='#' className="ms-2 text-sm font-medium underline text-[#EA2427]">Forgot Password</Link>
+                            {/* <Link to='#' className="ms-2 text-sm font-medium underline text-[#EA2427]">Forgot Password</Link> */}
                         </div>
 
                         <div className="bg-[#ddd] my-4 h-[1px]" />
 
                         <Button text={'log In'} position={"center"} showBorder={true} bgcolor={'#EA2427'} color={'white'} handleAction={handleLogin} />
-                        <Button text={'Create Account'} position={"center"} showBorder={true} bgcolor={'white'} color={'#EA2427'} />
+                        {/* <Button text={'Create Account'} position={"center"} showBorder={true} bgcolor={'white'} color={'#EA2427'} /> */}
 
-                        <div className="bg-[#ddd] my-4 h-[1px]" />
+                        {/* <div className="bg-[#ddd] my-4 h-[1px]" /> */}
 
                         <Button text={'Sign In with Google'} position={"center"} showBorder={true} bgcolor={'white'} color={'black'} icon={google} handleAction={() => login()} />
-                        {/* <GoogleLogin onSuccess={responseMessage} onError={errorMessage} /> */}
                     </div>
                 </div>
             </div>
