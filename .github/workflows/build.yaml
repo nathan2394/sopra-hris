@@ -1,0 +1,34 @@
+name: SOPRA-HRIS FE
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔨 Get latest code
+        uses: actions/checkout@v3
+
+      - name: 🔨 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      - name: 🔨 Install dependencies and build project
+        run: |
+          npm install --force
+          npm run build
+        env:
+          CI: false
+
+      - name: 📂 Sync files dev
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./build/
