@@ -15,3 +15,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* styles.css */
+.custom-width-1 {
+  width: 20%;
+}
+
+.custom-width-2 {
+  width: 30%;
+}
+
+/* Add more classes as needed */
+

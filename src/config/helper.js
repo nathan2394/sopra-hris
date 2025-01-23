@@ -11,7 +11,7 @@ export const exportToExcel = (dataTable, filename = 'data', template = 'default'
                 "emp.Number": val?.nik,
                 "emp.Name": val?.name,
                 "Dept": val?.divisionName,
-                "Trans. Date": val?.transDate
+                "Trans. Date": coverDate(val?.transDate)
             }
         ))
     }
@@ -38,6 +38,29 @@ export const getCurrentDate = () => {
   
     return `${day}-${month}-${year}`;
 };
+
+export const coverDate = (val) => {
+    const inputDate = val;
+    const date = new Date(inputDate);
+
+    const day = date.getDate().toString().padStart(2, "0");;
+    const month = date.toLocaleString("en-GB", { month: "short" }).toLowerCase();
+    const year = date.getFullYear().toString().slice(-2);
+    
+    const formattedDate = `${day}-${month}-${year}`;
+
+    return formattedDate;
+}
+
+export const getMonthName = (monthNumber) => {
+    const months = [
+        "January", "February", "March", "April", 
+        "May", "June", "July", "August", 
+        "September", "October", "November", "December"
+    ];
+    
+    return months[monthNumber - 1];
+}
 
 export const formatHeader = (value) => {
     let readableFormat = value.replace(/([a-z])([A-Z])/g, '$1 $2');  // Add space before uppercase
