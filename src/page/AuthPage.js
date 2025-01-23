@@ -4,23 +4,16 @@ import { google, sopra_full } from "../config/icon";
 import { Link, useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import React, { useEffect, useState } from "react";
-import axios from 'axios';
+import { baseColor } from "../config/setting";
 
 const AuthPage = ({setAuth}) => {
     const [ user, setUser ] = useState([]);
-    // const [ profile, setProfile ] = useState([]);
+    const isLoggedIn = localStorage.getItem("statusAuth");
 
     const login = useGoogleLogin({
         onSuccess: (codeResponse) => setUser(codeResponse),
         onError: (error) => console.log('Login Failed:', error)
     });
-
-    // const responseMessage = (response) => {
-    //     console.log(response);
-    // };
-    // const errorMessage = (error) => {
-    //     console.log(error);
-    // };
 
     const navigate = useNavigate();
 
@@ -28,26 +21,20 @@ const AuthPage = ({setAuth}) => {
         navigate('/');
     }
 
+    useEffect(() => {
+        if (isLoggedIn) {
+          navigate("/");
+        }
+    }, [isLoggedIn, navigate]);
+
     useEffect(
         () => {
             try {
-                if (user) {
+                if (user.access_token) {
                     console.log(user);
-                    axios
-                        .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
-                            headers: {
-                                Authorization: `Bearer ${user.access_token}`,
-                                Accept: 'application/json'
-                            }
-                        })
-                        .then((res) => {
-                            if(res.data){
-                                setAuth(true);
-                                navigate('/');
-                                // setProfile(res.data);
-                            }
-                        })
-                        .catch((err) => console.log(err));
+                    setAuth(true);
+                    localStorage.setItem('statusAuth', true);
+                    navigate('/');
                 }
             } catch (err) {
                 console.log(err)
@@ -86,8 +73,8 @@ const AuthPage = ({setAuth}) => {
 
                         <div className="bg-[#ddd] my-4 h-[1px]" />
 
-                        <Button text={'log In'} position={"center"} showBorder={true} bgcolor={'#EA2427'} color={'white'} handleAction={handleLogin} />
-                        {/* <Button text={'Create Account'} position={"center"} showBorder={true} bgcolor={'white'} color={'#EA2427'} /> */}
+                        <Button text={'log In'} position={"center"} showBorder={true} bgcolor={baseColor} color={'white'} handleAction={handleLogin} />
+                        {/* <Button text={'Create Account'} position={"center"} showBorder={true} bgcolor={'white'} color={baseColor} /> */}
 
                         {/* <div className="bg-[#ddd] my-4 h-[1px]" /> */}
 

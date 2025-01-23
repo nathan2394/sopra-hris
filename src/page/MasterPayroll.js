@@ -2,11 +2,13 @@ import React, { useRef, useState } from "react";
 
 import Button from "../component/button";
 import Table from "../component/table";
-import { exportToExcel, getCurrentDate } from "../config/helper";
-import { close, download, excel } from "../config/icon";
+import { exportToExcel, getCurrentDate, getMonthName } from "../config/helper";
+import { arrow_green, close, download, empty, excel, payroll, reload, upload } from "../config/icon";
 import IconImage from "../component/icon_img";
 import { loadData, postData } from "../config/api";
 import LoadingIndicator from "../component/loading_indicator";
+import { baseColor } from "../config/setting";
+import Title from "../component/title";
 
 const MasterPayroll = () => {
   const fileInputRef = useRef(null);
@@ -15,31 +17,39 @@ const MasterPayroll = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadExport, setIsLoadExport] = useState(false);
-  const [isLoadExportBank, setIsLoadExportBank] = useState(false);
   const [loadUpload, setLoadUpload] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [exportType, setExportType] = useState('');
+  const [exportLabel, setExportLabel] = useState('');
+  
+  const [period, setPeriod] = useState('-');
 
   const [dataUploadTable, setDataUploadTable] = useState([]);
+
+  const handleReloadUpload = (formData) => {
+    postData({ url: `Salary/upload`, formData: formData })?.then((res) => {
+      if(res?.data?.length > 0){
+        const filteredData = res.data.map(obj =>
+          Object.fromEntries(
+            Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year'))
+          )
+        );
+        setPeriod(`${getMonthName(res?.data[0]?.month)} ${res?.data[0]?.year}`)
+        setDataUploadTable(filteredData);
+        setIsUpload(true);
+        setLoadUpload(false);
+      }
+    });
+  }
     
   const handleInputChange = (event) => {
     if(event.target.value){
-      console.log(event.target.files[0]);
       setLoadUpload(true);
       setFileUpload(event.target.files[0]?.name); 
       const formData = new FormData();
       formData.append('file', event.target.files[0]);
   
-      postData({ url: `Salary/upload`, formData: formData })?.then((res) => {
-        if(res?.data?.length > 0){
-          const filteredData = res.data.map(obj =>
-            Object.fromEntries(
-              Object.entries(obj).filter(([key]) => !key.includes('ID'))
-            )
-          );
-          setDataUploadTable(filteredData);
-          setIsUpload(true);
-          setLoadUpload(false);
-        }
-      });
+      handleReloadUpload(formData);
     }else{
       setFileUpload(null);
       setIsUpload(false);
@@ -48,7 +58,15 @@ const MasterPayroll = () => {
     }
   };
 
-  const uploadFile = () => {
+  const reloadFile = () => {
+    const formData = new FormData();
+    formData.append('file', fileInputRef.current.files[0]);
+    handleReloadUpload(formData);
+    setLoadUpload(true);
+    setIsUpload(false);
+  }
+
+  const chooseFile = () => {
     fileInputRef.current.click();
   }
 
@@ -57,11 +75,12 @@ const MasterPayroll = () => {
       event.preventDefault();
     }
 
-    if(type === 'bank'){
-      setIsLoadExportBank(true);
-    }else{
-      setIsLoadExport(true);
+    if(type === ''){
+      alert('Please Select Export Type');
+      return;
     }
+
+    setIsLoadExport(true);
 
     loadData({ url: `Salary/generatedata`, params: [{title: 'filter', value: `type:${type}`}] }).then((res) => {
       const todayDate = getCurrentDate();
@@ -71,11 +90,7 @@ const MasterPayroll = () => {
         )
       );
       exportToExcel(filteredData, `Data_${type}_${todayDate}`, `${type === 'bank' ? 'bank' : 'default'}`)
-      if(type === 'bank'){
-        setIsLoadExportBank(false);
-      }else{
-        setIsLoadExport(false);
-      }
+      setIsLoadExport(false);
     });
   }
 
@@ -88,66 +103,79 @@ const MasterPayroll = () => {
     });
   }
 
-  const removeFile = () => {
-    setFileUpload(null);
-    setIsUpload(false);
-    setDataUploadTable([]);
-    fileInputRef.current.value = '';
-  }
-
   return (
-    <div className="px-4 max-w-full">
-      <div className="flex flex-col">
-        <Button text={'Download Template'} setWidth={'auto'} bgcolor={'#ddd'} isLoading={isLoading} handleAction={() => downloadTemplate()} icon={download} />
-        <div className="flex flex-col mt-3 mb-4">
-          <p className="text-xs text-black" id="file_input_help">Upload Payroll Data:</p>
-          <div className="flex items-center justify-center w-full">
-              <div className="relative w-full h-64">
-                {fileUpload &&
-                  <div className="absolute top-2 right-2 cursor-pointer" style={{zIndex: 9}} onClick={() => removeFile()}>
-                    <IconImage size="normal" source={close} />
-                  </div>
-                }
-                <label className="relative flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100" onClick={uploadFile}>
-                    {fileUpload ? 
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <div className="mb-4">
-                          <IconImage size={'large'} source={excel} />
-                        </div>
-                        <p className="mb-2 text-sm text-gray-500">{fileUpload}</p>
-                      </div>
-                      :                  
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <svg className="w-8 h-8 mb-4 text-gray-500 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                          </svg>
-                          <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                          <p className="text-xs text-gray-500 ">CSV, XLSX or XLS</p>
-                      </div>
-                    }
-                </label>
+    <div className="px-5 max-w-full">
+      {/* <p className="font-bold text-sm">Master Payroll</p> */}
+      <Title label={'Master Payroll'} source={payroll} />
+
+      <div className="bg-[#ddd] my-3 h-[1.5px]" />
+
+      <div className="flex flex-row justify-between items-center pt-1">
+        <Button text={'Download Form'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoading} handleAction={() => downloadTemplate()} icon={download} />
+        <div className="flex flex-row">
+          <div className="py-2 relative" style={ !isUpload ? { opacity: '0.3', pointerEvents: 'none' } : {}}>
+            <div className="border border-gray-400 bg-[#ffffff] rounded-lg flex flex-row items-center mr-2 cursor-pointer" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)', userSelect: 'none'}} onClick={() => setOpen(!open)}>
+              <div className="p-2 w-[145px]">
+                <p className="text-sm font-semibold">{`${exportLabel || 'Select Export Type'}`}</p>
               </div>
-          </div> 
+              <div className="bg-gray-400 h-[36px] w-[1px]"></div>
+              <div className="p-2">
+                  <IconImage size="small" source={arrow_green} />
+              </div>
+            </div>
+            {open &&             
+              <div className="absolute top-14 border border-gray-400 bg-[#ffffff] rounded-lg w-[180px]" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
+                <div className="cursor-pointer p-1 border-b border-gray-400 hover:bg-[#ddd]" style={{transition: '.1s'}} onClick={() => {
+                  setExportType('payroll')
+                  setExportLabel('Export Payroll')
+                  setOpen(false)
+                }}>
+                  <p className="text-sm font-semibold">Export Payroll</p>
+                </div>
+                <div className="cursor-pointer p-1 hover:bg-[#ddd]" style={{transition: '.1s'}} onClick={() => {
+                  setExportType('bank')
+                  setExportLabel('Export for Bank')
+                  setOpen(false)
+                }}>
+                  <p className="text-sm font-semibold">Export for Bank</p>
+                </div>
+              </div>
+            }
+          </div>
+          <Button text={'Export'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoadExport} handleAction={(e) => exportFile(exportType, e)} />
+        </div>
+      </div>
+
+      {isUpload ?
+        <div className="w-full overflow-x-auto">
+          <Table dataTable={dataUploadTable} />
+        </div>
+        :
+        <div className="border border-[#ddd] bg-[#ffffff] rounded-lg w-full my-2 min-h-[400px] flex flex-col items-center justify-center p-6">
+          {loadUpload ? 
+            <LoadingIndicator position="bottom" label="Calculate..." showText={true} size="large" />
+            :
+            <div className="flex flex-col items-center justify-center p-6">
+              <img className="w-[28%] mx-auto" alt="logo" src={empty} />
+              <p className="font-bold text-sm">Opps, Nothing to See Here!</p>
+              <p className="font-normal text-xs text-center w-[300px] text-gray-500">Nothing to see here yet. Please upload your payroll form by clicking the “Upload Form” button.</p>
+            </div>
+          }
+        </div>
+      }
+
+      <div className="flex flex-row justify-between items-center pt-2">
+        <p className="font-bold text-sm">Payroll Period: <span className="font-semibold text-gray-500">{period}</span></p>
+        <div className="flex flex-row">
+          <div style={ !isUpload ? { opacity: '0.3', pointerEvents: 'none' } : {}}>
+            <Button setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={() => reloadFile()} icon={reload} />
+          </div>
+          <div className="mx-1" />
+          <Button text={'Upload Form'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={() => chooseFile()} icon={upload} />
           <input className="hidden" ref={fileInputRef} type="file" accept=".csv, .xlsx, .xls" onChange={handleInputChange} />
         </div>
       </div>
 
-      <div className="bg-[#ddd] my-2 h-[2px]" />
-
-      {loadUpload && <LoadingIndicator position="bottom" label="Calculate..." showText={true} size="large" /> }
-
-      {isUpload && 
-      <>
-        <div className="flex flex-row justify-end">
-          <Button text={'Export Payroll'} bgcolor={'#ddd'} isLoading={isLoadExport} handleAction={(e) => exportFile('payroll', e)} />
-          <div className="mx-1" />
-          <Button text={'Export to Bank'} bgcolor={'#ddd'} isLoading={isLoadExportBank} handleAction={(e) => exportFile('bank', e)} />
-        </div>
-        <div className="w-full overflow-x-auto">
-          <Table dataTable={dataUploadTable} />
-        </div>
-      </>
-      }
     </div>
   );
 };

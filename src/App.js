@@ -13,7 +13,7 @@ const Layout = ({ children, setAuth }) => {
   const location = useLocation();
 
   // Define routes that should NOT use the full layout
-  const excludedPaths = ['/login']; // Add other routes like '/register' if needed
+  const excludedPaths = ['/login'];
 
   // Check if the current path matches excluded paths or is a 404
   const isExcludedPath = excludedPaths.includes(location.pathname);
@@ -25,36 +25,31 @@ const Layout = ({ children, setAuth }) => {
   }
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Sidebar />
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          marginLeft: '12.5rem',
-          zIndex: 999,
-        }}
-      >
+    <div style={{maxWidth: '2000px', margin: '0 auto'}}>
+      <div className="bg-[#F5F5F5]" style={{ display: 'flex', height: '100vh', flexDirection: 'column' }}>
         <Navbar setAuth={setAuth} />
-        <div
-          style={{
-            padding: '20px',
-            paddingTop: '4rem',
-            flex: 1,
-            overflowY: 'auto',
-          }}
-        >
-          {children}
+        {/* <Sidebar /> */}
+        <div style={{zIndex: 99,}}>
+          <div
+            style={{
+              padding: '20px',
+              paddingTop: '5.5rem',
+            }}
+          >
+            {children}
+          </div>
+          
         </div>
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 };
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('statusAuth'));
+
+  console.log(isAuthenticated)
 
   return (
     <Router>
