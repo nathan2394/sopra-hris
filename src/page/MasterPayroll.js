@@ -5,7 +5,7 @@ import Table from "../component/table";
 import { exportToExcel, getCurrentDate, getMonthName } from "../config/helper";
 import { arrow_green, close, download, empty, excel, payroll, reload, upload } from "../config/icon";
 import IconImage from "../component/icon_img";
-import { loadData, postData } from "../config/api";
+import { loadData, postFormData } from "../config/api";
 import LoadingIndicator from "../component/loading_indicator";
 import { baseColor } from "../config/setting";
 import TitlePage from "../component/titlePage";
@@ -27,7 +27,7 @@ const MasterPayroll = () => {
   const [dataUploadTable, setDataUploadTable] = useState([]);
 
   const handleReloadUpload = (formData) => {
-    postData({ url: `Salary/upload`, formData: formData })?.then((res) => {
+    postFormData({ url: `Salary/upload`, formData: formData })?.then((res) => {
       if(res?.data?.length > 0){
         const filteredData = res.data.map(obj =>
           Object.fromEntries(

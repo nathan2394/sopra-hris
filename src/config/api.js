@@ -29,6 +29,22 @@ export const postData = async ({url, formData = null}) => {
     const api_endpoint = 'https://sopra-hris.mixtra.co.id';
 
     try {
+        const response = await axios.post(`${api_endpoint}/${url}`, formData);
+        return response.data;
+    } catch (error) {
+        console.error('Error while posting data:', error);
+        // throw error;
+        return {
+            status: error.status,
+            response: error.response
+        }
+    }
+};
+
+export const postFormData = async ({url, formData = null}) => {
+    const api_endpoint = 'https://sopra-hris.mixtra.co.id';
+
+    try {
         const response = await axios.post(`${api_endpoint}/${url}`, formData, {
             headers: {
             'Content-Type': 'multipart/form-data', // Ensure proper content type
