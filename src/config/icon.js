@@ -1,3 +1,4 @@
+export const search = '/icon/search.svg';
 export const menu = '/icon/menu.svg';
 export const logout = '/icon/logout.svg';
 export const user = '/icon/user.svg';
@@ -10,7 +11,8 @@ export const notif = '/icon/notification.png';
 export const arrow_red = '/icon/arrow_down_red.png';
 export const arrow_green = '/icon/arrow_down_green.png';
 export const payroll = '/icon/payroll.png';
-export const reload = 'icon/reload.png';
+export const reload = '/icon/reload.png';
+export const employee = '/icon/employee.png';
 
 //logo
 export const sopra = '/logo/sopra.png';

@@ -8,7 +8,7 @@ import IconImage from "../component/icon_img";
 import { loadData, postData } from "../config/api";
 import LoadingIndicator from "../component/loading_indicator";
 import { baseColor } from "../config/setting";
-import Title from "../component/title";
+import TitlePage from "../component/titlePage";
 
 const MasterPayroll = () => {
   const fileInputRef = useRef(null);
@@ -37,6 +37,9 @@ const MasterPayroll = () => {
         setPeriod(`${getMonthName(res?.data[0]?.month)} ${res?.data[0]?.year}`)
         setDataUploadTable(filteredData);
         setIsUpload(true);
+        setLoadUpload(false);
+      }else{
+        setIsUpload(false);
         setLoadUpload(false);
       }
     });
@@ -104,11 +107,8 @@ const MasterPayroll = () => {
   }
 
   return (
-    <div className="px-5 max-w-full">
-      {/* <p className="font-bold text-sm">Master Payroll</p> */}
-      <Title label={'Master Payroll'} source={payroll} />
-
-      <div className="bg-[#ddd] my-3 h-[1.5px]" />
+    <>
+      <TitlePage label={'Master Payroll'} source={payroll} />
 
       <div className="flex flex-row justify-between items-center pt-1">
         <Button text={'Download Form'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoading} handleAction={() => downloadTemplate()} icon={download} />
@@ -176,7 +176,7 @@ const MasterPayroll = () => {
         </div>
       </div>
 
-    </div>
+    </>
   );
 };
   

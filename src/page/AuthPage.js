@@ -31,10 +31,13 @@ const AuthPage = ({setAuth}) => {
         () => {
             try {
                 if (user.access_token) {
-                    console.log(user);
+                    console.log(user.access_token);
                     setAuth(true);
                     localStorage.setItem('statusAuth', true);
                     navigate('/');
+                    // postData({ url: `Auth/google-login`, formData: {token: user.access_token} })?.then((res) => {
+                        
+                    // });
                 }
             } catch (err) {
                 console.log(err)

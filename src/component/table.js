@@ -1,6 +1,9 @@
+import { Link } from "react-router-dom";
 import { checkType, formatHeader, formatText } from "../config/helper";
+import { baseColor } from "../config/setting";
+import { employee } from "../config/icon";
 
-const Table = ({ dataTable = [] }) => {
+const Table = ({ dataTable = [], isAction = false }) => {
   if (dataTable?.length > 0) {
     const labelHeader = Object?.keys(dataTable[0]);
 
@@ -18,9 +21,18 @@ const Table = ({ dataTable = [] }) => {
                     idx === 0 ? "first:rounded-tl-lg" : ""
                   } ${idx === labelHeader.length - 1 ? "last:rounded-tr-lg" : ""}`}
                 >
-                  {formatHeader(val)}
+                  <Link >{formatHeader(val)}</Link> 
                 </th>
               ))}
+              {isAction &&
+                <th
+                  scope="col"
+                  style={{ width: `${100}%` }} // Adjust the width calculation as needed
+                  className={`border border-[#595858] min-w-[105px] p-[10px] last:rounded-tr-lg`}
+                >
+                  Action
+                </th>
+              }
             </tr>
           </thead>
           <tbody>
@@ -28,7 +40,7 @@ const Table = ({ dataTable = [] }) => {
               <tr
                 className={`${
                   index % 2 === 0 ? "bg-[rgb(255,255,255)]" : "bg-[#ebebeb]"
-                }`}
+                } cursor-pointer`}
                 key={index}
               >
                 {Object.values(row)?.map((val, idx) => (
@@ -50,9 +62,19 @@ const Table = ({ dataTable = [] }) => {
                         : ""
                     }`}
                   >
-                    {formatText(val)}
+                    {isAction 
+                    ? 
+                      <Link to={row?.employeeID ? `/employee/detail?id=${row?.employeeID}` : '#'}>{formatText(val)}</Link>
+                    :
+                      formatText(val)
+                    }
                   </th>
                 ))}
+                {/* {isAction &&
+                  <th scope="row" className={`p-[10px] font-normal border border-[#d2cfcf] text-black whitespace-nowrap ${"text-left"}`}>
+                      <Link to={row?.employeeID ? `/employee/detail?id=${row?.employeeID}` : '#'} className={`underline text-[#369D00]`}>View</Link>
+                  </th>
+                } */}
               </tr>
             ))}
           </tbody>
