@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { arrow_green } from "../config/icon"
 import IconImage from "./icon_img";
 
-const Select = ({data = [], defaultLabel = '', setWidth = '100%', filterVal = null, setFilter = null, value = null, setValue = null, isError = null}) => {
+const Select = ({data = [], defaultLabel = '', type, setWidth = '100%', filterVal = null, setFilter = null, value = null, setValue = null, isError = null}) => {
     const [open, setOpen] = useState(false);
 
     return (     

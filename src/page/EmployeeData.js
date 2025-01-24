@@ -34,13 +34,6 @@ const EmployeeData = () => {
     const closeModal = () => setModalOpen(false);
 
     useEffect(() => {
-        setSearchForm({
-            ...searchForm,
-            group: filterGroup
-        })
-    }, [filterGroup, filterType])
-
-    useEffect(() => {
         loadData({url: 'EmployeeType'}).then((res) => {
             setListType(res?.data?.map((data) => (
                 {
@@ -76,7 +69,7 @@ const EmployeeData = () => {
         const params = [
             {
                 title: 'filter',
-                value: `${searchForm?.name ? 'name:' + searchForm?.name +'|' : ''} ${searchForm?.nik ? 'nik:' + searchForm?.nik +'|' : ''} ${searchForm?.ktp ? 'ktp:' + searchForm?.ktp +'|' : ''}`
+                value: `${searchForm?.name ? 'name:' + searchForm?.name +'|' : ''} ${searchForm?.nik ? 'nik:' + searchForm?.nik +'|' : ''} ${searchForm?.ktp ? 'ktp:' + searchForm?.ktp +'|' : ''} ${searchForm?.group ? 'group:' + searchForm?.group +'|' : ''}`
             }
         ];
 
