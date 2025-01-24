@@ -66,41 +66,41 @@ const EmployeeForm = () => {
 
                 <div>
                     <div className="flex flex-row w-full">
-                        <Input label={'Name'} type={'text'} value={formData?.name} />
+                        <Input readOnly={true}  label={'Name'} type={'text'} value={formData?.name} />
                         <div className="mx-2" />
-                        <Input label={'NIK'}  type={'text'} value={formData?.nik} />
+                        <Input readOnly={true}  label={'NIK'}  type={'text'} value={formData?.nik} />
                         <div className="mx-2" />
-                        <Input label={'No. KTP'} type={'text'} value={formData?.ktp} />
+                        <Input readOnly={true}  label={'No. KTP'} type={'text'} value={formData?.ktp} />
                         <div className="mx-2" />
-                        <Input label={'Gender'} type={'text'} value={formData?.gender} />
+                        <Input readOnly={true}  label={'Gender'} type={'text'} value={formData?.gender} />
                     </div>
 
                     <div className="flex flex-row w-full">
-                        <Input label={'Email'} type={'text'} value={formData?.gender} />
+                        <Input readOnly={true}  label={'Email'} type={'text'} value={formData?.gender} />
                         <div className="mx-2" />
-                        <Input label={'Phone Number'}  type={'text'} value={formData?.phoneNumber} />
+                        <Input readOnly={true}  label={'Phone Number'}  type={'text'} value={formData?.phoneNumber} />
                         <div className="mx-2" />
-                        <Input label={'Place Of Birth'}  type={'text'} value={coverDate(formData?.placeOfBirth)} />
+                        <Input readOnly={true}  label={'Place Of Birth'}  type={'text'} value={coverDate(formData?.placeOfBirth)} />
                         <div className="mx-2" />
-                        <Input label={'Date Of Birth'} type={'text'} value={coverDate(formData?.dateOfBirth)} />
+                        <Input readOnly={true}  label={'Date Of Birth'} type={'text'} value={coverDate(formData?.dateOfBirth)} />
                     </div>
 
                     <div className="flex flex-row w-full">
-                        <Input label={'Start Working Date'} type={'text'} value={coverDate(formData?.startWorkingDate)} />
+                        <Input readOnly={true}  label={'Start Working Date'} type={'text'} value={coverDate(formData?.startWorkingDate)} />
                         <div className="mx-2" />
-                        <Input label={'Group'}  type={'text'} value={formData?.groupType} />
+                        <Input readOnly={true}  label={'Group'}  type={'text'} value={formData?.groupType} />
                         <div className="mx-2" />
-                        <Input label={'Function'} type={'text'} value={formData?.functionName} />
+                        <Input readOnly={true}  label={'Function'} type={'text'} value={formData?.functionName} />
                         <div className="mx-2" />
-                        <Input label={'Departemen'} type={'text'} value={formData?.departmentName} />
+                        <Input readOnly={true}  label={'Departemen'} type={'text'} value={formData?.departmentName} />
                     </div>
 
                     <div className="flex flex-row w-full">
-                        <Input label={'Account No.'} setWidth="24%" type={'text'} value={formData?.accountNo} />
+                        <Input readOnly={true}  label={'Account No.'} setWidth="24%" type={'text'} value={formData?.accountNo} />
                         <div className="mx-2" />
-                        <Input label={'Bank'} setWidth="24%" type={'text'} value={formData?.bank} />
+                        <Input readOnly={true}  label={'Bank'} setWidth="24%" type={'text'} value={formData?.bank} />
                         <div className="mx-2" />
-                        <Input label={'Division'} setWidth="24%" type={'text'} value={formData?.divisionName} />
+                        <Input readOnly={true}  label={'Division'} setWidth="24%" type={'text'} value={formData?.divisionName} />
                     </div>
                 </div>
 
@@ -115,11 +115,11 @@ const EmployeeForm = () => {
                     <div>
                         {formData?.allowancedeductionDetails?.filter(data => data?.amount > 0)?.map((val, idx) => (
                             <div key={idx} className="flex flex-row w-full">
-                                <Input value={val?.name} label={'Name'} setWidth="24%" type={'text'} />
+                                <Input readOnly={true}  value={val?.name} label={'Name'} setWidth="24%" type={'text'} />
                                 <div className="mx-2" />
-                                <Input value={val?.type} label={'Type'} setWidth="24%" type={'text'} />
+                                <Input readOnly={true}  value={val?.type} label={'Type'} setWidth="24%" type={'text'} />
                                 <div className="mx-2" />
-                                <Input value={formatText(val?.amount)} label={'Amount'} setWidth="24%" type={'text'} textAlign="right" />
+                                <Input readOnly={true}  value={formatText(val?.amount)} label={'Amount'} setWidth="24%" type={'text'} textAlign="right" />
                             </div>
                         ))}
                     </div>
