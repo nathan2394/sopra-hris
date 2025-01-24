@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { checkType, formatHeader, formatText } from "../config/helper";
 import { baseColor } from "../config/setting";
-import { employee } from "../config/icon";
+import { employee, empty } from "../config/icon";
 
 const Table = React.memo(({ dataTable = [], isAction = false }) => {
   if (dataTable?.length > 0) {
@@ -80,6 +80,15 @@ const Table = React.memo(({ dataTable = [], isAction = false }) => {
             ))}
           </tbody>
         </table>
+      </div>
+    );
+  }else{
+    return (
+      <div>
+          <div className="flex flex-col items-center justify-center p-6">
+            <img className="w-[28%] mx-auto" alt="logo" src={empty} />
+            <p className="font-bold text-sm">Opps, Nothing to See Here!</p>
+          </div>
       </div>
     );
   }
