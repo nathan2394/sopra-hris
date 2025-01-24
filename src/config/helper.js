@@ -40,16 +40,19 @@ export const getCurrentDate = () => {
 };
 
 export const coverDate = (val) => {
-    const inputDate = val;
-    const date = new Date(inputDate);
-
-    const day = date.getDate().toString().padStart(2, "0");;
-    const month = date.toLocaleString("en-GB", { month: "short" }).toLowerCase();
-    const year = date.getFullYear().toString().slice(-2);
+    if(val){
+        const inputDate = val;
+        const date = new Date(inputDate);
     
-    const formattedDate = `${day}-${month}-${year}`;
-
-    return formattedDate;
+        const day = date.getDate().toString().padStart(2, "0");;
+        const month = date.toLocaleString("en-GB", { month: "short" }).toLowerCase();
+        const year = date.getFullYear().toString().slice(-2);
+        
+        const formattedDate = `${day}-${month}-${year}`;
+    
+        return formattedDate;
+    }
+    return val;
 }
 
 export const getMonthName = (monthNumber) => {
@@ -71,10 +74,14 @@ export const formatHeader = (value) => {
 
 export const formatText = (value) => {
     const checkText = typeof value;
+    const date = new Date(value);
 
     if(checkText === "number"){
         return Math?.round(value)?.toLocaleString('id-ID');
     }else{
+        if(!isNaN(date.getTime())){
+            return coverDate(value);
+        }
         return value;
     }
 }

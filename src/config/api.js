@@ -37,6 +37,10 @@ export const postData = async ({url, formData = null}) => {
         return response.data;
     } catch (error) {
         console.error('Error while posting data:', error);
-        throw error;
+        // throw error;
+        return {
+            status: error.status,
+            response: error.response
+        }
     }
 };
