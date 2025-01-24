@@ -33,10 +33,6 @@ const EmployeeData = () => {
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
 
-    useEffect(()=> {
-        console.log(listGroup, 'data')
-    }, [listGroup])
-
     useEffect(() => {
         setSearchForm({
             ...searchForm,

@@ -1,9 +1,10 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { checkType, formatHeader, formatText } from "../config/helper";
 import { baseColor } from "../config/setting";
 import { employee } from "../config/icon";
 
-const Table = ({ dataTable = [], isAction = false }) => {
+const Table = React.memo(({ dataTable = [], isAction = false }) => {
   if (dataTable?.length > 0) {
     const labelHeader = Object?.keys(dataTable[0]);
 
@@ -82,6 +83,6 @@ const Table = ({ dataTable = [], isAction = false }) => {
       </div>
     );
   }
-};
+});
 
 export default Table;

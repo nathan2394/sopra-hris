@@ -25,7 +25,11 @@ const Select = ({data = [], defaultLabel = '', setWidth = '100%', filterVal = nu
                     <p className="text-sm font-semibold">Export for Bank</p>
                     </div> */}
                     {data?.map((val, idx) => (
-                        <div key={idx} className="cursor-pointer p-2 border-b border-gray-400 hover:bg-[#ddd]" style={{transition: '.1s'}} >
+                        <div key={idx} className="cursor-pointer p-2 border-b border-gray-400 hover:bg-[#ddd]" style={{transition: '.1s'}} onClick={() => {
+                            setFilter(val?.value);
+                            setValue(val?.id);
+                            setOpen(!open);
+                        } }>
                             <p className="text-xs font-normal">{val?.value}</p>
                         </div>
                     ))}
