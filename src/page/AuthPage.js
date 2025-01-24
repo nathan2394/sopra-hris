@@ -5,6 +5,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import React, { useEffect, useState } from "react";
 import { baseColor } from "../config/setting";
+import axios from 'axios';
+import { postData } from "../config/api";
 
 const AuthPage = ({setAuth}) => {
     const [ user, setUser ] = useState([]);
@@ -32,12 +34,14 @@ const AuthPage = ({setAuth}) => {
             try {
                 if (user.access_token) {
                     console.log(user.access_token);
-                    setAuth(true);
-                    localStorage.setItem('statusAuth', true);
-                    navigate('/');
-                    // postData({ url: `Auth/google-login`, formData: {token: user.access_token} })?.then((res) => {
-                        
-                    // });
+                    postData({ url: `Auth/google-login`, formData: user.access_token })?.then((res) => {
+                        if(res?.data){
+                            setAuth(true);
+                            localStorage.setItem('statusAuth', true);
+                            localStorage.setItem('userToken', res?.data?.token);
+                            navigate('/');
+                        }
+                    });
                 }
             } catch (err) {
                 console.log(err)
@@ -81,7 +85,7 @@ const AuthPage = ({setAuth}) => {
 
                         {/* <div className="bg-[#ddd] my-4 h-[1px]" /> */}
 
-                        <Button text={'Sign In with Google'} position={"center"} showBorder={true} bgcolor={'white'} color={'black'} icon={google} handleAction={() => login()} />
+                        <Button text={'Sign In with Google'} position={"center"} bgcolor={'white'} color={'black'} icon={google} handleAction={() => login()} />
                     </div>
                 </div>
             </div>

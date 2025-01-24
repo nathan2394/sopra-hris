@@ -16,10 +16,18 @@ const EmployeeData = () => {
     const [listType, setListType] = useState([]);
     const [isModalOpen, setModalOpen] = useState(false);
     const [isLoadData, setIsLoadData] = useState(true);
+
+    const [filterGroup, setFilterGroup] = useState('');
+    const [filterType, setFilterType] = useState('');
+
+    const [valueGroup, setValueGroup] = useState('');
+    const [valueType, setValueType] = useState('');
+
     const [searchForm, setSearchForm] = useState({
         name    : '',
         nik     : '',
-        ktp     : ''
+        ktp     : '',
+        group   : 0
     })
 
     const openModal = () => setModalOpen(true);
@@ -28,6 +36,13 @@ const EmployeeData = () => {
     useEffect(()=> {
         console.log(listGroup, 'data')
     }, [listGroup])
+
+    useEffect(() => {
+        setSearchForm({
+            ...searchForm,
+            group: filterGroup
+        })
+    }, [filterGroup, filterType])
 
     useEffect(() => {
         loadData({url: 'EmployeeType'}).then((res) => {
@@ -128,8 +143,8 @@ const EmployeeData = () => {
                 <div className="flex flex-row justify-between items-center">
                     <Button text="Search" setWidth="auto" bgcolor={'white'} icon={search} handleAction={() => openModal()} />
                     <div className="flex flex-row">
-                        <Select data={listGroup} defaultLabel="Group" />
-                        <Select data={listType} defaultLabel="Employee Type" />
+                        <Select data={listGroup} defaultLabel="Group" value={valueGroup} setValue={setValueGroup} filterVal={filterGroup} setFilter={setFilterGroup} />
+                        <Select data={listType} defaultLabel="Employee Type" value={valueType} setValue={setValueType} filterVal={filterType} setFilter={setFilterType} />
                     </div>
                 </div>
                 {!isLoadData ? 
