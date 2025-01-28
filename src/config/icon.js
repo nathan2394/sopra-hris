@@ -6,13 +6,21 @@ export const excel = '/icon/file_excel.svg';
 // export const download = '/icon/arrow_down_dwnld.svg';
 export const download = '/icon/download.png';
 export const upload = '/icon/upload.png';
+
 export const close = '/icon/close.svg';
+export const close_white = 'icon/close_white.svg';
+
 export const notif = '/icon/notification.png';
 export const arrow_red = '/icon/arrow_down_red.png';
 export const arrow_green = '/icon/arrow_down_green.png';
 export const payroll = '/icon/payroll.png';
 export const reload = '/icon/reload.png';
 export const employee = '/icon/employee.png';
+export const list = '/icon/list.png';
+
+export const filter = 'icon/filter.svg';
+export const sort_asc = 'icon/sort_up.svg';
+export const sort_desc = 'icon/sort_down.svg';
 
 //logo
 export const sopra = '/logo/sopra.png';

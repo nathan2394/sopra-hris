@@ -10,6 +10,7 @@ import ProtectedRoute from "./protectedRoute";
 import NotFound from "./page/NotFound";
 import EmployeeData from "./page/EmployeeData";
 import EmployeeForm from "./page/EmployeeForm";
+import Report from "./page/Report";
 
 const Layout = ({ children, setAuth }) => {
   const location = useLocation();
@@ -19,7 +20,7 @@ const Layout = ({ children, setAuth }) => {
 
   // Check if the current path matches excluded paths or is a 404
   const isExcludedPath = excludedPaths.includes(location.pathname);
-  const is404Page = location.pathname !== '/' && location.pathname !== '/employee' && location.pathname !== '/employee/detail'   && !excludedPaths.includes(location.pathname);
+  const is404Page = location.pathname !== '/' && location.pathname !== '/report' && location.pathname !== '/employee' && location.pathname !== '/employee/detail'   && !excludedPaths.includes(location.pathname);
 
   if (isExcludedPath || is404Page) {
     // Render children without layout for excluded paths or 404
@@ -46,9 +47,7 @@ const Layout = ({ children, setAuth }) => {
 };
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('statusAuth'));
-
-  console.log(isAuthenticated)
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('statusAuth'));
 
   return (
     <Router>
@@ -68,6 +67,11 @@ const App = () => {
           <Route path="/employee/detail" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <EmployeeForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/report" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Report />
             </ProtectedRoute>
           } />
           <Route path="*" element={<NotFound />} />

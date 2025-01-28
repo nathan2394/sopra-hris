@@ -13,6 +13,10 @@ const TitlePage = ({label, subLabel = '', source, type = 'header', setNavigateBa
         {
             title: 'Employee Data',
             navRoute: '/employee',
+        },
+        {
+            title: 'Report Salary',
+            navRoute: '/report'
         }
     ];
 
