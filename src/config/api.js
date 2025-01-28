@@ -18,10 +18,15 @@ export const loadData = async ({ url, params = [] }) => {
     }
     
     try {
+        // console.log(`${api_endpoint}/${url}${paramsUrl}`);
         const result = await axios.get(`${api_endpoint}/${url}${paramsUrl}`)
         return Promise.resolve(result.data);
     } catch (err) {
-        console.error(Promise.reject(err));
+        console.error(err);
+        return {
+            status: err.status,
+            response: err.response
+        }
     }
 };
 

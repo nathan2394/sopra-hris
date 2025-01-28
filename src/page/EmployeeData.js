@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { employee, search } from "../config/icon";
+import { employee, filter, search } from "../config/icon";
 import TitlePage from "../component/titlePage";
 import { loadData } from "../config/api";
 import Table from "../component/table";
@@ -9,26 +9,43 @@ import Input from "../component/input";
 import { baseColor } from "../config/setting";
 import Select from "../component/select";
 import LoadingIndicator from "../component/loading_indicator";
+import IconImage from "../component/icon_img";
+import { exportToExcel, getCurrentDate } from "../config/helper";
 
 const EmployeeData = () => {
-    const [data, listData] = useState([]);
-    const [listGroup, setListGroup] = useState([]);
-    const [listType, setListType] = useState([]);
+    const [listData, setListData] = useState([]);
     const [isModalOpen, setModalOpen] = useState(false);
     const [isLoadData, setIsLoadData] = useState(true);
 
+    const [listGroup, setListGroup] = useState([]);
+    const [listType, setListType] = useState([]);
+    const [listDepart, setListDepart] = useState([]);
+    const [listDiv, setListDiv] = useState([]);
+
     const [filterGroup, setFilterGroup] = useState('');
     const [filterType, setFilterType] = useState('');
+    const [filterDepart, setFilterDepart] = useState('');
+    const [filterDiv, setFilterDiv] = useState('');
 
     const [valueGroup, setValueGroup] = useState('');
     const [valueType, setValueType] = useState('');
+    const [valueDepart, setValueDepart] = useState('');
+    const [valueDiv, setValueDiv] = useState('');
+
+    const [isLoadExport, setIsLoadExport] = useState(false);
 
     const [searchForm, setSearchForm] = useState({
         name    : '',
         nik     : '',
         ktp     : '',
-        group   : 0
-    })
+        group   : 0,
+        department : 0,
+        division : 0,
+        employeeType: 0
+    });
+
+    const [isFilter, setIsFilter] = useState(false);
+    const [listFilter, setListFilter] = useState([]);
 
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
@@ -52,32 +69,122 @@ const EmployeeData = () => {
             )));
         })
 
+        loadData({url: 'Departments'}).then((res) => {
+            setListDepart(res?.data?.map((data) => (
+                {
+                    id: data?.departmentID,
+                    value: data?.name
+                }
+            )));
+        })
+
+        loadData({url: 'Divisions'}).then((res) => {
+            setListDiv(res?.data?.map((data) => (
+                {
+                    id: data?.divisionID,
+                    value: data?.name
+                }
+            )));
+        })
+
         loadData({url: 'Employees'}).then((res) => {
             if(res?.data?.length > 0){
-                const filteredData = res.data.map(obj =>
-                    Object.fromEntries(
-                      Object.entries(obj).filter(([key]) => (!key.includes('ID') || key.includes('employeeID')) && !key.includes('dateIn')  && !key.includes('dateUp')  && !key.includes('userIn') && !key.includes('userUp') && !key.includes('isDeleted'))
-                    )
-                );
-                listData(filteredData);
+                // const filteredData = res.data.map(obj =>
+                //     Object.fromEntries(
+                //       Object.entries(obj).filter(([key]) => (!key.includes('ID') || key.includes('employeeID')) && !key.includes('dateIn')  && !key.includes('dateUp')  && !key.includes('userIn') && !key.includes('userUp') && !key.includes('isDeleted'))
+                //     )
+                // );
+
+                const filteredData = res.data.map((obj) => (
+                    {
+                        'employeeID' : obj?.employeeID,
+                        'nik': obj?.nik,
+                        'employeeName': obj?.employeeName,
+                        'departmentName': obj?.departmentName,
+                        'divisionName' : obj?.divisionName,
+                        'group': obj?.groupName + ` (${obj?.groupType})`,
+                        'employeeType': obj?.employeeTypeName,
+                        'jobTitle': obj?.employeeJobTitleName,
+                        'functionName': obj?.functionName,
+                        'placeOfBirth': obj?.placeOfBirth,
+                        'dateOfBirth': obj?.dateOfBirth,
+                        'gender': obj?.gender,
+                        'email': obj?.email,
+                        'phoneNumber': obj?.phoneNumber,
+                        'ktp': obj?.ktp,
+                        'startWorkingDate': obj?.startWorkingDate,
+                        'startJointDate': obj?.startJointDate,
+                        'religion': obj?.religion,
+                        'bpjstk': obj?.bpjstk,
+                        'bpjskes': obj?.bpjskes,
+                        'taxStatus': obj?.taxStatus,
+                        'tkStatus': obj?.tkStatus,
+                        'accountNo': obj?.accountNo,
+                        'bank': obj?.bank,
+                        'basicSalary': obj?.basicSalary,
+                    }
+                ))
+
+                setListData(filteredData);
                 setIsLoadData(false);
             }
         })
     }, []);
 
     const fetchEmployeeData = () => {
+        setIsLoadData(true);
+
         const params = [
             {
                 title: 'filter',
-                value: `${searchForm?.name ? 'name:' + searchForm?.name +'|' : ''} ${searchForm?.nik ? 'nik:' + searchForm?.nik +'|' : ''} ${searchForm?.ktp ? 'ktp:' + searchForm?.ktp +'|' : ''} ${searchForm?.group ? 'group:' + searchForm?.group +'|' : ''}`
+                value: `${searchForm?.name ? 'name:' + searchForm?.name +'|' : ''} ${searchForm?.nik ? 'nik:' + searchForm?.nik +'|' : ''} ${searchForm?.ktp ? 'ktp:' + searchForm?.ktp +'|' : ''} ${searchForm?.group ? 'group:' + searchForm?.group +'|' : ''} ${searchForm?.department ? 'department:' + searchForm?.department +'|' : ''} ${searchForm?.division ? 'division:' + searchForm?.division +'|' : ''}`
             }
         ];
 
         loadData({url: 'Employees', params: params}).then((res) => {
-            listData(res?.data);
-            setIsLoadData(false);
+            if(res?.data?.length > 0){
+                const filteredData = res.data.map((obj) => (
+                    {
+                        'employeeID' : obj?.employeeID,
+                        'nik': obj?.nik,
+                        'employeeName': obj?.employeeName,
+                        'departmentName': obj?.departmentName,
+                        'divisionName' : obj?.divisionName,
+                        'group': obj?.groupName + ` (${obj?.groupType})`,
+                        'employeeType': obj?.employeeTypeName,
+                        'jobTitle': obj?.employeeJobTitleName,
+                        'functionName': obj?.functionName,
+                        'placeOfBirth': obj?.placeOfBirth,
+                        'dateOfBirth': obj?.dateOfBirth,
+                        'gender': obj?.gender,
+                        'email': obj?.email,
+                        'phoneNumber': obj?.phoneNumber,
+                        'ktp': obj?.ktp,
+                        'startWorkingDate': obj?.startWorkingDate,
+                        'startJointDate': obj?.startJointDate,
+                        'religion': obj?.religion,
+                        'bpjstk': obj?.bpjstk,
+                        'bpjskes': obj?.bpjskes,
+                        'taxStatus': obj?.taxStatus,
+                        'tkStatus': obj?.tkStatus,
+                        'accountNo': obj?.accountNo,
+                        'bank': obj?.bank,
+                        'basicSalary': obj?.basicSalary,
+                    }
+                ))
+
+                setListData(filteredData);
+                setIsLoadData(false);
+            }
         })
     }
+
+    useEffect(() => {
+        if(!isLoadData){
+            // console.log('trigger', searchForm?.group, searchForm?.department, searchForm?.division)
+            fetchEmployeeData();
+        }
+    }, [searchForm?.group, searchForm?.department, searchForm?.division])
 
     const submitSearch = () => {
         fetchEmployeeData();
@@ -90,6 +197,66 @@ const EmployeeData = () => {
           [event.target.name]: event.target.value,
         });
     };
+
+    const removeFilter = (target) => {
+        if(target){
+            const arrFilter = listFilter?.filter(val => !val?.includes(target))
+            setListFilter(arrFilter);
+            setIsFilter(arrFilter?.length > 0 ? true : false);
+        }
+    }
+
+    const exportFile = (type, event) => {
+        if (event) {
+          event.preventDefault();
+        }
+    
+        if(type === ''){
+          alert('Please Select Export Type');
+          return;
+        }
+    
+        setIsLoadExport(true);
+
+        loadData({url: 'Employees'}).then((res) => {
+            const todayDate = getCurrentDate();
+            let filteredData = [];
+            if(res?.data?.length > 0){
+                filteredData = res.data.map((obj) => (
+                    {
+                        'employeeID' : obj?.employeeID,
+                        'nik': obj?.nik,
+                        'employeeName': obj?.employeeName,
+                        'departmentName': obj?.departmentName,
+                        'divisionName' : obj?.divisionName,
+                        'group': obj?.groupName + ` (${obj?.groupType})`,
+                        'employeeType': obj?.employeeTypeName,
+                        'jobTitle': obj?.employeeJobTitleName,
+                        'functionName': obj?.functionName,
+                        'placeOfBirth': obj?.placeOfBirth,
+                        'dateOfBirth': obj?.dateOfBirth,
+                        'gender': obj?.gender,
+                        'email': obj?.email,
+                        'phoneNumber': obj?.phoneNumber,
+                        'ktp': obj?.ktp,
+                        'startWorkingDate': obj?.startWorkingDate,
+                        'startJointDate': obj?.startJointDate,
+                        'religion': obj?.religion,
+                        'bpjstk': obj?.bpjstk,
+                        'bpjskes': obj?.bpjskes,
+                        'taxStatus': obj?.taxStatus,
+                        'tkStatus': obj?.tkStatus,
+                        'accountNo': obj?.accountNo,
+                        'bank': obj?.bank,
+                        'basicSalary': obj?.basicSalary,
+                    }
+                ))
+
+                exportToExcel(filteredData, `Data_Employee_${todayDate}`, `${type === 'bank' ? 'bank' : 'default'}`)
+                setIsLoadExport(false);
+            }
+        })
+    }
 
     const renderModal = () => (
         <Modal isOpen={isModalOpen} onClose={closeModal}>
@@ -125,19 +292,46 @@ const EmployeeData = () => {
         </Modal>
     );
 
+    const changeSelectVal = (target, val) => {
+        if(target){
+            setSearchForm({
+                ...searchForm,
+                [target]: val
+            })
+        }
+    }
+
     return (
         <>
             <TitlePage label={'Employee Data'} source={employee} />
             <div>
                 <div className="flex flex-row justify-between items-center">
-                    <Button text="Search" setWidth="auto" bgcolor={'white'} icon={search} handleAction={() => openModal()} />
                     <div className="flex flex-row">
-                        <Select data={listGroup} defaultLabel="Group" value={valueGroup} setValue={setValueGroup} filterVal={filterGroup} setFilter={setFilterGroup} />
-                        <Select data={listType} defaultLabel="Employee Type" value={valueType} setValue={setValueType} filterVal={filterType} setFilter={setFilterType} />
+                        <Button text="Search" setWidth="auto" bgcolor={'white'} icon={search} handleAction={() => openModal()} />
+                        <div className="mx-1" />
+                        <Button text={'Export Data'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoadExport} handleAction={(e) => exportFile('default', e)} />
+                    </div>
+                    <div className="flex flex-row">
+                        <Select data={listGroup} defaultLabel="Select Group" name={'group'} handleAction={changeSelectVal} value={valueGroup} setValue={setValueGroup} filterVal={filterGroup} setFilter={setFilterGroup} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
+                        <Select data={listType} defaultLabel="Select Employee Type" name={'employeeType'} handleAction={changeSelectVal} value={valueType} setValue={setValueType} filterVal={filterType} setFilter={setFilterType} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
+                        <Select data={listDepart} defaultLabel="Select Departemen" name={'department'} handleAction={changeSelectVal} value={valueDepart} setValue={setFilterDepart} filterVal={filterDepart} setFilter={setFilterDepart} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
+                        <Select data={listDiv} defaultLabel="Select Divison" name={'division'} handleAction={changeSelectVal} value={valueDiv} setValue={setValueDiv} filterVal={filterDiv} setFilter={setFilterDiv} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
                     </div>
                 </div>
+                {isFilter &&                
+                    <div className="mt-4 flex flex-row items-center">
+                        <IconImage size="small" source={filter} />
+                        <p className="font-bold text-sm pl-2">Filter By:</p>
+                        {listFilter?.map((val, idx) => (
+                            <div className="flex flex-row" key={idx}>
+                                <div className="ml-2" />
+                                <Button text={val} setWidth={'full'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} flagFilter={true} handleAction={removeFilter} />
+                            </div>
+                        ))}
+                    </div>
+                }
                 {!isLoadData ? 
-                    <Table dataTable={data} isAction={true} />
+                    <Table dataTable={listData} isAction={true} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />

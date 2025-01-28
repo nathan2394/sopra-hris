@@ -3,20 +3,28 @@ import { saveAs } from "file-saver";
 
 export const exportToExcel = (dataTable, filename = 'data', template = 'default') => {
     let arrObj = dataTable;
-    if(template !== 'default'){
-        arrObj = dataTable?.map((val) => (
-            {
-                "Acc. No.": val?.accountNo,
-                "Trans. Amount" : Math.round(val?.netto),
-                "emp.Number": val?.nik,
-                "emp.Name": val?.name,
-                "Dept": val?.divisionName,
-                "Trans. Date": coverDate(val?.transDate)
-            }
-        ))
-    }
+    // if(template !== 'default'){
+    //     arrObj = dataTable?.map((val) => (
+    //         {
+    //             "Acc. No.": val?.accountNo,
+    //             "Trans. Amount" : Math.round(val?.netto),
+    //             "emp.Number": val?.nik,
+    //             "emp.Name": val?.name,
+    //             "Dept": val?.divisionName,
+    //             "Trans. Date": coverDate(val?.transDate)
+    //         }
+    //     ))
+    // }
     // Convert JSON data to a worksheet
     const worksheet = XLSX.utils.json_to_sheet(arrObj);
+
+    if(template !== 'default'){
+        Object.keys(worksheet).forEach((key) => {
+            if (key.startsWith("F")) { // Assuming 'F' is the column for "Trans. Date"
+                worksheet[key].z = "dd/mm/yy"; // Date format
+            }
+        });
+    }
 
     // Create a new workbook
     const workbook = XLSX.utils.book_new();
@@ -45,7 +53,7 @@ export const coverDate = (val) => {
         const date = new Date(inputDate);
     
         const day = date.getDate().toString().padStart(2, "0");;
-        const month = date.toLocaleString("en-GB", { month: "short" }).toLowerCase();
+        const month = date.toLocaleString("en-GB", { month: "short" });
         const year = date.getFullYear().toString().slice(-2);
         
         const formattedDate = `${day}-${month}-${year}`;
@@ -74,17 +82,21 @@ export const formatHeader = (value) => {
 
 export const formatText = (value) => {
     const checkText = typeof value;
-    const date = new Date(value);
 
-    if(checkText === "number"){
+    if (checkText === "number") {
         return Math?.round(value)?.toLocaleString('id-ID');
-    }else{
-        if(!isNaN(date.getTime())){
+    } else if (checkText === "string" && !isNaN(value)) {
+        // If it's a string and can be parsed as a number, treat it as a string
+        return value;
+    } else {
+        const date = new Date(value);
+        if (!isNaN(date.getTime())) {
             return coverDate(value);
         }
         return value;
     }
-}
+};
+
 
 export const checkType = (value) => {
     const checkType = typeof value;

@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 
 import Button from "../component/button";
 import Table from "../component/table";
-import { exportToExcel, getCurrentDate, getMonthName } from "../config/helper";
+import { coverDate, exportToExcel, getCurrentDate, getMonthName } from "../config/helper";
 import { arrow_green, close, download, empty, excel, payroll, reload, upload } from "../config/icon";
 import IconImage from "../component/icon_img";
 import { loadData, postFormData } from "../config/api";
@@ -31,7 +31,7 @@ const MasterPayroll = () => {
       if(res?.data?.length > 0){
         const filteredData = res.data.map(obj =>
           Object.fromEntries(
-            Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year'))
+            Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year') && !key.includes('payrollType'))
           )
         );
         setPeriod(`${getMonthName(res?.data[0]?.month)} ${res?.data[0]?.year}`)
@@ -87,11 +87,47 @@ const MasterPayroll = () => {
 
     loadData({ url: `Salary/generatedata`, params: [{title: 'filter', value: `type:${type}`}] }).then((res) => {
       const todayDate = getCurrentDate();
-      const filteredData = res.data.map(obj =>
-        Object.fromEntries(
-          Object.entries(obj).filter(([key]) => !key.includes('ID'))
-        )
-      );
+      let filteredData = [];
+      
+      // filteredData = res.data.map(obj =>
+      //   Object.fromEntries(
+      //     Object.entries(obj).filter(([key]) => !key.includes('ID')  && !key.includes('dateIn')  && !key.includes('dateUp')  && !key.includes('userIn') && !key.includes('userUp') && !key.includes('isDeleted') )
+      //   )
+      // );
+
+      if(type === 'payroll'){
+        filteredData = res?.data?.data.map((val) => (
+          {
+            "nik" : val?.nik,
+            "name" : val?.name,
+            "month" : val?.month,
+            "year" : val?.year,
+            "hks" : val?.hks,
+            "hka" : val?.hka,
+            "meal" : val?.meal,
+            "absent" : val?.absent,
+            "ovt" : val?.ovt,
+            "late" : val?.late,
+            "allowanceTotal" : val?.allowanceTotal,
+            "deductionTotal" : val?.deductionTotal,
+            "thp" : val?.netto,
+            "bpjs" : val?.bpjs,
+            "transferAmount" : val?.transferAmount
+          }
+        ))
+      }else{
+        filteredData = res?.data?.map((val) => (
+          {
+            "Acc. No.": val?.accountNo,
+            "Trans. Amount" : Math.round(val?.netto),
+            "emp.Number": val?.nik,
+            "emp.Name": val?.name,
+            "Dept": val?.divisionName,
+            "Trans. Date": coverDate(val?.transDate)
+          }
+        ))
+      }
+
       exportToExcel(filteredData, `Data_${type}_${todayDate}`, `${type === 'bank' ? 'bank' : 'default'}`)
       setIsLoadExport(false);
     });
@@ -145,6 +181,50 @@ const MasterPayroll = () => {
           <Button text={'Export'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoadExport} handleAction={(e) => exportFile(exportType, e)} />
         </div>
       </div>
+
+      {isUpload &&
+        <div className="my-4">
+          <p className="font-bold text-sm mb-1">Summary:</p>
+          <div className="w-full overflow-x-auto">
+            <div className="flex flex-row bg-[#ddd] w-full rounded-t-lg">
+              <div className="w-full p-2 border border-[#ddd] rounded-t-lg"><p className="text-sm font-semibold">Division</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold">Amt Transfer (Rp)</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold">COUNT (#pax)</p></div>
+              <div className="w-full p-2 border border-[#ddd] rounded-t-lg"><p className="text-sm font-semibold">AVG (Amt/Cnt)</p></div>
+            </div>
+            <div className="flex flex-row bg-[#eee] w-full">
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs font-semibold uppercase">Medical</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
+            </div>
+            <div className="flex flex-row bg-[#eee] w-full">
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs font-semibold uppercase">Packaging</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
+            </div>
+            <div className="flex flex-row bg-[#eee] w-full">
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs font-semibold uppercase">Plant</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
+            </div>
+            <div className="flex flex-row bg-[#eee] w-full">
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs font-semibold uppercase">Moulshop</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
+            </div>
+            <div className="flex flex-row bg-[#ddd] w-full rounded-b-lg">
+              <div className="w-full p-2 border border-[#ddd] rounded-b-lg"><p className="text-sm font-semibold">Total</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold text-end">0</p></div>
+              <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold text-end">0</p></div>
+              <div className="w-full p-2 border border-[#ddd] rounded-b-lg"><p className="text-sm font-semibold text-end">0</p></div>
+            </div>
+          </div>
+        </div>
+      }
 
       {isUpload ?
         <div className="w-full overflow-x-auto">

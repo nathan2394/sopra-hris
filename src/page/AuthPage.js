@@ -35,10 +35,10 @@ const AuthPage = ({setAuth}) => {
                 if (user.access_token) {
                     console.log(user.access_token);
                     postData({ url: `Auth/google-login`, formData: {token: user.access_token} })?.then((res) => {
-                        if(res?.data){
+                        if(res?.token){
                             setAuth(true);
                             localStorage.setItem('statusAuth', true);
-                            localStorage.setItem('userToken', res?.data?.token);
+                            localStorage.setItem('userToken', res?.token);
                             navigate('/');
                         }
                     });
