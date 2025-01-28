@@ -41,8 +41,14 @@ const EmployeeData = () => {
         group   : 0,
         department : 0,
         division : 0,
-        employeeType: 0
+        type: 0
     });
+
+    const [searchInput, setSearchInput] = useState({
+        name    : '',
+        nik     : '',
+        ktp     : '',
+    })
 
     const [isFilter, setIsFilter] = useState(false);
     const [listFilter, setListFilter] = useState([]);
@@ -54,7 +60,7 @@ const EmployeeData = () => {
         loadData({url: 'EmployeeType'}).then((res) => {
             setListType(res?.data?.map((data) => (
                 {
-                    id: data?.groupID,
+                    id: data?.employeeTypeID,
                     value: data?.name
                 }
             )));
@@ -87,48 +93,7 @@ const EmployeeData = () => {
             )));
         })
 
-        loadData({url: 'Employees'}).then((res) => {
-            if(res?.data?.length > 0){
-                // const filteredData = res.data.map(obj =>
-                //     Object.fromEntries(
-                //       Object.entries(obj).filter(([key]) => (!key.includes('ID') || key.includes('employeeID')) && !key.includes('dateIn')  && !key.includes('dateUp')  && !key.includes('userIn') && !key.includes('userUp') && !key.includes('isDeleted'))
-                //     )
-                // );
-
-                const filteredData = res.data.map((obj) => (
-                    {
-                        'employeeID' : obj?.employeeID,
-                        'nik': obj?.nik,
-                        'employeeName': obj?.employeeName,
-                        'departmentName': obj?.departmentName,
-                        'divisionName' : obj?.divisionName,
-                        'group': obj?.groupName + ` (${obj?.groupType})`,
-                        'employeeType': obj?.employeeTypeName,
-                        'jobTitle': obj?.employeeJobTitleName,
-                        'functionName': obj?.functionName,
-                        'placeOfBirth': obj?.placeOfBirth,
-                        'dateOfBirth': obj?.dateOfBirth,
-                        'gender': obj?.gender,
-                        'email': obj?.email,
-                        'phoneNumber': obj?.phoneNumber,
-                        'ktp': obj?.ktp,
-                        'startWorkingDate': obj?.startWorkingDate,
-                        'startJointDate': obj?.startJointDate,
-                        'religion': obj?.religion,
-                        'bpjstk': obj?.bpjstk,
-                        'bpjskes': obj?.bpjskes,
-                        'taxStatus': obj?.taxStatus,
-                        'tkStatus': obj?.tkStatus,
-                        'accountNo': obj?.accountNo,
-                        'bank': obj?.bank,
-                        'basicSalary': obj?.basicSalary,
-                    }
-                ))
-
-                setListData(filteredData);
-                setIsLoadData(false);
-            }
-        })
+        fetchEmployeeData();
     }, []);
 
     const fetchEmployeeData = () => {
@@ -137,7 +102,7 @@ const EmployeeData = () => {
         const params = [
             {
                 title: 'filter',
-                value: `${searchForm?.name ? 'name:' + searchForm?.name +'|' : ''} ${searchForm?.nik ? 'nik:' + searchForm?.nik +'|' : ''} ${searchForm?.ktp ? 'ktp:' + searchForm?.ktp +'|' : ''} ${searchForm?.group ? 'group:' + searchForm?.group +'|' : ''} ${searchForm?.department ? 'department:' + searchForm?.department +'|' : ''} ${searchForm?.division ? 'division:' + searchForm?.division +'|' : ''}`
+                value: `${searchForm?.name ? 'name:' + searchForm?.name +'|' : ''} ${searchForm?.nik ? 'nik:' + searchForm?.nik +'|' : ''} ${searchForm?.ktp ? 'ktp:' + searchForm?.ktp +'|' : ''} ${searchForm?.group ? 'group:' + searchForm?.group +'|' : ''} ${searchForm?.department ? 'department:' + searchForm?.department +'|' : ''} ${searchForm?.division ? 'division:' + searchForm?.division +'|' : ''} ${searchForm?.type ? 'employeeType:' + searchForm?.type +'|' : ''}`
             }
         ];
 
@@ -175,6 +140,9 @@ const EmployeeData = () => {
 
                 setListData(filteredData);
                 setIsLoadData(false);
+            }else{
+                setListData([]);
+                setIsLoadData(false);
             }
         })
     }
@@ -184,15 +152,34 @@ const EmployeeData = () => {
             // console.log('trigger', searchForm?.group, searchForm?.department, searchForm?.division)
             fetchEmployeeData();
         }
-    }, [searchForm?.group, searchForm?.department, searchForm?.division])
+    }, [searchForm?.group, searchForm?.department, searchForm?.division, searchForm?.name, searchForm?.nik, searchForm?.ktp, searchForm?.type])
+
+    useEffect(() => {
+        setIsFilter(listFilter?.length > 0 ? true : false);
+    }, [listFilter])
 
     const submitSearch = () => {
-        fetchEmployeeData();
+        // fetchEmployeeData();
+        
+        let arr = [];
+        if(searchInput?.name) arr?.push(`Name: ${searchInput?.name}`);
+        if(searchInput?.nik) arr?.push(`NIK: ${searchInput?.nik}`);
+        if(searchInput?.ktp) arr?.push(`No.KTP: ${searchInput?.ktp}`);
+        setSearchForm({
+            ...searchForm,
+            name: searchInput?.name,
+            nik: searchInput?.nik,
+            ktp: searchInput?.ktp
+        })
+        setListFilter([
+            ...listFilter,
+            ...arr
+        ]);
         setModalOpen(false);
     }
 
     const handleChange = (event) => {
-        setSearchForm({
+        setSearchInput({
           ...searchForm,
           [event.target.name]: event.target.value,
         });
@@ -202,7 +189,36 @@ const EmployeeData = () => {
         if(target){
             const arrFilter = listFilter?.filter(val => !val?.includes(target))
             setListFilter(arrFilter);
-            setIsFilter(arrFilter?.length > 0 ? true : false);
+            //console.log(target?.toLowerCase()?.includes('name'))
+            if(target?.toLowerCase()?.includes('name')) {
+                setSearchForm({...searchForm, name: ''}) 
+                setSearchInput({...searchInput, name: ''}) 
+            }
+            if(target?.toLowerCase()?.includes('nik')) { 
+                setSearchForm({...searchForm, nik: ''}) 
+                setSearchInput({...searchInput, name: ''}) 
+            }
+            if(target?.toLowerCase()?.includes('ktp')) { 
+                setSearchForm({...searchForm, ktp: ''}) 
+                setSearchInput({...searchInput, name: ''}) 
+            }
+
+            if(target?.toLowerCase()?.includes('group')){
+                setSearchForm({...searchForm, group: 0}) 
+                setFilterGroup('');
+            } 
+            if(target?.toLowerCase()?.includes('type')){
+                setSearchForm({...searchForm, type: 0});
+                setFilterType('');
+            } 
+            if(target?.toLowerCase()?.includes('department')){
+                setSearchForm({...searchForm, department: 0});
+                setFilterDepart('');
+            } 
+            if(target?.toLowerCase()?.includes('division')){
+                setSearchForm({...searchForm, division: 0});
+                setFilterDiv('');
+            } 
         }
     }
 
@@ -276,11 +292,11 @@ const EmployeeData = () => {
                 {/* <!-- Modal body --> */}
                 <div className="p-6">
                     <div className="flex flex-col">
-                        <Input label={'Name'} setName='name' value={searchForm.name} type={'text'} placeholder={"Search Employee Name..."} handleAction={handleChange} />
+                        <Input label={'Name'} setName='name' value={searchInput.name} type={'text'} placeholder={"Search Employee Name..."} handleAction={handleChange} />
                         <div className="mx-2" />
-                        <Input label={'NIK'} setName='nik' value={searchForm.nik} type={'text'} placeholder={"Search Employee NIK..."} handleAction={handleChange} />
+                        <Input label={'NIK'} setName='nik' value={searchInput.nik} type={'text'} placeholder={"Search Employee NIK..."} handleAction={handleChange} />
                         <div className="mx-2" />
-                        <Input label={'No. KTP'} setName='ktp' value={searchForm.ktp} type={'text'} placeholder={"Search Employee No. KTP..."} handleAction={handleChange} />
+                        <Input label={'No. KTP'} setName='ktp' value={searchInput.ktp} type={'text'} placeholder={"Search Employee No. KTP..."} handleAction={handleChange} />
                     </div>
                     <div className="flex flex-row w-full">
                         <Button text="Close" setWidth={'full'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => closeModal()} />
@@ -293,6 +309,7 @@ const EmployeeData = () => {
     );
 
     const changeSelectVal = (target, val) => {
+        console.log(target, val)
         if(target){
             setSearchForm({
                 ...searchForm,
@@ -313,8 +330,8 @@ const EmployeeData = () => {
                     </div>
                     <div className="flex flex-row">
                         <Select data={listGroup} defaultLabel="Select Group" name={'group'} handleAction={changeSelectVal} value={valueGroup} setValue={setValueGroup} filterVal={filterGroup} setFilter={setFilterGroup} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
-                        <Select data={listType} defaultLabel="Select Employee Type" name={'employeeType'} handleAction={changeSelectVal} value={valueType} setValue={setValueType} filterVal={filterType} setFilter={setFilterType} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
-                        <Select data={listDepart} defaultLabel="Select Departemen" name={'department'} handleAction={changeSelectVal} value={valueDepart} setValue={setFilterDepart} filterVal={filterDepart} setFilter={setFilterDepart} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
+                        <Select data={listType} defaultLabel="Select Employee Type" name={'type'} handleAction={changeSelectVal} value={valueType} setValue={setValueType} filterVal={filterType} setFilter={setFilterType} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
+                        <Select data={listDepart} defaultLabel="Select Departmen" name={'department'} handleAction={changeSelectVal} value={valueDepart} setValue={setValueDepart} filterVal={filterDepart} setFilter={setFilterDepart} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
                         <Select data={listDiv} defaultLabel="Select Divison" name={'division'} handleAction={changeSelectVal} value={valueDiv} setValue={setValueDiv} filterVal={filterDiv} setFilter={setFilterDiv} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
                     </div>
                 </div>
