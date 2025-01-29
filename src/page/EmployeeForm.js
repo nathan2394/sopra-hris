@@ -60,7 +60,7 @@ const EmployeeForm = () => {
                     allowancedeductionDetails: res?.data?.allowancedeductionDetails
                 })
                 if(res?.data?.allowancedeductionDetails){
-                    const groupedResult = res?.data?.allowancedeductionDetails.reduce((acc, item) => {
+                    const groupedResult = res?.data?.allowancedeductionDetails?.filter(data => data?.amount > 0).reduce((acc, item) => {
                         const existingGroup = acc.find((group) => group.type === item.type);
                         if (existingGroup) {
                           existingGroup.data.push(item);

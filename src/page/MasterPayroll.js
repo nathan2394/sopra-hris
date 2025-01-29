@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 
 import Button from "../component/button";
 import Table from "../component/table";
-import { coverDate, exportToExcel, getCurrentDate, getMonthName } from "../config/helper";
+import { coverDate, exportToExcel, formatText, getCurrentDate, getMonthName } from "../config/helper";
 import { arrow_green, close, download, empty, excel, payroll, reload, upload } from "../config/icon";
 import IconImage from "../component/icon_img";
 import { loadData, postFormData } from "../config/api";
@@ -25,6 +25,8 @@ const MasterPayroll = () => {
   const [period, setPeriod] = useState('-');
 
   const [dataUploadTable, setDataUploadTable] = useState([]);
+  const [dataUploadSummary, setDataUploadSummary] = useState([]);
+  const [dataUploadTotal, setDataUploadTotal] = useState([]);
 
   const handleReloadUpload = (formData) => {
     postFormData({ url: `Salary/upload`, formData: formData })?.then((res) => {
@@ -38,6 +40,14 @@ const MasterPayroll = () => {
         setDataUploadTable(filteredData);
         setIsUpload(true);
         setLoadUpload(false);
+
+        if(res?.dataSummary){
+          setDataUploadSummary(res?.dataSummary);
+        }
+
+        if(res?.dataSummaryTotal){
+          setDataUploadTotal(res?.dataSummaryTotal);
+        }
       }else{
         setIsUpload(false);
         setLoadUpload(false);
@@ -96,7 +106,7 @@ const MasterPayroll = () => {
       // );
 
       if(type === 'payroll'){
-        filteredData = res?.data?.data.map((val) => (
+        filteredData = res?.data?.map((val) => (
           {
             "nik" : val?.nik,
             "name" : val?.name,
@@ -178,7 +188,7 @@ const MasterPayroll = () => {
               </div>
             }
           </div>
-          <Button text={'Export'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoadExport} handleAction={(e) => exportFile(exportType, e)} />
+          <Button text={'Export Data'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoadExport} handleAction={(e) => exportFile(exportType, e)} />
         </div>
       </div>
 
@@ -192,36 +202,22 @@ const MasterPayroll = () => {
               <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold">COUNT (#pax)</p></div>
               <div className="w-full p-2 border border-[#ddd] rounded-t-lg"><p className="text-sm font-semibold">AVG (Amt/Cnt)</p></div>
             </div>
-            <div className="flex flex-row bg-[#eee] w-full">
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs font-semibold uppercase">Medical</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
-            </div>
-            <div className="flex flex-row bg-[#eee] w-full">
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs font-semibold uppercase">Packaging</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
-            </div>
-            <div className="flex flex-row bg-[#eee] w-full">
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs font-semibold uppercase">Plant</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
-            </div>
-            <div className="flex flex-row bg-[#eee] w-full">
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs font-semibold uppercase">Moulshop</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">0</p></div>
-            </div>
-            <div className="flex flex-row bg-[#ddd] w-full rounded-b-lg">
-              <div className="w-full p-2 border border-[#ddd] rounded-b-lg"><p className="text-sm font-semibold">Total</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold text-end">0</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold text-end">0</p></div>
-              <div className="w-full p-2 border border-[#ddd] rounded-b-lg"><p className="text-sm font-semibold text-end">0</p></div>
-            </div>
+            {dataUploadSummary?.map((val, idx) => (
+              <div className="flex flex-row bg-[#eee] w-full" key={idx}>
+                <div className="w-full p-2 border border-[#ddd]"><p className="text-xs font-semibold uppercase">{formatText(val?.departmentName)}</p></div>
+                <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.amountTransfer)}</p></div>
+                <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.countEmployee)}</p></div>
+                <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.avgAmountEmployee)}</p></div>
+              </div>
+            ))}
+            {dataUploadTotal?.map((val, idx) => (
+              <div className="flex flex-row bg-[#ddd] w-full rounded-b-lg" key={idx}>
+                <div className="w-full p-2 border border-[#ddd] rounded-b-lg"><p className="text-sm font-semibold">Total</p></div>
+                <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold text-end">{formatText(val?.amountTransfer)}</p></div>
+                <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold text-end">{formatText(val?.countEmployee)}</p></div>
+                <div className="w-full p-2 border border-[#ddd] rounded-b-lg"><p className="text-sm font-semibold text-end">{formatText(val?.avgAmountEmployee)}</p></div>
+              </div>
+            ))}
           </div>
         </div>
       }

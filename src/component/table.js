@@ -5,7 +5,7 @@ import { baseColor } from "../config/setting";
 import { employee, empty, sort_asc, sort_desc } from "../config/icon";
 import IconImage from "./icon_img";
 
-const Table = React.memo(({ dataTable = [], isAction = false, setIsFilter, listFilter = [], setListFilter }) => {
+const Table = React.memo(({ dataTable = [], isAction = false, setIsFilter = null, listFilter = [], setListFilter }) => {
   const [listTable, setListTable] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
@@ -14,7 +14,7 @@ const Table = React.memo(({ dataTable = [], isAction = false, setIsFilter, listF
   }, [dataTable]);
 
   const sortData = (key) => {
-    const replaceFilter = listFilter?.filter(val => !val?.includes(`Sort,${sortConfig?.direction}: ${sortConfig?.key}`))
+    //const replaceFilter = listFilter?.filter(val => !val?.includes(`Sort,${sortConfig?.direction}: ${sortConfig?.key}`))
 
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -27,12 +27,14 @@ const Table = React.memo(({ dataTable = [], isAction = false, setIsFilter, listF
     });
     setListTable(sortedList);
     setSortConfig({ key, direction });
-    setIsFilter(true);
-    setListFilter([...replaceFilter, `Sort,${direction}: ${key}`])
+    // if(setIsFilter){
+    //   setIsFilter(true);
+    //   setListFilter([...replaceFilter, `Sort,${direction}: ${key}`])
+    // }
   }
 
-  if (listTable?.length > 0) {
-    const labelHeader = Object?.keys(listTable[0]);
+  if (dataTable?.length > 0) {
+    const labelHeader = Object?.keys(dataTable[0]);
 
     return (
       <div className="w-full overflow-x-auto pt-4">
@@ -116,11 +118,13 @@ const Table = React.memo(({ dataTable = [], isAction = false, setIsFilter, listF
     );
   }else{
     return (
-      <div>
+      <div className="border border-[#ddd] bg-[#ffffff] rounded-lg w-full my-2 min-h-[400px] flex flex-col items-center justify-center p-6">
+        <div className="flex flex-col items-center justify-center p-6">
           <div className="flex flex-col items-center justify-center p-6">
             <img className="w-[28%] mx-auto" alt="logo" src={empty} />
             <p className="font-bold text-sm">Opps, Nothing to See Here!</p>
           </div>
+        </div>
       </div>
     );
   }
