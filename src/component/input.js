@@ -6,7 +6,7 @@ const Input = ({label, setName, type, placeholder, setWidth = '100%', handleActi
         // </div>
         <div className="mb-5" style={{width: setWidth }}>
             {label && <label className="block mb-2 text-sm font-medium text-gray-900">{label}</label> }
-            <input type={type} value={value} style={{textAlign: textAlign}} name={setName} className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder={placeholder} onChange={handleAction ? handleAction : null} required readOnly={readOnly} />
+            <input type={type} value={value} style={{textAlign: textAlign}} name={setName} className={`${!readOnly ? 'bg-white' : 'bg-gray-100' } border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`} placeholder={placeholder} onChange={handleAction ? handleAction : null} required readOnly={readOnly} />
         </div>
     )
 }

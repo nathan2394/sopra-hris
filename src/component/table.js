@@ -14,8 +14,6 @@ const Table = React.memo(({ dataTable = [], isAction = false, setIsFilter = null
   }, [dataTable]);
 
   const sortData = (key) => {
-    //const replaceFilter = listFilter?.filter(val => !val?.includes(`Sort,${sortConfig?.direction}: ${sortConfig?.key}`))
-
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
@@ -27,10 +25,6 @@ const Table = React.memo(({ dataTable = [], isAction = false, setIsFilter = null
     });
     setListTable(sortedList);
     setSortConfig({ key, direction });
-    // if(setIsFilter){
-    //   setIsFilter(true);
-    //   setListFilter([...replaceFilter, `Sort,${direction}: ${key}`])
-    // }
   }
 
   if (dataTable?.length > 0) {

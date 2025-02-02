@@ -12,27 +12,13 @@ import LoadingIndicator from "../component/loading_indicator";
 import IconImage from "../component/icon_img";
 import { exportToExcel, getCurrentDate } from "../config/helper";
 
-const Report = () => {
+const Report = ({setIsLoading}) => {
     const [data, listData] = useState([]);
-    const [isModalOpen, setModalOpen] = useState(false);
     const [isLoadData, setIsLoadData] = useState(true);
-
     const [isLoadExport, setIsLoadExport] = useState(false);
 
-    const [searchForm, setSearchForm] = useState({
-        name    : '',
-        nik     : '',
-        ktp     : '',
-        group   : 0
-    });
-
-    const [isFilter, setIsFilter] = useState(false);
-    const [listFilter, setListFilter] = useState([]);
-
-    const openModal = () => setModalOpen(true);
-    const closeModal = () => setModalOpen(false);
-
     useEffect(() => {
+        setIsLoading(true);
         loadData({url: 'SalaryDetails'}).then((res) => {
             if(res?.data?.length > 0){
                 const filteredData = res.data.map(obj =>
@@ -42,8 +28,10 @@ const Report = () => {
                 );
                 listData(filteredData);
                 setIsLoadData(false);
+                setIsLoading(false);
             }else{
-                setIsLoadData(false)
+                setIsLoadData(false);
+                setIsLoading(false);
             }
         })
     }, []);
@@ -91,7 +79,7 @@ const Report = () => {
                 }
 
                 {!isLoadData ? 
-                    <Table dataTable={data} isAction={true} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
+                    <Table dataTable={data} isAction={true} />
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />
