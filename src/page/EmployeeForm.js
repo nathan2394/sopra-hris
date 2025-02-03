@@ -203,7 +203,7 @@ const EmployeeForm = () => {
                                         <div key={idx} className="flex flex-col w-full pb-2">
                                             <p className="font-semibold text-xs py-1">Name: {val?.name}</p>
                                             <p className="font-semibold text-xs py-1">Type: {val?.allowanceDeductionGroupType}</p>
-                                            <p className="font-semibold text-xs py-1">{val?.name?.toLowerCase()?.includes('lembur') ? 'Status: Eligible' : 'Amount: ' + val?.amount}</p>
+                                            <p className="font-semibold text-xs py-1">{val?.name?.toLowerCase()?.includes('lembur') ? 'Status: Eligible' : 'Amount: ' + formatText(val?.amount)}</p>
                                             <div className="bg-[#ddd] my-3 h-[1.5px] w-[200px]" />
                                         </div>
                                     ))}

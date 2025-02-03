@@ -27,6 +27,8 @@ const ReportDetail = () => {
         thp: '',
         deductionTotal: 0,
         allowanceTotal: 0,
+        otherAllowances: 0,
+        otherDeductions: 0,
     });
 
     const [isEdit, setIsEdit] = useState(false);
@@ -53,6 +55,8 @@ const ReportDetail = () => {
                         thp: res?.data?.thp,
                         deductionTotal: res?.data?.deductionTotal,
                         allowanceTotal: res?.data?.allowanceTotal,
+                        otherAllowances: res?.data?.otherAllowances,
+                        otherDeductions: res?.data?.otherDeductions,
                     })
                 }
             })
@@ -118,6 +122,9 @@ const ReportDetail = () => {
                                 <p className="font-normal text-sm py-1 ">f.</p>
                                 <p className="font-normal text-sm p-1">Lembur: {formData?.uLembur}</p>
                             </div>
+                            <div className="flex flex-row">
+                                <p className="font-normal text-sm py-1">Other: {formatText(formData?.otherAllowances)}</p>
+                            </div>
                         </div>
                     </div>
 
@@ -133,6 +140,9 @@ const ReportDetail = () => {
                             <div className="flex flex-row">
                                 <p className="font-normal text-sm pb-1">a.</p>
                                 <p className="font-normal text-sm pb-1 px-1">BPJS: {formatText(formData?.bpjs)}</p>
+                            </div>
+                            <div className="flex flex-row">
+                                <p className="font-normal text-sm py-1">Other: {formatText(formData?.otherDeductions)}</p>
                             </div>
                         </div>
                     </div>
