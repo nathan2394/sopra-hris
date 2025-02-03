@@ -23,11 +23,11 @@ const AuthPage = ({setAuth}) => {
         navigate('/');
     }
 
-    useEffect(() => {
-        if (isLoggedIn) {
-          navigate("/");
-        }
-    }, [isLoggedIn, navigate]);
+    // useEffect(() => {
+    //     if (isLoggedIn) {
+    //       navigate("/");
+    //     }
+    // }, [isLoggedIn, navigate]);
 
     useEffect(
         () => {
@@ -35,10 +35,12 @@ const AuthPage = ({setAuth}) => {
                 if (user.access_token) {
                     console.log(user.access_token);
                     postData({ url: `Auth/google-login`, formData: {token: user.access_token} })?.then((res) => {
+                        console?.log(res?.data);
                         if(res?.token){
                             setAuth(true);
                             localStorage.setItem('statusAuth', true);
                             localStorage.setItem('userToken', res?.token);
+                            localStorage.setItem('userdata', JSON.stringify(res.data));
                             navigate('/');
                         }
                     });

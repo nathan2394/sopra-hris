@@ -10,12 +10,12 @@ import LoadingIndicator from "../component/loading_indicator";
 import { baseColor } from "../config/setting";
 import TitlePage from "../component/titlePage";
 
-const MasterPayroll = () => {
+const MasterPayroll = ({setIsLoading}) => {
   const fileInputRef = useRef(null);
   const [fileUpload, setFileUpload] = useState(null);
   const [isUpload, setIsUpload] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadTemplate, setIsLoadTemplate] = useState(false);
   const [isLoadExport, setIsLoadExport] = useState(false);
   const [loadUpload, setLoadUpload] = useState(false);
   const [open, setOpen] = useState(false);
@@ -29,6 +29,7 @@ const MasterPayroll = () => {
   const [dataUploadTotal, setDataUploadTotal] = useState([]);
 
   const handleReloadUpload = (formData) => {
+    setIsLoading(true);
     postFormData({ url: `Salary/upload`, formData: formData })?.then((res) => {
       if(res?.data?.length > 0){
         const filteredData = res.data.map(obj =>
@@ -39,6 +40,7 @@ const MasterPayroll = () => {
         setPeriod(`${getMonthName(res?.data[0]?.month)} ${res?.data[0]?.year}`)
         setDataUploadTable(filteredData);
         setIsUpload(true);
+        setIsLoading(false);
         setLoadUpload(false);
 
         if(res?.dataSummary){
@@ -49,6 +51,7 @@ const MasterPayroll = () => {
           setDataUploadTotal(res?.dataSummaryTotal);
         }
       }else{
+        setIsLoading(false);
         setIsUpload(false);
         setLoadUpload(false);
       }
@@ -109,18 +112,34 @@ const MasterPayroll = () => {
         filteredData = res?.data?.map((val) => (
           {
             "nik" : val?.nik,
-            "name" : val?.name,
+            "name" : val?.employeeName,
+            "department" : val?.department,
+            "division" : val?.division,
+            "type" : val?.employeeType,
+            "group" : val?.groupName + ` (${val?.groupType})`, 
+            "accountNo" : val?.accountNo,
             "month" : val?.month,
             "year" : val?.year,
+            "startWorkingDate" : coverDate(val?.startWorkingDate),
             "hks" : val?.hks,
             "hka" : val?.hka,
+            "att" : val?.att,
             "meal" : val?.meal,
             "absent" : val?.absent,
             "ovt" : val?.ovt,
             "late" : val?.late,
+            "basicSalary" : val?.basicSalary,
+            "uMakan": val?.uMakan,
+            "uTransport": val?.uTransport,
+            "uJabatan": val?.uJabatan,
+            "uFunctional": val?.uFunctional,
+            "utKhusus": val?.utKhusus,
+            "utOperational": 2282616,
+            "uLembur": val?.uLembur,
             "allowanceTotal" : val?.allowanceTotal,
             "deductionTotal" : val?.deductionTotal,
-            "thp" : val?.netto,
+            "thp" : val?.thp,
+            "netto" : val?.netto,
             "bpjs" : val?.bpjs,
             "transferAmount" : val?.transferAmount
           }
@@ -132,8 +151,8 @@ const MasterPayroll = () => {
             "Trans. Amount" : Math.round(val?.netto),
             "emp.Number": val?.nik,
             "emp.Name": val?.name,
-            "Dept": val?.divisionName,
-            "Trans. Date": coverDate(val?.transDate)
+            "Dept": val?.departmentName,
+            "Trans. Date": coverDate(val?.transDate, 'custom')
           }
         ))
       }
@@ -144,20 +163,20 @@ const MasterPayroll = () => {
   }
 
   const downloadTemplate = () => {
-    setIsLoading(true);
+    setIsLoadTemplate(true);
     const todayDate = getCurrentDate();
     loadData({ url: `Salary/template` }).then((res) => {
-      exportToExcel(res?.data, `Template_Salary_${todayDate}`)
-      setIsLoading(false);
+      exportToExcel(res?.data, `Template_Salary_${todayDate}`, 'download')
+      setIsLoadTemplate(false);
     });
   }
 
   return (
     <>
-      <TitlePage label={'Master Payroll'} source={payroll} />
+      <TitlePage label={'Master Payroll'} source={payroll} isAction={false} />
 
       <div className="flex flex-row justify-between items-center pt-1">
-        <Button text={'Download Form'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoading} handleAction={() => downloadTemplate()} icon={download} />
+        <Button text={'Download Form'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoadTemplate} handleAction={() => downloadTemplate()} icon={download} />
         <div className="flex flex-row">
           <div className="py-2 relative" style={ !isUpload ? { opacity: '0.3', pointerEvents: 'none' } : {}}>
             <div className="border border-gray-400 bg-[#ffffff] rounded-lg flex flex-row items-center mr-2 cursor-pointer" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)', userSelect: 'none'}} onClick={() => setOpen(!open)}>

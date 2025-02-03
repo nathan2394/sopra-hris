@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { employee, filter, search } from "../config/icon";
+import { employee, filter, reload, search } from "../config/icon";
 import TitlePage from "../component/titlePage";
 import { loadData } from "../config/api";
 import Table from "../component/table";
@@ -10,9 +10,13 @@ import { baseColor } from "../config/setting";
 import Select from "../component/select";
 import LoadingIndicator from "../component/loading_indicator";
 import IconImage from "../component/icon_img";
-import { exportToExcel, getCurrentDate } from "../config/helper";
+import { coverDate, exportToExcel, getCurrentDate } from "../config/helper";
+import { data, Link, useNavigate } from 'react-router-dom';
+import Collapse from "../component/collapse";
 
-const EmployeeData = () => {
+const EmployeeData = ({setIsLoading}) => {
+    const navigate = useNavigate();
+
     const [listData, setListData] = useState([]);
     const [isModalOpen, setModalOpen] = useState(false);
     const [isLoadData, setIsLoadData] = useState(true);
@@ -22,17 +26,8 @@ const EmployeeData = () => {
     const [listDepart, setListDepart] = useState([]);
     const [listDiv, setListDiv] = useState([]);
 
-    const [filterGroup, setFilterGroup] = useState('');
-    const [filterType, setFilterType] = useState('');
-    const [filterDepart, setFilterDepart] = useState('');
-    const [filterDiv, setFilterDiv] = useState('');
-
-    const [valueGroup, setValueGroup] = useState('');
-    const [valueType, setValueType] = useState('');
-    const [valueDepart, setValueDepart] = useState('');
-    const [valueDiv, setValueDiv] = useState('');
-
-    const [isLoadExport, setIsLoadExport] = useState(false);
+    const [checkedValue, setCheckValue] = useState({});
+    const [selectedValues, setSelectedValues] = useState({});
 
     const [searchForm, setSearchForm] = useState({
         name    : '',
@@ -56,6 +51,11 @@ const EmployeeData = () => {
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
 
+    const [isModalFilterOpen, setModalFilterOpen] = useState(false);
+
+    const openModalFilter = () => setModalFilterOpen(true);
+    const closeModalFilter = () => setModalFilterOpen(false);
+
     useEffect(() => {
         loadData({url: 'EmployeeType'}).then((res) => {
             setListType(res?.data?.map((data) => (
@@ -70,7 +70,7 @@ const EmployeeData = () => {
             setListGroup(res?.data?.map((data) => (
                 {
                     id: data?.groupID,
-                    value: data?.name + `(${data?.type})`
+                    value: `${data?.type}` + `${data?.name ? ` - ${data?.name}` : ''}`
                 }
             )));
         })
@@ -98,6 +98,7 @@ const EmployeeData = () => {
 
     const fetchEmployeeData = () => {
         setIsLoadData(true);
+        setIsLoading(true);
 
         const params = [
             {
@@ -113,19 +114,19 @@ const EmployeeData = () => {
                         'employeeID' : obj?.employeeID,
                         'nik': obj?.nik,
                         'employeeName': obj?.employeeName,
-                        'departmentName': obj?.departmentName,
-                        'divisionName' : obj?.divisionName,
-                        'group': obj?.groupName + ` (${obj?.groupType})`,
+                        'department': obj?.departmentName,
+                        'division' : obj?.divisionName,
+                        'grade':  `${obj?.groupType}` + `${obj?.groupName ? ` - ${obj?.groupName}` : ''}`,
                         'employeeType': obj?.employeeTypeName,
                         'jobTitle': obj?.employeeJobTitleName,
-                        'functionName': obj?.functionName,
+                        'function': obj?.functionName,
                         'placeOfBirth': obj?.placeOfBirth,
                         'dateOfBirth': obj?.dateOfBirth,
                         'gender': obj?.gender,
                         'email': obj?.email,
                         'phoneNumber': obj?.phoneNumber,
                         'ktp': obj?.ktp,
-                        'startWorkingDate': obj?.startWorkingDate,
+                        'startWorkDate': obj?.startWorkingDate,
                         'startJointDate': obj?.startJointDate,
                         'religion': obj?.religion,
                         'bpjstk': obj?.bpjstk,
@@ -133,16 +134,17 @@ const EmployeeData = () => {
                         'taxStatus': obj?.taxStatus,
                         'tkStatus': obj?.tkStatus,
                         'accountNo': obj?.accountNo,
-                        'bank': obj?.bank,
-                        'basicSalary': obj?.basicSalary,
+                        'bank': obj?.bank
                     }
                 ))
 
                 setListData(filteredData);
                 setIsLoadData(false);
+                setIsLoading(false);
             }else{
                 setListData([]);
                 setIsLoadData(false);
+                setIsLoading(false);
             }
         })
     }
@@ -155,8 +157,18 @@ const EmployeeData = () => {
     }, [searchForm?.group, searchForm?.department, searchForm?.division, searchForm?.name, searchForm?.nik, searchForm?.ktp, searchForm?.type])
 
     useEffect(() => {
-        setIsFilter(listFilter?.length > 0 ? true : false);
-    }, [listFilter])
+        setIsFilter((listFilter?.length > 0 || JSON.stringify(checkedValue) !== "{}") ? true : false);
+    }, [listFilter, checkedValue]);
+
+    useEffect(() => {
+        setSearchForm({
+            ...searchForm,
+            group: checkedValue?.group?.map(item => item?.id)?.join(),
+            department : checkedValue?.department?.map(item => item?.id)?.join(),
+            division : checkedValue?.division?.map(item => item?.id)?.join(),
+            type: checkedValue?.type?.map(item => item?.id)?.join()
+        })
+    }, [checkedValue])
 
     const submitSearch = () => {
         // fetchEmployeeData();
@@ -185,7 +197,7 @@ const EmployeeData = () => {
         });
     };
 
-    const removeFilter = (target) => {
+    const removeFilters = (target) => {
         if(target){
             const arrFilter = listFilter?.filter(val => !val?.includes(target))
             setListFilter(arrFilter);
@@ -202,25 +214,21 @@ const EmployeeData = () => {
                 setSearchForm({...searchForm, ktp: ''}) 
                 setSearchInput({...searchInput, name: ''}) 
             }
-
-            if(target?.toLowerCase()?.includes('group')){
-                setSearchForm({...searchForm, group: 0}) 
-                setFilterGroup('');
-            } 
-            if(target?.toLowerCase()?.includes('type')){
-                setSearchForm({...searchForm, type: 0});
-                setFilterType('');
-            } 
-            if(target?.toLowerCase()?.includes('department')){
-                setSearchForm({...searchForm, department: 0});
-                setFilterDepart('');
-            } 
-            if(target?.toLowerCase()?.includes('division')){
-                setSearchForm({...searchForm, division: 0});
-                setFilterDiv('');
-            } 
         }
     }
+
+    const removeFilter = (label, itemId) => {
+        setCheckValue((prev) => {
+          const newValues = { ...prev };
+          newValues[label] = newValues[label].filter((v) => v.id !== itemId);
+    
+          if (newValues[label].length === 0) {
+            delete newValues[label];
+          }
+    
+          return newValues;
+        });
+    };
 
     const exportFile = (type, event) => {
         if (event) {
@@ -231,8 +239,6 @@ const EmployeeData = () => {
           alert('Please Select Export Type');
           return;
         }
-    
-        setIsLoadExport(true);
 
         loadData({url: 'Employees'}).then((res) => {
             const todayDate = getCurrentDate();
@@ -245,31 +251,29 @@ const EmployeeData = () => {
                         'employeeName': obj?.employeeName,
                         'departmentName': obj?.departmentName,
                         'divisionName' : obj?.divisionName,
-                        'group': obj?.groupName + ` (${obj?.groupType})`,
+                        'grade': `${obj?.groupType}` + `${obj?.groupName ? ` - ${obj?.groupName}` : ''}`,
                         'employeeType': obj?.employeeTypeName,
                         'jobTitle': obj?.employeeJobTitleName,
                         'functionName': obj?.functionName,
                         'placeOfBirth': obj?.placeOfBirth,
-                        'dateOfBirth': obj?.dateOfBirth,
+                        'dateOfBirth': coverDate(obj?.dateOfBirth),
                         'gender': obj?.gender,
                         'email': obj?.email,
                         'phoneNumber': obj?.phoneNumber,
                         'ktp': obj?.ktp,
-                        'startWorkingDate': obj?.startWorkingDate,
-                        'startJointDate': obj?.startJointDate,
+                        'startWorkingDate': coverDate(obj?.startWorkingDate),
+                        'startJointDate': coverDate(obj?.startJointDate),
                         'religion': obj?.religion,
                         'bpjstk': obj?.bpjstk,
                         'bpjskes': obj?.bpjskes,
                         'taxStatus': obj?.taxStatus,
                         'tkStatus': obj?.tkStatus,
                         'accountNo': obj?.accountNo,
-                        'bank': obj?.bank,
-                        'basicSalary': obj?.basicSalary,
+                        'bank': obj?.bank
                     }
                 ))
 
                 exportToExcel(filteredData, `Data_Employee_${todayDate}`, `${type === 'bank' ? 'bank' : 'default'}`)
-                setIsLoadExport(false);
             }
         })
     }
@@ -308,45 +312,149 @@ const EmployeeData = () => {
         </Modal>
     );
 
-    const changeSelectVal = (target, val) => {
-        console.log(target, val)
-        if(target){
-            setSearchForm({
-                ...searchForm,
-                [target]: val
-            })
-        }
+    const handleCheckbox = (item, label) => {
+        setSelectedValues((prev) => {
+            const newValues = { ...prev };
+
+            if (!newValues[label]) {
+              newValues[label] = [];
+            }
+      
+            // Check if the item already exists
+            if (newValues[label].some((v) => v?.id === item?.id)) {
+              // Remove if it exists
+              newValues[label] = newValues[label].filter((v) => v?.id !== item?.id);
+            } else {
+              // Add new selection with label
+              newValues[label] = [...newValues[label], item];
+            }
+      
+            // If empty, remove the key to keep the state clean
+            if (newValues[label]?.length === 0) {
+              delete newValues[label];
+            }
+      
+            return newValues;
+        });
+    };
+
+    const submitFilter = () => {
+        setModalFilterOpen(false);
+        setCheckValue(selectedValues);
+        console.log(selectedValues);
+    }
+
+    const renderFilter = () => {
+        const listFilterData = [
+            {
+                title: 'Grade',
+                target: 'group',
+                data: listGroup
+            },
+            {
+                title: 'Type',
+                target: 'type',
+                data: listType
+            },
+            {
+                title: 'Department',
+                target: 'department',
+                data: listDepart
+            },
+            {
+                title: 'Division',
+                target: 'division',
+                data: listDiv
+            }
+        ];
+
+        let arrFilter = selectedValues;
+
+        return (
+            <Modal isOpen={isModalFilterOpen} onClose={closeModalFilter} position="right">
+                <div className="relative bg-white rounded-lg shadow-sm">
+                    {/* <!-- Modal header --> */}
+                    <div className="flex items-center justify-between p-4 border-b rounded-t border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900 ">
+                            Filter
+                        </h3>
+                        <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-toggle="crud-modal" onClick={() => setModalFilterOpen(false)}>
+                            <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            </svg>
+                        </button>
+                    </div>
+                    {/* <!-- Modal body --> */}
+                    <div className="pt-4 min-h-[400px] max-h-[450px] overflow-y-auto">
+                        {listFilterData?.map((value, idx) => (
+                            <Collapse key={idx} title={value.title}>
+                                {value?.data?.map((val, index) => (
+                                    <div key={index}>
+                                        <div className="flex flex-row py-2 px-4">
+                                            <input type="checkbox" value={val?.id} checked={arrFilter[value?.target]?.some((v) => v?.id === val?.id) || false} onChange={() => handleCheckbox(val, value?.target)} />
+                                            <p className="text-xs pl-2">{val?.value}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </Collapse>
+                        ))}
+                    </div>
+
+                    <div className="p-4 flex flex-row items-center">
+                        <Button setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={() => {
+                            setSelectedValues({});
+                        }} icon={reload} />
+                        <div className="mx-1" />
+                        <Button text={'Submit'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={() => submitFilter()} />
+                    </div>
+                 </div>
+            </Modal>
+        )
     }
 
     return (
         <>
-            <TitlePage label={'Employee Data'} source={employee} />
+            <TitlePage label={'Employee Data'} source={employee} isAction={true} handleAdd={() => navigate('/employee/detail?action=add')} handleSearch={() => openModal()} handleExport={(e) => exportFile('default', e)} handleFilter={() => openModalFilter()} />
             <div>
-                <div className="flex flex-row justify-between items-center">
-                    <div className="flex flex-row">
-                        <Button text="Search" setWidth="auto" bgcolor={'white'} icon={search} handleAction={() => openModal()} />
-                        <div className="mx-1" />
-                        <Button text={'Export Data'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoadExport} handleAction={(e) => exportFile('default', e)} />
-                    </div>
-                    <div className="flex flex-row">
-                        <Select data={listGroup} defaultLabel="Select Group" name={'group'} handleAction={changeSelectVal} value={valueGroup} setValue={setValueGroup} filterVal={filterGroup} setFilter={setFilterGroup} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
-                        <Select data={listType} defaultLabel="Select Employee Type" name={'type'} handleAction={changeSelectVal} value={valueType} setValue={setValueType} filterVal={filterType} setFilter={setFilterType} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
-                        <Select data={listDepart} defaultLabel="Select Departmen" name={'department'} handleAction={changeSelectVal} value={valueDepart} setValue={setValueDepart} filterVal={filterDepart} setFilter={setFilterDepart} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
-                        <Select data={listDiv} defaultLabel="Select Divison" name={'division'} handleAction={changeSelectVal} value={valueDiv} setValue={setValueDiv} filterVal={filterDiv} setFilter={setFilterDiv} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
-                    </div>
-                </div>
                 {isFilter &&                
                     <div className="mt-4 flex flex-row items-center">
                         <IconImage size="small" source={filter} />
                         <p className="font-bold text-sm pl-2">Filter By:</p>
-                        {listFilter?.map((val, idx) => (
-                            <div className="flex flex-row" key={idx}>
-                                <div className="ml-2" />
-                                <Button text={val} setWidth={'full'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} flagFilter={true} handleAction={removeFilter} />
+                        <div className="flex flex-wrap gap-2 pl-2">
+                            {listFilter?.map((val, idx) => (
+                                <div className="flex flex-row pl-2" key={idx}>
+                                    {/* <div className="ml-2" />
+                                    <Button text={val} setWidth={'full'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} flagFilter={true} handleAction={removeFilters} /> */}
+                                    <span className="px-2 py-1 bg-gray-200 rounded-full flex items-center">
+                                    {val}
+                                        <button
+                                            onClick={() => removeFilters(val)}
+                                            className={`ml-2 text-[${baseColor}] font-bold`}
+                                        >
+                                            ✕
+                                        </button>
+                                    </span>
+                                </div>
+                            ))}
+                            <div className="flex flex-wrap gap-2 pl-2">
+                                {Object.entries(checkedValue).map(([label, values]) =>
+                                    values.map((item) => (
+                                        <span key={`${label}-${item.id}`} className="px-2 py-1 bg-gray-200 rounded-full flex items-center">
+                                        {label}: {item.value}
+                                            <button
+                                                onClick={() => removeFilter(label, item.id)}
+                                                className={`ml-2 text-[${baseColor}] font-bold`}
+                                            >
+                                                ✕
+                                            </button>
+                                        </span>
+                                    ))
+                                )}
                             </div>
-                        ))}
+                        </div>
                     </div>
                 }
+
                 {!isLoadData ? 
                     <Table dataTable={listData} isAction={true} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
                     :
@@ -356,6 +464,7 @@ const EmployeeData = () => {
                 }
             </div>
             {renderModal()}
+            {renderFilter()}
         </>
     );
 }

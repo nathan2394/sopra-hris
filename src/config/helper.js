@@ -47,14 +47,14 @@ export const getCurrentDate = () => {
     return `${day}-${month}-${year}`;
 };
 
-export const coverDate = (val) => {
+export const coverDate = (val, displayYear = 'default') => {
     if(val){
         const inputDate = val;
         const date = new Date(inputDate);
     
         const day = date.getDate().toString().padStart(2, "0");;
         const month = date.toLocaleString("en-GB", { month: "short" });
-        const year = date.getFullYear().toString().slice(-2);
+        const year = displayYear !== 'default' ? date.getFullYear().toString().slice(-2) : date.getFullYear().toString();
         
         const formattedDate = `${day}-${month}-${year}`;
     

@@ -12,38 +12,26 @@ import LoadingIndicator from "../component/loading_indicator";
 import IconImage from "../component/icon_img";
 import { exportToExcel, getCurrentDate } from "../config/helper";
 
-const Report = () => {
+const Report = ({setIsLoading}) => {
     const [data, listData] = useState([]);
-    const [isModalOpen, setModalOpen] = useState(false);
     const [isLoadData, setIsLoadData] = useState(true);
-
     const [isLoadExport, setIsLoadExport] = useState(false);
 
-    const [searchForm, setSearchForm] = useState({
-        name    : '',
-        nik     : '',
-        ktp     : '',
-        group   : 0
-    });
-
-    const [isFilter, setIsFilter] = useState(false);
-    const [listFilter, setListFilter] = useState([]);
-
-    const openModal = () => setModalOpen(true);
-    const closeModal = () => setModalOpen(false);
-
     useEffect(() => {
-        loadData({url: 'SalaryDetails'}).then((res) => {
+        setIsLoading(true);
+        loadData({url: 'SalaryDetails', params:[{title: 'filter', value: 'month:1|year:2025'}]}).then((res) => {
             if(res?.data?.length > 0){
                 const filteredData = res.data.map(obj =>
                     Object.fromEntries(
-                      Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('dateIn')  && !key.includes('dateUp')  && !key.includes('userIn') && !key.includes('userUp') && !key.includes('isDeleted'))
+                      Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year') && !key.includes('dateIn')  && !key.includes('dateUp')  && !key.includes('userIn') && !key.includes('userUp') && !key.includes('isDeleted'))
                     )
                 );
                 listData(filteredData);
                 setIsLoadData(false);
+                setIsLoading(false);
             }else{
-                setIsLoadData(false)
+                setIsLoadData(false);
+                setIsLoading(false);
             }
         })
     }, []);
@@ -60,7 +48,7 @@ const Report = () => {
     
         setIsLoadExport(true);
     
-        loadData({url: 'SalaryDetails'}).then((res) => {
+        loadData({url: 'SalaryDetails', params:[{title: 'filter', value: 'month:1|year:2025'}]}).then((res) => {
             const todayDate = getCurrentDate();
             let filteredData = [];
           
@@ -78,20 +66,11 @@ const Report = () => {
 
     return (
         <>
-            <TitlePage label={'Report Salary'} source={list} />
+            <TitlePage label={'Report Salary'} source={list} isAction={true} handleExport={(e) => exportFile('default', e)} />
             <div>
-                {data?.length > 0 &&
-                    <div className="flex flex-row justify-between items-center">
-                        <div className="flex flex-row">
-                            {/* <Button text="Search" setWidth="auto" bgcolor={'white'} icon={search} handleAction={() => openModal()} />
-                            <div className="mx-1" /> */}
-                            <Button text={'Export Data'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoadExport} handleAction={(e) => exportFile('default', e)} />
-                        </div>
-                    </div>
-                }
 
                 {!isLoadData ? 
-                    <Table dataTable={data} isAction={true} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
+                    <Table dataTable={data} isAction={true} />
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />

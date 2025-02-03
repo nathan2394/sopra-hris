@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import './App.css';
 import AuthPage from "./page/AuthPage";
@@ -11,8 +11,10 @@ import NotFound from "./page/NotFound";
 import EmployeeData from "./page/EmployeeData";
 import EmployeeForm from "./page/EmployeeForm";
 import Report from "./page/Report";
+import FullLoading from "./component/fullLoading";
+import ReportDetail from "./page/ReportDetail";
 
-const Layout = ({ children, setAuth }) => {
+const Layout = ({ children, setAuth, userData, isLoading = false }) => {
   const location = useLocation();
 
   // Define routes that should NOT use the full layout
@@ -28,50 +30,72 @@ const Layout = ({ children, setAuth }) => {
   }
 
   return (
-    <div style={{maxWidth: '2000px', margin: '0 auto'}}>
-      <div className="bg-[#F5F5F5]" style={{ display: 'flex', height: '100vh', flexDirection: 'column' }}>
-        <Navbar setAuth={setAuth} />
-        {/* <Sidebar /> */}
-        <div style={{zIndex: 99,}}>
-          <div style={{ padding: '20px', paddingTop: '5.5rem'}}>
-            <div className="px-5 max-w-full">
-              {children}
+    <>
+      <div style={{maxWidth: '2000px', margin: '0 auto'}}>
+        <div className="bg-[#F5F5F5]" style={{ display: 'flex', height: '100vh', flexDirection: 'column' }}>
+          <Navbar setAuth={setAuth} userData={userData} />
+          {/* <Sidebar /> */}
+          <div style={{zIndex: 99}}>
+            <div style={{ padding: '20px', paddingTop: '5.5rem'}}>
+              <div className="px-5 max-w-full">
+                {children}
+              </div>
             </div>
+            
           </div>
-          
         </div>
+        {/* <Footer /> */}
       </div>
-      {/* <Footer /> */}
-    </div>
+      {isLoading && <FullLoading /> }
+    </>
   );
 };
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('statusAuth'));
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userData, setUserData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    //const localData = localStorage.getItem('userdata');
+    //const isAuth = localStorage.getItem('statusAuth');
+
+    //if(localData) setUserData(JSON.parse(localData));
+    //if(isAuth) setIsAuthenticated(isAuth === 'true' ? true : false);
+  }, [])
+
+  // useEffect(() => {
+
+  // }. [])
 
   return (
     <Router>
-      <Layout setAuth={setIsAuthenticated} >
+      <Layout setAuth={setIsAuthenticated} userData={userData} isLoading={isLoading}>
         <Routes>
           <Route path="/login" element={<AuthPage setAuth={setIsAuthenticated} />} />
           <Route path="/" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <MasterPayroll />
+              <MasterPayroll setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
           <Route path="/employee" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <EmployeeData />
+              <EmployeeData setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
           <Route path="/employee/detail" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <EmployeeForm />
+              <EmployeeForm setIsLoading={setIsLoading} />
+            </ProtectedRoute>
+          } />
+          <Route path="/report/detail" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ReportDetail setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
           <Route path="/report" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Report />
+              <Report setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
           <Route path="*" element={<NotFound />} />

@@ -1,28 +1,29 @@
+import { exportData, filterData, search } from "../config/icon";
 import { baseColor } from "../config/setting";
 import Button from "./button";
 import IconImage from "./icon_img";
 import { Link, useNavigate } from 'react-router-dom';
 
-const TitlePage = ({label, subLabel = '', source, type = 'header', setNavigateBack}) => { 
+const TitlePage = ({label, subLabel = '', source, type = 'header', setNavigateBack, isAction = false, handleSearch = false, handleFilter = false, handleExport = false, handleAdd = false }) => { 
     const navigate = useNavigate();
     const menu = [
-        {
-            title: 'Master Payroll',
-            navRoute: '/',
-        },
-        {
-            title: 'Employee Data',
-            navRoute: '/employee',
-        },
-        {
-            title: 'Report Salary',
-            navRoute: '/report'
-        }
+        // {
+        //     title: 'Master Payroll',
+        //     navRoute: '/',
+        // },
+        // {
+        //     title: 'Employee Data',
+        //     navRoute: '/employee',
+        // },
+        // {
+        //     title: 'Report Salary',
+        //     navRoute: '/report'
+        // }
     ];
 
     return (
         <>
-            <div className="flex flex-row justify-between items-center">
+            <div className={`flex flex-row justify-between items-center ${!isAction ? 'pt-4 pb-2' : 'pt-2'}`}>
                 {type === 'header' ? 
                     <div className="flex flex-row items-center">
                         <IconImage size="small" source={source} />
@@ -39,14 +40,32 @@ const TitlePage = ({label, subLabel = '', source, type = 'header', setNavigateBa
                         <p className="font-bold text-sm px-2">{`>`}</p>
                         <p className="font-bold text-sm pl-2 underline">{subLabel}</p>
                     </div>
-                }
-                {type === 'header' &&                
-                    <div className="flex flex-row">
-                        {menu?.map((val, idx) => (
-                            <div key={idx} className={`${idx+1 !== menu?.length ? 'pr-3' : '' }`}>
-                                <Button text={val.title} setWidth={'auto'} bgcolor={`${val.title === label ? baseColor : 'rgb(51 51 51 / 30%)'}`} color={'white'} handleAction={() => navigate(val.navRoute)} />
-                            </div>
-                        ))}
+                } 
+                {(type === 'header' && isAction) &&                
+                    <div className="flex flex-row items-center">
+                        {handleSearch && 
+                            <>
+                                <Button setWidth="auto" bgcolor={'white'} icon={search} handleAction={handleSearch} />
+                            </>
+                        }
+                        {handleFilter && 
+                            <>
+                                <div className="mx-[6px]" />
+                                <Button setWidth="auto" bgcolor={'white'} icon={filterData} handleAction={handleFilter} />
+                            </>
+                        }
+                        {handleExport && 
+                            <>
+                                <div className="mx-[6px]" />
+                                <Button text={'Export Data'} setWidth={'auto'} bgcolor={'white'} color={baseColor} icon={exportData} handleAction={handleExport} />
+                            </>
+                        }
+                        {handleAdd && 
+                            <>
+                                <div className="bg-[#33333328] h-[30px] w-[1px] mx-4" />
+                                <Button text={'+ Add Data'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={handleAdd} />
+                            </>
+                        }
                     </div>
                 }
             </div>
