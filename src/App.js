@@ -22,7 +22,7 @@ const Layout = ({ children, setAuth, userData, isLoading = false }) => {
 
   // Check if the current path matches excluded paths or is a 404
   const isExcludedPath = excludedPaths.includes(location.pathname);
-  const is404Page = location.pathname !== '/' && location.pathname !== '/report' && location.pathname !== '/employee' && location.pathname !== '/employee/detail'   && !excludedPaths.includes(location.pathname);
+  const is404Page = location.pathname !== '/' && location.pathname !== '/report/detail' && location.pathname !== '/report' && location.pathname !== '/employee' && location.pathname !== '/employee/detail'   && !excludedPaths.includes(location.pathname);
 
   if (isExcludedPath || is404Page) {
     // Render children without layout for excluded paths or 404

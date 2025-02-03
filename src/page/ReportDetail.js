@@ -17,9 +17,14 @@ const ReportDetail = () => {
         jobTitle: '',
         basicSalary: '',
         uMakan: '',
+        uTransport: '',
+        uJabatan: '',
+        uFunctional: '',
+        utKhusus: '',
+        utOperational: '',
         uLembur: '',
         bpjs: '',
-        netto: '',
+        thp: '',
     });
 
     const [isEdit, setIsEdit] = useState(false);
@@ -31,14 +36,19 @@ const ReportDetail = () => {
             loadData({url: `SalaryDetails/${getId}`}).then((res) => {
                 if(res?.data){
                     setFormData({
-                        name: '',
-                        depart: '',
-                        jobTitle: '',
-                        basicSalary: '',
-                        uMakan: '',
-                        uLembur: '',
-                        bpjs: '',
-                        netto: '',
+                        name: res?.data?.employeeName,
+                        depart: res?.data?.department,
+                        jobTitle: res?.data?.employeeJobTitle,
+                        basicSalary: res?.data?.basicSalary,
+                        uMakan: res?.data?.uMakan,
+                        uTransport: res?.data?.uTransport,
+                        uJabatan: res?.data?.uJabatan,
+                        uFunctional: res?.data?.uFunctional,
+                        utKhusus: res?.data?.utKhusus,
+                        utOperational: res?.data?.utOperational,
+                        uLembur: res?.data?.uLembur,
+                        bpjs: res?.data?.bpjs,
+                        thp: res?.data?.thp,
                     })
                 }
             })
@@ -49,28 +59,7 @@ const ReportDetail = () => {
         <>
             <TitlePage label={'Report Data'} subLabel={'Report Detail'} source={employee} type={'detail'} setNavigateBack={`/report`} />
             <div className="border bg-white p-4 rounded-lg">
-                {/* <div className="flex flex-row justify-between items-center">
-                    <p className="font-bold text-sm">{'Detail Employee'}</p>
-                    {!isAdd ?
-                        isEdit ?
-                        <div className="flex flex-row items-center">
-                            <p className={`font-bold text-sm text-[#EA2427] underline cursor-pointer`} onClick={() => {
-                                setIsEdit(false);
-                                setIsReadOnly(true);
-                            }}>Cancel</p>
-                            <div className="mx-2" />
-                            <p className={`font-bold text-sm text-[${baseColor}] underline cursor-pointer`}>Submit</p>
-                        </div>
-                        :
-                        <p className={`font-bold text-sm text-[${baseColor}] underline cursor-pointer`} onClick={() => {
-                            setIsEdit(true);
-                            setIsReadOnly(false);
-                        }}>Edit Data</p>
-                        :
-                        <p className={`font-bold text-sm text-[${baseColor}] underline cursor-pointer`}>Submit</p>
-                    }
-                </div> */}
-
+                <p className="font-bold text-sm">{'Report Data'}</p>
                 <div className="bg-[#ddd] my-3 h-[1.5px]" />
 
                 <div>
@@ -85,13 +74,27 @@ const ReportDetail = () => {
                     </div>
 
                     <div className="flex flex-row w-full">
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'U Makan'} type={'text'} value={formData?.uMakan} />
+                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Makan'} type={'text'} value={formData?.uMakan} />
                         <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'U Lembur'}  type={'text'} value={formData?.uLembur} />
+                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Transport'} type={'text'} value={formData?.uTransport} />
+                        <div className="mx-2" />
+                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Jabatan'} type={'text'} value={formData?.uJabatan} />
+                        <div className="mx-2" />
+                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Functional'} type={'text'} value={formData?.uFunctional} />
+                    </div>
+
+                    <div className="flex flex-row w-full">
+                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Khusus'} type={'text'} value={formData?.utKhusus} />
+                        <div className="mx-2" />
+                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Operational'} type={'text'} value={formData?.utOperational} />
+                        <div className="mx-2" />
+                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Lembur'}  type={'text'} value={formData?.uLembur} />
                         <div className="mx-2" />
                         <Input readOnly={isAdd ? false : isReadOnly}  label={'BPJS'}  type={'text'} value={formData?.bpjs} />
-                        <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Netto'} type={'text'} value={formData?.netto} />
+                    </div>
+
+                    <div className="flex flex-row w-full">
+                        <Input readOnly={isAdd ? false : isReadOnly}  label={'THP'} setWidth="24%" type={'text'} value={formData?.thp} />
                     </div>
                 </div>
             </div>

@@ -111,7 +111,7 @@ const EmployeeData = ({setIsLoading}) => {
             if(res?.data?.length > 0){
                 const filteredData = res.data.map((obj) => (
                     {
-                        'employeeID' : obj?.employeeID,
+                        'id' : obj?.employeeID,
                         'nik': obj?.nik,
                         'employeeName': obj?.employeeName,
                         'department': obj?.departmentName,
@@ -456,7 +456,7 @@ const EmployeeData = ({setIsLoading}) => {
                 }
 
                 {!isLoadData ? 
-                    <Table dataTable={listData} isAction={true} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
+                    <Table dataTable={listData} isAction={true} detailPath={'/employee/detail?id='} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />
