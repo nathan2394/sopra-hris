@@ -48,7 +48,7 @@ const Report = ({setIsLoading}) => {
     
         setIsLoadExport(true);
     
-        loadData({url: 'SalaryDetails'}).then((res) => {
+        loadData({url: 'SalaryDetails', params:[{title: 'filter', value: 'month:1|year:2025'}]}).then((res) => {
             const todayDate = getCurrentDate();
             let filteredData = [];
           
