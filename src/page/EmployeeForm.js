@@ -3,8 +3,9 @@ import TitlePage from "../component/titlePage";
 import Input from "../component/input";
 import { employee, empty, payroll } from "../config/icon";
 import { loadData } from "../config/api";
-import { coverDate, formatText, getQueryParam } from "../config/helper";
+import { coverDate, formatText, getMonthName, getQueryParam } from "../config/helper";
 import { baseColor } from "../config/setting";
+import { Link } from "react-router-dom";
 
 const EmployeeForm = () => {
 
@@ -38,6 +39,7 @@ const EmployeeForm = () => {
         employeeJobTitleName: '',
         allowancedeductionDetails: [],
         masterEmployeePayroll: [],
+        salaryHistories: [],
     });
 
     const [isEdit, setIsEdit] = useState(false);
@@ -72,11 +74,12 @@ const EmployeeForm = () => {
                         basicSalary: res?.data?.basicSalary || '-',
                         employeeTypeName: res?.data?.employeeTypeName || '-',
                         employeeJobTitleName: res?.data?.employeeJobTitleName || '-',
-                        allowancedeductionDetails: res?.data?.allowancedeductionDetails,
-                        masterEmployeePayroll: res?.data?.masterEmployeePayroll
+                        allowancedeductionDetails: res?.data?.allowanceDeductionDetails,
+                        masterEmployeePayroll: res?.data?.masterEmployeePayroll,
+                        salaryHistories: res?.data?.salaryHistories
                     })
-                    if(res?.data?.allowancedeductionDetails){
-                        const groupedResult = res?.data?.allowancedeductionDetails?.filter(data => data?.amount > 0).reduce((acc, item) => {
+                    if(res?.data?.allowanceDeductionDetails){
+                        const groupedResult = res?.data?.allowanceDeductionDetails?.filter(data => data?.amount > 0).reduce((acc, item) => {
                             const existingGroup = acc.find((group) => group.type === item.type);
                             if (existingGroup) {
                               existingGroup.data.push(item);
@@ -152,13 +155,6 @@ const EmployeeForm = () => {
                         <Input readOnly={isAdd ? false : isReadOnly}  label={'Departemen'} type={'text'} value={formData?.departmentName} />
                     </div>
 
-                    {/* <div className="flex flex-row w-full">
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Account No.'} setWidth="24%" type={'text'} value={formData?.accountNo} />
-                        <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Bank'} setWidth="24%" type={'text'} value={formData?.bank} />
-                        <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Division'} setWidth="24%" type={'text'} value={formData?.divisionName} />
-                    </div> */}
                     <div className="flex flex-row w-full">
                         <Input readOnly={isAdd ? false : isReadOnly}  label={'Account No.'}  type={'text'} value={formData?.accountNo} />
                         <div className="mx-2" />
@@ -192,7 +188,7 @@ const EmployeeForm = () => {
                 {(!isEdit && formData?.allowancedeductionDetails && formData?.allowancedeductionDetails?.length > 0) && 
                     <>
                         <div className="flex flex-row items-center mt-4">
-                            <p className="font-bold text-sm pl-2">{'Allowance Deduction Details'}</p>
+                            <p className="font-bold text-sm">{'Allowance Deduction Details'}</p>
                         </div>
     
                         <div className="bg-[#ddd] my-3 h-[1.5px]" />
@@ -201,31 +197,47 @@ const EmployeeForm = () => {
                             {listAlD?.map((val1) => {
                                 //const listAllowanceDeduction = groupedResul
                                 return (
-                                <>
+                                <div className="px-1 border border-[#ddd] rounded-lg">
                                     <p className="font-bold text-sm mb-2">{val1?.type}</p>
                                     {val1?.data?.map((val, idx) => (
-                                        <div key={idx} className="flex flex-row w-full items-center pb-2">
-                                            <p className="font-semibold text-xs">{val?.name}</p>
-                                            <p className="font-semibold text-xs mx-2">-</p>
-                                            <p className="font-semibold text-xs">{val?.amount}</p>
-                                            {/* <Input readOnly={isAdd ? false : isReadOnly}  value={val?.name} label={'Name'} setWidth="24%" type={'text'} />
-                                            <div className="mx-2" /> */}
-                                            {/* <Input readOnly={isAdd ? false : isReadOnly}  value={val?.type} label={'Type'} setWidth="24%" type={'text'} />
-                                            <div className="mx-2" /> */}
-                                            {/* <Input readOnly={isAdd ? false : isReadOnly}  value={formatText(val?.amount)} label={'Amount'} setWidth="24%" type={'text'} textAlign="right" /> */}
+                                        <div key={idx} className="flex flex-col w-full pb-2">
+                                            <p className="font-semibold text-xs py-1">Name: {val?.name}</p>
+                                            <p className="font-semibold text-xs py-1">Type: {val?.allowanceDeductionGroupType}</p>
+                                            <p className="font-semibold text-xs py-1">{val?.name?.toLowerCase()?.includes('lembur') ? 'Status: Eligible' : 'Amount: ' + val?.amount}</p>
+                                            <div className="bg-[#ddd] my-3 h-[1.5px] w-[200px]" />
                                         </div>
                                     ))}
-                                </>
+                                </div>
                                 )
                             })}
                         </div>
                     </>  
                 }
 
-                {(!isEdit && formData?.masterEmployeePayroll && formData?.masterEmployeePayroll?.length > 0) &&
-                    <div className="my-4">
+                {(!isEdit && formData?.salaryHistories && formData?.salaryHistories?.length > 0) && 
+                    <div className="mb-4 mt-6">
                         <div className="flex flex-row items-center mt-4">
-                            <p className="font-bold text-sm pl-2"></p>
+                            <p className="font-bold text-sm mb-2">Salary</p>
+                        </div>
+                        <div className="w-full overflow-x-auto">
+                            <div className="flex flex-row bg-[#e9e9e9] w-full">
+                                <div className="w-full p-2 border border-[#ddd]"><p className="text-xs font-semibold">Month</p></div>
+                                <div className="w-full p-2 border border-[#ddd]"><p className="text-xs font-semibold">Netto</p></div>
+                            </div>
+                            {formData?.salaryHistories?.map((val, idx) => (
+                                <div className="flex flex-row bg-[#fff] w-full" key={idx}>
+                                    <Link to={`/report/detail?id=${val?.salaryID}`} className="w-full p-2 border border-[#ddd] cursor-pointer"><p className="text-xs underline">{getMonthName(val.month) + ' ' + val?.year}</p></Link>
+                                    <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.netto)}</p></div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                }
+
+                {(!isEdit && formData?.masterEmployeePayroll && formData?.masterEmployeePayroll?.length > 0) &&
+                    <div className="mb-4 mt-10">
+                        <div className="flex flex-row items-center mt-4">
+                            <p className="font-bold text-sm">Master Payroll</p>
                         </div>
     
                         <div className="bg-[#ddd] my-3 h-[1.5px]" />
@@ -245,7 +257,7 @@ const EmployeeForm = () => {
                                     <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-start font-semibold">Tunjangan Lembur</p></div>
                                     <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-start font-semibold">BPJS</p></div>
                                 </div>
-                                {formData?.masterEmployeePayroll?.map((val, idx) => (
+                                {formData?.masterEmployeePayroll?.sort((a,b) => a.year - b.year)?.map((val, idx) => (
                                     <div className="flex flex-col bg-[#fff] w-full" key={idx}>
                                     <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">{val?.year}</p></div>
                                     <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.thp)}</p></div>

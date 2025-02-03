@@ -25,6 +25,8 @@ const ReportDetail = () => {
         uLembur: '',
         bpjs: '',
         thp: '',
+        deductionTotal: 0,
+        allowanceTotal: 0,
     });
 
     const [isEdit, setIsEdit] = useState(false);
@@ -49,6 +51,8 @@ const ReportDetail = () => {
                         uLembur: res?.data?.uLembur,
                         bpjs: res?.data?.bpjs,
                         thp: res?.data?.thp,
+                        deductionTotal: res?.data?.deductionTotal,
+                        allowanceTotal: res?.data?.allowanceTotal,
                     })
                 }
             })
@@ -62,39 +66,89 @@ const ReportDetail = () => {
                 <p className="font-bold text-sm">{'Report Data'}</p>
                 <div className="bg-[#ddd] my-3 h-[1.5px]" />
 
-                <div>
-                    <div className="flex flex-row w-full">
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Name'} type={'text'} value={formData?.name} />
-                        <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Department'}  type={'text'} value={formData?.depart} />
-                        <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Job Title'} type={'text'} value={formData?.jobTitle} />
-                        <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Basic Salary'} type={'text'} value={formData?.basicSalary} />
+                <div className="border-b border-[#eee] mb-2">
+                    <div className="flex flex-row items-start">
+                        <p className="font-normal text-sm pb-1 w-[100px]">Name</p>
+                        <p className="font-normal text-sm pb-1 w-[10px]">:</p>
+                        <p className="font-normal text-sm pb-1">{formData?.name || '-'}</p>
+                    </div>
+                    <div className="flex flex-row items-start">
+                        <p className="font-normal text-sm pb-1 w-[100px]">Department</p>
+                        <p className="font-normal text-sm pb-1 w-[10px]">:</p>
+                        <p className="font-normal text-sm pb-1">{formData?.depart || '-'}</p>
+                    </div>
+                    <div className="flex flex-row items-start">
+                        <p className="font-normal text-sm pb-1 w-[100px]">Job Title</p>
+                        <p className="font-normal text-sm pb-1 w-[10px]">:</p>
+                        <p className="font-normal text-sm pb-1">{formData?.jobTitle || '-'}</p>
+                    </div>
+                </div>
+
+                <div className="border-b border-[#eee] my-2">
+                    <div className="flex flex-row items-start">
+                        <p className="font-normal text-sm pb-1 w-[100px]">Basic Salary</p>
+                        <p className="font-normal text-sm pb-1 w-[10px]">:</p>
+                        <p className="font-normal text-sm pb-1">{formatText(formData?.basicSalary) || '-'}</p>
                     </div>
 
-                    <div className="flex flex-row w-full">
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Makan'} type={'text'} value={formData?.uMakan} />
-                        <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Transport'} type={'text'} value={formData?.uTransport} />
-                        <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Jabatan'} type={'text'} value={formData?.uJabatan} />
-                        <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Functional'} type={'text'} value={formData?.uFunctional} />
+                    <div className="flex flex-col items-start mt-2">
+                        <p className="font-normal text-sm pb-1 w-[100px]">Allowance:</p>
+                        <div className="flex flex-col">
+                            <div className="flex flex-row">
+                                <p className="font-normal text-sm pb-1 ">a.</p>
+                                <p className="font-normal text-sm pb-1 px-1">Makan: {formatText(formData?.uMakan)}</p>
+                            </div>
+                            <div className="flex flex-row">
+                                <p className="font-normal text-sm py-1 ">b.</p>
+                                <p className="font-normal text-sm p-1">Transport: {formatText(formData?.uTransport)}</p>
+                            </div>
+                            <div className="flex flex-row">
+                                <p className="font-normal text-sm py-1 ">c.</p>
+                                <p className="font-normal text-sm p-1">Jabatan: {formatText(formData?.uJabatan)}</p>
+                            </div>
+                            <div className="flex flex-row">
+                                <p className="font-normal text-sm py-1 ">d.</p>
+                                <p className="font-normal text-sm p-1">Khusus: {formatText(formData?.utKhusus)}</p>
+                            </div>
+                            <div className="flex flex-row">
+                                <p className="font-normal text-sm py-1 ">e.</p>
+                                <p className="font-normal text-sm p-1">Operational: {formatText(formData?.utOperational)}</p>
+                            </div>
+                            <div className="flex flex-row">
+                                <p className="font-normal text-sm py-1 ">f.</p>
+                                <p className="font-normal text-sm p-1">Lembur: {formData?.uLembur}</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="flex flex-row w-full">
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Khusus'} type={'text'} value={formData?.utKhusus} />
-                        <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Operational'} type={'text'} value={formData?.utOperational} />
-                        <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'Tunjangan Lembur'}  type={'text'} value={formData?.uLembur} />
-                        <div className="mx-2" />
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'BPJS'}  type={'text'} value={formData?.bpjs} />
+                    <div className="flex flex-row items-start py-2">
+                        <p className="font-semibold text-sm pb-1 w-auto">Total Allowance</p>
+                        <p className="font-normal text-sm pb-1 w-[10px]">:</p>
+                        <p className="font-normal text-sm pb-1">{formatText(formData?.allowanceTotal) || 0}</p>
                     </div>
 
-                    <div className="flex flex-row w-full">
-                        <Input readOnly={isAdd ? false : isReadOnly}  label={'THP'} setWidth="24%" type={'text'} value={formData?.thp} />
+                    <div className="flex flex-col items-start mt-2">
+                        <p className="font-normal text-sm pb-1 w-[110px]">Deduction:</p>
+                        <div className="flex flex-col">
+                            <div className="flex flex-row">
+                                <p className="font-normal text-sm pb-1">a.</p>
+                                <p className="font-normal text-sm pb-1 px-1">BPJS: {formatText(formData?.bpjs)}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-row items-start py-2">
+                        <p className="font-semibold text-sm pb-1 w-auto">Total Deduction</p>
+                        <p className="font-normal text-sm pb-1 w-[10px]">:</p>
+                        <p className="font-normal text-sm pb-1">{formatText(formData?.deductionTotal) || 0}</p>
+                    </div>
+                </div>
+
+                <div className=" mt-6">
+                    <div className="flex flex-row items-start">
+                        <p className="font-bold text-sm pb-1 w-[100px]">THP</p>
+                        <p className="font-bold text-sm pb-1 w-[10px]">:</p>
+                        <p className="font-bold text-sm pb-1">{formatText(formData?.thp) || 0}</p>
                     </div>
                 </div>
             </div>
