@@ -48,7 +48,7 @@ const Navbar = ({setAuth, userData}) => {
                     <div className="flex flex-row">
                       <div className="bg-slate-600 w-[35px] h-auto rounded-s-md"></div>
                       <div className="ml-2">
-                        <p className="text-xs">{userData?.email ? userData?.email?.length > 15 ? `${userData?.email?.slice(0, 15)}...` : userData?.email : 'User'}</p>
+                        <p className="text-xs">{userData?.email ? (userData?.email?.length > 15 ? `${userData?.email?.slice(0, 15)}...` : userData?.email) : 'User'}</p>
                         <p className="text-[10px]">SOPRA</p>
                       </div>
                     </div>

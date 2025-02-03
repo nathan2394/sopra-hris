@@ -3,7 +3,7 @@ import TitlePage from "../component/titlePage";
 import Input from "../component/input";
 import { employee, empty, payroll } from "../config/icon";
 import { loadData } from "../config/api";
-import { coverDate, formatText } from "../config/helper";
+import { coverDate, formatText, getQueryParam } from "../config/helper";
 import { baseColor } from "../config/setting";
 
 const ReportDetail = () => {
@@ -31,7 +31,7 @@ const ReportDetail = () => {
     const [isReadOnly, setIsReadOnly] = useState(true);
 
     useEffect(()=> {
-        const getId = url.searchParams.get("id");
+        const getId = getQueryParam("id");
         if(getId){
             loadData({url: `SalaryDetails/${getId}`}).then((res) => {
                 if(res?.data){

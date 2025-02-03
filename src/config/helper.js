@@ -97,6 +97,12 @@ export const formatText = (value) => {
     }
 };
 
+export const getQueryParam = (param) => {
+    const hash = window.location.hash; // e.g. "#/employee?id=123"
+    const queryString = hash.includes("?") ? hash.split("?")[1] : ""; // Extract "?id=123"
+    const params = new URLSearchParams(queryString);
+    return params.get(param);
+};
 
 export const checkType = (value) => {
     const checkType = typeof value;

@@ -3,13 +3,12 @@ import TitlePage from "../component/titlePage";
 import Input from "../component/input";
 import { employee, empty, payroll } from "../config/icon";
 import { loadData } from "../config/api";
-import { coverDate, formatText } from "../config/helper";
+import { coverDate, formatText, getQueryParam } from "../config/helper";
 import { baseColor } from "../config/setting";
 
 const EmployeeForm = () => {
-    const currentUrl = window.location.href;
-    const url = new URL(currentUrl);
-    const [isAdd] = useState(url.searchParams.get("action") === 'add' ? true : false);
+
+    const [isAdd] = useState(getQueryParam("action") === 'add' ? true : false);
 
     const [listAlD, setListAlD] = useState([]);
     const [formData, setFormData] = useState({
@@ -45,7 +44,7 @@ const EmployeeForm = () => {
     const [isReadOnly, setIsReadOnly] = useState(true);
 
     useEffect(()=> {
-        const getId = url.searchParams.get("id");
+        const getId = getQueryParam("id");
         if(getId){
             loadData({url: `Employees/${getId}`}).then((res) => {
                 if(res?.data){
@@ -74,40 +73,7 @@ const EmployeeForm = () => {
                         employeeTypeName: res?.data?.employeeTypeName || '-',
                         employeeJobTitleName: res?.data?.employeeJobTitleName || '-',
                         allowancedeductionDetails: res?.data?.allowancedeductionDetails,
-                        masterEmployeePayroll: [
-                            {
-                                "year": 2024,
-                                "employeeID": 20,
-                                "employeeName": "Triono",
-                                "basicSalary": 3451571,
-                                "uMakan": 0,
-                                "uTransport": 0,
-                                "uJabatan": 0,
-                                "uFunctional": 0,
-                                "utKhusus": 0,
-                                "utOperational": 0,
-                                "uLembur": 0,
-                                "bpjs": 185405,
-                                "thp": 4385405,
-                                "netto": 4200000
-                            },
-                            {
-                                "year": 2025,
-                                "employeeID": 20,
-                                "employeeName": "Triono",
-                                "basicSalary": 3451571,
-                                "uMakan": 345000,
-                                "uTransport": 460000,
-                                "uJabatan": 250000,
-                                "uFunctional": 0,
-                                "utKhusus": 0,
-                                "utOperational": 0,
-                                "uLembur": 0,
-                                "bpjs": 194675.6,
-                                "thp": 4558344.57,
-                                "netto": 4363668.97
-                            }
-                        ]
+                        masterEmployeePayroll: res?.data?.masterEmployeePayroll
                     })
                     if(res?.data?.allowancedeductionDetails){
                         const groupedResult = res?.data?.allowancedeductionDetails?.filter(data => data?.amount > 0).reduce((acc, item) => {
