@@ -12,6 +12,7 @@ import EmployeeData from "./page/EmployeeData";
 import EmployeeForm from "./page/EmployeeForm";
 import Report from "./page/Report";
 import FullLoading from "./component/fullLoading";
+import ReportDetail from "./page/ReportDetail";
 
 const Layout = ({ children, setAuth, userData, isLoading = false }) => {
   const location = useLocation();
@@ -85,6 +86,11 @@ const App = () => {
           <Route path="/employee/detail" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <EmployeeForm setIsLoading={setIsLoading} />
+            </ProtectedRoute>
+          } />
+          <Route path="/report/detail" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ReportDetail setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
           <Route path="/report" element={

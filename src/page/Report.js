@@ -19,11 +19,11 @@ const Report = ({setIsLoading}) => {
 
     useEffect(() => {
         setIsLoading(true);
-        loadData({url: 'SalaryDetails'}).then((res) => {
+        loadData({url: 'SalaryDetails', params:[{title: 'filter', value: 'month:1|year:2025'}]}).then((res) => {
             if(res?.data?.length > 0){
                 const filteredData = res.data.map(obj =>
                     Object.fromEntries(
-                      Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('dateIn')  && !key.includes('dateUp')  && !key.includes('userIn') && !key.includes('userUp') && !key.includes('isDeleted'))
+                      Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year') && !key.includes('dateIn')  && !key.includes('dateUp')  && !key.includes('userIn') && !key.includes('userUp') && !key.includes('isDeleted'))
                     )
                 );
                 listData(filteredData);
@@ -66,17 +66,8 @@ const Report = ({setIsLoading}) => {
 
     return (
         <>
-            <TitlePage label={'Report Salary'} source={list} />
+            <TitlePage label={'Report Salary'} source={list} isAction={true} handleExport={(e) => exportFile('default', e)} />
             <div>
-                {data?.length > 0 &&
-                    <div className="flex flex-row justify-between items-center">
-                        <div className="flex flex-row">
-                            {/* <Button text="Search" setWidth="auto" bgcolor={'white'} icon={search} handleAction={() => openModal()} />
-                            <div className="mx-1" /> */}
-                            <Button text={'Export Data'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoadExport} handleAction={(e) => exportFile('default', e)} />
-                        </div>
-                    </div>
-                }
 
                 {!isLoadData ? 
                     <Table dataTable={data} isAction={true} />

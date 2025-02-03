@@ -112,13 +112,15 @@ const MasterPayroll = ({setIsLoading}) => {
         filteredData = res?.data?.map((val) => (
           {
             "nik" : val?.nik,
-            "name" : val?.name,
-            "department" : val?.departmentName,
-            "division" : val?.divisionName,
-            "type" : val?.employeeTypeName,
+            "name" : val?.employeeName,
+            "department" : val?.department,
+            "division" : val?.division,
+            "type" : val?.employeeType,
             "group" : val?.groupName + ` (${val?.groupType})`, 
+            "accountNo" : val?.accountNo,
             "month" : val?.month,
             "year" : val?.year,
+            "startWorkingDate" : coverDate(val?.startWorkingDate),
             "hks" : val?.hks,
             "hka" : val?.hka,
             "att" : val?.att,
@@ -126,9 +128,18 @@ const MasterPayroll = ({setIsLoading}) => {
             "absent" : val?.absent,
             "ovt" : val?.ovt,
             "late" : val?.late,
+            "basicSalary" : val?.basicSalary,
+            "uMakan": val?.uMakan,
+            "uTransport": val?.uTransport,
+            "uJabatan": val?.uJabatan,
+            "uFunctional": val?.uFunctional,
+            "utKhusus": val?.utKhusus,
+            "utOperational": 2282616,
+            "uLembur": val?.uLembur,
             "allowanceTotal" : val?.allowanceTotal,
             "deductionTotal" : val?.deductionTotal,
-            "thp" : val?.netto,
+            "thp" : val?.thp,
+            "netto" : val?.netto,
             "bpjs" : val?.bpjs,
             "transferAmount" : val?.transferAmount
           }
@@ -155,7 +166,7 @@ const MasterPayroll = ({setIsLoading}) => {
     setIsLoadTemplate(true);
     const todayDate = getCurrentDate();
     loadData({ url: `Salary/template` }).then((res) => {
-      exportToExcel(res?.data, `Template_Salary_${todayDate}`)
+      exportToExcel(res?.data, `Template_Salary_${todayDate}`, 'download')
       setIsLoadTemplate(false);
     });
   }
