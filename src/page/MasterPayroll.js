@@ -166,7 +166,7 @@ const MasterPayroll = ({setIsLoading}) => {
     setIsLoadTemplate(true);
     const todayDate = getCurrentDate();
     loadData({ url: `Salary/template` }).then((res) => {
-      exportToExcel(res?.data, `Template_Salary_${todayDate}`, 'download')
+      exportToExcel(res?.data, `Template_Salary_${todayDate}`, 'default')
       setIsLoadTemplate(false);
     });
   }
