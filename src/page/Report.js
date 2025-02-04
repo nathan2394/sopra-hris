@@ -21,11 +21,26 @@ const Report = ({setIsLoading}) => {
         setIsLoading(true);
         loadData({url: 'SalaryDetails', params:[{title: 'filter', value: 'month:1|year:2025'}]}).then((res) => {
             if(res?.data?.length > 0){
-                const filteredData = res.data.map(obj =>
-                    Object.fromEntries(
-                      Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year') && !key.includes('dateIn')  && !key.includes('dateUp')  && !key.includes('userIn') && !key.includes('userUp') && !key.includes('isDeleted'))
-                    )
-                );
+                const filteredData = res.data.map(obj => {
+                    const filteredObj = Object.fromEntries(
+                        Object.entries(obj).filter(([key]) => 
+                            !key.includes('ID') && 
+                            !key.includes('month') && 
+                            !key.includes('year') && 
+                            !key.includes('dateIn') &&  
+                            !key.includes('dateUp') &&  
+                            !key.includes('userIn') &&  
+                            !key.includes('userUp') &&  
+                            !key.includes('isDeleted')
+                        )
+                    );
+                
+                    return {
+                        id: obj?.salaryID,
+                        ...filteredObj,
+                    };
+                });    
+                console.log(filteredData);            
                 listData(filteredData);
                 setIsLoadData(false);
                 setIsLoading(false);
@@ -70,7 +85,7 @@ const Report = ({setIsLoading}) => {
             <div>
 
                 {!isLoadData ? 
-                    <Table dataTable={data} isAction={true} />
+                    <Table dataTable={data} isAction={true} detailPath={'/report/detail?id='} />
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />

@@ -5,7 +5,7 @@ import { baseColor } from "../config/setting";
 import { employee, empty, sort_asc, sort_desc } from "../config/icon";
 import IconImage from "./icon_img";
 
-const Table = React.memo(({ dataTable = [], isAction = false, setIsFilter = null, listFilter = [], setListFilter }) => {
+const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', setIsFilter = null, listFilter = [], setListFilter }) => {
   const [listTable, setListTable] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
@@ -93,7 +93,7 @@ const Table = React.memo(({ dataTable = [], isAction = false, setIsFilter = null
                   >
                     {isAction 
                     ? 
-                      <Link to={row?.employeeID ? `/employee/detail?id=${row?.employeeID}` : '#'}>{formatText(val)}</Link>
+                      <Link to={row?.id ? `${detailPath}${row?.id}` : '#'}>{formatText(val)}</Link>
                     :
                       formatText(val)
                     }
@@ -101,7 +101,7 @@ const Table = React.memo(({ dataTable = [], isAction = false, setIsFilter = null
                 ))}
                 {/* {isAction &&
                   <th scope="row" className={`p-[10px] font-normal border border-[#d2cfcf] text-black whitespace-nowrap ${"text-left"}`}>
-                      <Link to={row?.employeeID ? `/employee/detail?id=${row?.employeeID}` : '#'} className={`underline text-[#369D00]`}>View</Link>
+                      <Link to={row?.id ? `/employee/detail?id=${row?.id}` : '#'} className={`underline text-[#369D00]`}>View</Link>
                   </th>
                 } */}
               </tr>
