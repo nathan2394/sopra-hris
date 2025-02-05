@@ -260,7 +260,7 @@ const MasterPayroll = ({setIsLoading}) => {
       }
 
       <div className="flex flex-row justify-between items-center pt-2">
-        <p className="font-bold text-sm">Payroll Period: <span className="font-semibold text-gray-500">{period}</span></p>
+        <p className="font-bold text-sm">Payroll Period : <span className="font-semibold text-gray-500">{period}</span></p>
         <div className="flex flex-row">
           <div style={ !isUpload ? { opacity: '0.3', pointerEvents: 'none' } : {}}>
             <Button setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={() => reloadFile()} icon={reload} />
