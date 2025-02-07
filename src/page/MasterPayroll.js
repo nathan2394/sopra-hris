@@ -9,6 +9,7 @@ import { loadData, postFormData } from "../config/api";
 import LoadingIndicator from "../component/loading_indicator";
 import { baseColor } from "../config/setting";
 import TitlePage from "../component/titlePage";
+import SearchableSelect from "../component/select2";
 
 const MasterPayroll = ({setIsLoading}) => {
   const fileInputRef = useRef(null);
@@ -101,12 +102,6 @@ const MasterPayroll = ({setIsLoading}) => {
     loadData({ url: `Salary/generatedata`, params: [{title: 'filter', value: `type:${type}`}] }).then((res) => {
       const todayDate = getCurrentDate();
       let filteredData = [];
-      
-      // filteredData = res.data.map(obj =>
-      //   Object.fromEntries(
-      //     Object.entries(obj).filter(([key]) => !key.includes('ID')  && !key.includes('dateIn')  && !key.includes('dateUp')  && !key.includes('userIn') && !key.includes('userUp') && !key.includes('isDeleted') )
-      //   )
-      // );
 
       if(type === 'payroll'){
         filteredData = res?.data?.map((val) => (
@@ -171,42 +166,38 @@ const MasterPayroll = ({setIsLoading}) => {
     });
   }
 
+  const months = [
+    {label: "January", value: 1}, 
+    {label: "February", value: 2}, 
+    {label: "March", value: 3}, 
+    {label: "April", value: 4}, 
+    {label: "May", value: 5}, 
+    {label: "June", value: 6}, 
+    {label: "July", value: 7}, 
+    {label: "August", value: 8}, 
+    {label: "September", value: 9}, 
+    {label: "October", value: 10}, 
+    {label: "November", value: 11}, 
+    {label: "December", value: 12}
+  ];
+
+  const exportTypes = [
+    {label: "Payroll", value: "payroll"},
+    {label: "Bank", value: "bank"}
+  ];
+
   return (
     <>
       <TitlePage label={'Master Payroll'} source={payroll} isAction={false} />
-
       <div className="flex flex-row justify-between items-center pt-1">
-        <Button text={'Download Form'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoadTemplate} handleAction={() => downloadTemplate()} icon={download} />
-        <div className="flex flex-row">
-          <div className="py-2 relative" style={ !isUpload ? { opacity: '0.3', pointerEvents: 'none' } : {}}>
-            <div className="border border-gray-400 bg-[#ffffff] rounded-lg flex flex-row items-center mr-2 cursor-pointer" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)', userSelect: 'none'}} onClick={() => setOpen(!open)}>
-              <div className="p-2 w-[145px]">
-                <p className="text-sm font-semibold">{`${exportLabel || 'Select Export Type'}`}</p>
-              </div>
-              <div className="bg-gray-400 h-[36px] w-[1px]"></div>
-              <div className="p-2">
-                  <IconImage size="small" source={arrow_green} />
-              </div>
-            </div>
-            {open &&             
-              <div className="absolute top-14 border border-gray-400 bg-[#ffffff] rounded-lg w-[180px]" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
-                <div className="cursor-pointer p-1 border-b border-gray-400 hover:bg-[#ddd]" style={{transition: '.1s'}} onClick={() => {
-                  setExportType('payroll')
-                  setExportLabel('Export Payroll')
-                  setOpen(false)
-                }}>
-                  <p className="text-sm font-semibold">Export Payroll</p>
-                </div>
-                <div className="cursor-pointer p-1 hover:bg-[#ddd]" style={{transition: '.1s'}} onClick={() => {
-                  setExportType('bank')
-                  setExportLabel('Export for Bank')
-                  setOpen(false)
-                }}>
-                  <p className="text-sm font-semibold">Export for Bank</p>
-                </div>
-              </div>
-            }
-          </div>
+        <div className="flex flex-row items-center w-full">
+          <SearchableSelect placeHolder = 'Periode' setWidth="auto" options={months}  />
+          <div className="mx-1" />
+          <Button text={'Download Form'} setWidth="auto" bgcolor={baseColor} color={'white'} isLoading={isLoadTemplate} handleAction={() => downloadTemplate()} icon={download} />
+        </div>
+        <div className="flex flex-row items-center justify-end w-full">
+          <SearchableSelect placeHolder = 'Select Export Type' setWidth="185px" options={exportTypes}  />
+          <div className="mx-1" />
           <Button text={'Export Data'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoadExport} handleAction={(e) => exportFile(exportType, e)} />
         </div>
       </div>

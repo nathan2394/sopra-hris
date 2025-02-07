@@ -9,6 +9,8 @@ export const upload = '/icon/upload.png';
 export const exportData = '/icon/export.png';
 
 export const close = '/icon/close.svg';
+export const success = '/icon/success.svg';
+export const question = 'icon/question.svg';
 export const close_white = 'icon/close_white.svg';
 
 export const notif = '/icon/notification.png';
@@ -35,6 +37,8 @@ export const sopra_logo = '/logo/sopra_full_2.png';
 export const sopra_full = '/logo/sopra_full.png';
 export const google = '/logo/google.png';
 export const empty = '/logo/empty.png';
+
+export const calendar = '/icon/calendar.svg';
 
 //gif
 export const gif_loader = '/gif/loading.gif';

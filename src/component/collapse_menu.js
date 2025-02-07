@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { arrow_green } from "../config/icon"
 import IconImage from "./icon_img";
 
-const Collapse = ({title = 'Select', children}) => {
+const CollapseMenu = ({title = 'Select', children}) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -19,4 +19,4 @@ const Collapse = ({title = 'Select', children}) => {
     )
 }
 
-export default Collapse;
+export default CollapseMenu;
