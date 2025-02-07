@@ -65,3 +65,16 @@ export const postFormData = async ({url, formData = null}) => {
         }
     }
 };
+
+export const deleteData = async ({ url, id }) => {
+    const api_endpoint = 'https://sopra-hris.mixtra.co.id';
+    try {
+        let res;
+
+        res = await axios.delete(`${api_endpoint}/${url}/${id}`);
+
+        return res.data;
+    } catch (err) {
+        throw err.response.data?.message;
+    }
+}

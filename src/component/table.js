@@ -5,7 +5,7 @@ import { baseColor } from "../config/setting";
 import { employee, empty, sort_asc, sort_desc } from "../config/icon";
 import IconImage from "./icon_img";
 
-const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', setIsFilter = null, listFilter = [], setListFilter }) => {
+const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', actionDelete, actionEdit }) => {
   const [listTable, setListTable] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
@@ -39,21 +39,22 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', s
                 <th
                   scope="col"
                   key={idx}
-                  style={{ width: `${100 / labelHeader.length}%` }} // Adjust the width calculation as needed
-                  className={`border border-[#595858] min-w-[115px] p-[10px] ${
+                  className={`border border-[#595858] ${val?.length >= 9 ? 'min-w-[205px]' : val?.length >= 5 ? 'min-w-[110px]' : val?.length >= 3 ? 'min-w-[80px]' : 'min-w-[60px]' }  p-[10px] ${
                     idx === 0 ? "first:rounded-tl-lg" : ""
                   } ${idx === labelHeader.length - 1 ? "last:rounded-tr-lg" : ""}`}
                 >
                   <div className="flex flex-row items-center">
-                    <Link >{formatHeader(val)}</Link> 
+                    <Link>
+                      <span className="font-medium text-[12px]">{formatHeader(val)}</span>
+                    </Link> 
                     <div className="flex flex-col pl-2" onClick={() => sortData(val)}>
                       <div className={`cursor-pointer`}><IconImage size={'smaller'} source={sort_asc} /></div>
-                      <div className={`mt-[-9.8px] cursor-pointer`}><IconImage size={'smaller'} source={sort_desc} /></div>
+                      <div className={`mt-[-11px] cursor-pointer`}><IconImage size={'smaller'} source={sort_desc} /></div>
                     </div>
                   </div>
                 </th>
               ))}
-              {/* {isAction &&
+              {(isAction && (actionDelete || actionEdit)) &&
                 <th
                   scope="col"
                   style={{ width: `${100}%` }} // Adjust the width calculation as needed
@@ -61,7 +62,7 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', s
                 >
                   Action
                 </th>
-              } */}
+              }
             </tr>
           </thead>
           <tbody>
@@ -76,7 +77,7 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', s
                   <th
                     scope="row"
                     key={idx}
-                    className={`p-[10px] font-normal border border-[#d2cfcf] text-black whitespace-nowrap ${
+                    className={`p-[8px] font-normal border border-[#d2cfcf] text-black whitespace-nowrap ${
                       checkType(val) === "number"
                         ? "text-right"
                         : "text-left"
@@ -99,11 +100,14 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', s
                     }
                   </th>
                 ))}
-                {/* {isAction &&
+                {(isAction && (actionDelete || actionEdit)) &&
                   <th scope="row" className={`p-[10px] font-normal border border-[#d2cfcf] text-black whitespace-nowrap ${"text-left"}`}>
-                      <Link to={row?.id ? `/employee/detail?id=${row?.id}` : '#'} className={`underline text-[#369D00]`}>View</Link>
+                      <div className="flex flex-row items-center justify-center">
+                        {actionEdit && <Link to={row?.id ? `${detailPath}${row?.id}` : '#'} className={`font-semibold hover:underline text-[#369D00] mr-2`}>View</Link>}
+                        {actionDelete && <p className={`font-semibold hover:underline text-[#D22F27]`} onClick={() => actionDelete(row?.id)}>Delete</p>}
+                      </div>
                   </th>
-                } */}
+                }
               </tr>
             ))}
           </tbody>

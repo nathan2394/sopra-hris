@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import { employee, filter, reload, search } from "../config/icon";
-import TitlePage from "../component/titlePage";
-import { loadData } from "../config/api";
-import Table from "../component/table";
-import Button from "../component/button";
-import Modal from "../component/modal";
-import Input from "../component/input";
-import { baseColor } from "../config/setting";
-import Select from "../component/select";
-import LoadingIndicator from "../component/loading_indicator";
-import IconImage from "../component/icon_img";
-import { coverDate, exportToExcel, getCurrentDate } from "../config/helper";
 import { data, Link, useNavigate } from 'react-router-dom';
-import Collapse from "../component/collapse";
+import { deleteData, loadData } from "../../config/api";
+import { coverDate, exportToExcel, getCurrentDate } from "../../config/helper";
+import Modal from "../../component/modal";
+import Input from "../../component/input";
+import Button from "../../component/button";
+import { baseColor } from "../../config/setting";
+import TitlePage from "../../component/titlePage";
+import { employee, filter, reload } from "../../config/icon";
+import IconImage from "../../component/icon_img";
+import Table from "../../component/table";
+import LoadingIndicator from "../../component/loading_indicator";
+import CollapseMenu from "../../component/collapse_menu";
+import AlertPopUp from "../../component/popupAlert";
 
 const EmployeeData = ({setIsLoading}) => {
     const navigate = useNavigate();
@@ -44,6 +44,8 @@ const EmployeeData = ({setIsLoading}) => {
         nik     : '',
         ktp     : '',
     })
+
+    const [isAlert, setIsAlert] = useState(false);
 
     const [isFilter, setIsFilter] = useState(false);
     const [listFilter, setListFilter] = useState([]);
@@ -320,16 +322,12 @@ const EmployeeData = ({setIsLoading}) => {
               newValues[label] = [];
             }
       
-            // Check if the item already exists
             if (newValues[label].some((v) => v?.id === item?.id)) {
-              // Remove if it exists
               newValues[label] = newValues[label].filter((v) => v?.id !== item?.id);
             } else {
-              // Add new selection with label
               newValues[label] = [...newValues[label], item];
             }
       
-            // If empty, remove the key to keep the state clean
             if (newValues[label]?.length === 0) {
               delete newValues[label];
             }
@@ -341,7 +339,6 @@ const EmployeeData = ({setIsLoading}) => {
     const submitFilter = () => {
         setModalFilterOpen(false);
         setCheckValue(selectedValues);
-        console.log(selectedValues);
     }
 
     const renderFilter = () => {
@@ -387,7 +384,7 @@ const EmployeeData = ({setIsLoading}) => {
                     {/* <!-- Modal body --> */}
                     <div className="pt-4 min-h-[400px] max-h-[450px] overflow-y-auto">
                         {listFilterData?.map((value, idx) => (
-                            <Collapse key={idx} title={value.title}>
+                            <CollapseMenu key={idx} title={value.title}>
                                 {value?.data?.map((val, index) => (
                                     <div key={index}>
                                         <div className="flex flex-row py-2 px-4">
@@ -396,7 +393,7 @@ const EmployeeData = ({setIsLoading}) => {
                                         </div>
                                     </div>
                                 ))}
-                            </Collapse>
+                            </CollapseMenu>
                         ))}
                     </div>
 
@@ -412,6 +409,16 @@ const EmployeeData = ({setIsLoading}) => {
         )
     }
 
+    const handleDetele = (id) => {
+        console.log('trigger');
+        setIsAlert(true);
+        // deleteData({ url: 'Employees', id: id }).then(() => {
+
+        // }).catch((e) => {
+        //     alert(e);
+        // })
+    }
+
     return (
         <>
             <TitlePage label={'Employee Data'} source={employee} isAction={true} handleAdd={() => navigate('/employee/detail?action=add')} handleSearch={() => openModal()} handleExport={(e) => exportFile('default', e)} handleFilter={() => openModalFilter()} />
@@ -423,8 +430,6 @@ const EmployeeData = ({setIsLoading}) => {
                         <div className="flex flex-wrap gap-2 pl-2">
                             {listFilter?.map((val, idx) => (
                                 <div className="flex flex-row pl-2" key={idx}>
-                                    {/* <div className="ml-2" />
-                                    <Button text={val} setWidth={'full'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} flagFilter={true} handleAction={removeFilters} /> */}
                                     <span className="px-2 py-1 bg-gray-200 rounded-full flex items-center">
                                     {val}
                                         <button
@@ -456,13 +461,14 @@ const EmployeeData = ({setIsLoading}) => {
                 }
 
                 {!isLoadData ? 
-                    <Table dataTable={listData} isAction={true} detailPath={'/employee/detail?id='} setIsFilter={setIsFilter} listFilter={listFilter} setListFilter={setListFilter} />
+                    <Table dataTable={listData} isAction={true} detailPath={'/employee/detail?id='}  />
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />
                     </div>
                 }
             </div>
+            {/* <AlertPopUp isOpen={isAlert} /> */}
             {renderModal()}
             {renderFilter()}
         </>
