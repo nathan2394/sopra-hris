@@ -6,6 +6,8 @@ body {
   /* @apply font-sans; */
 }
 
+ul li {list-style-type: disc;}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
