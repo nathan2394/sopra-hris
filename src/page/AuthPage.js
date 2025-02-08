@@ -23,11 +23,11 @@ const AuthPage = ({setAuth}) => {
         navigate('/');
     }
 
-    // useEffect(() => {
-    //     if (isLoggedIn) {
-    //       navigate("/");
-    //     }
-    // }, [isLoggedIn, navigate]);
+    useEffect(() => {
+        if (isLoggedIn) {
+          navigate("/");
+        }
+    }, [isLoggedIn, navigate]);
 
     useEffect(
         () => {

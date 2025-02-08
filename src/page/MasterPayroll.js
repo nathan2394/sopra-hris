@@ -99,7 +99,7 @@ const MasterPayroll = ({setIsLoading}) => {
 
     setIsLoadExport(true);
 
-    loadData({ url: `Salary/generatedata`, params: [{title: 'filter', value: `type:${type}`}] }).then((res) => {
+    loadData({ url: `Salary/generatedata`, params: [{title: 'filter', value: `type:${type}|month:1|year:2025`}] }).then((res) => {
       const todayDate = getCurrentDate();
       let filteredData = [];
 
@@ -129,7 +129,7 @@ const MasterPayroll = ({setIsLoading}) => {
             "uJabatan": val?.uJabatan,
             "uFunctional": val?.uFunctional,
             "utKhusus": val?.utKhusus,
-            "utOperational": 2282616,
+            "utOperational": val?.utOperational,
             "uLembur": val?.uLembur,
             "allowanceTotal" : val?.allowanceTotal,
             "deductionTotal" : val?.deductionTotal,
@@ -146,7 +146,7 @@ const MasterPayroll = ({setIsLoading}) => {
             "Trans. Amount" : Math.round(val?.netto),
             "emp.Number": val?.nik,
             "emp.Name": val?.name,
-            "Dept": val?.departmentName,
+            "Dept": val?.departmentCode,
             "Trans. Date": coverDate(val?.transDate, 'custom')
           }
         ))

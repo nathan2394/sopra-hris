@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import IconImage from "../component/icon_img";
 import { arrow_green, employee_green, list_green, logout, menu, notif, payroll_green, sopra_full, sopra_logo, user } from "../config/icon";
 import React, { useState } from "react";
 import Button from "../component/button";
+import { baseColor } from "../config/setting";
 
 const Navbar = ({setAuth, userData}) => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [openSideBar, setOpenSideBar] = useState(false);
   const listMenu = [
@@ -29,7 +31,7 @@ const Navbar = ({setAuth, userData}) => {
       <div className="relative">
         <nav className="bg-white border-gray-200 w-full fixed" style={{zIndex: 999, boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
           <div className="relative">
-            <div className="w-full flex flex-wrap items-center justify-between mx-auto py-4 px-10">
+            <div className="w-full flex flex-wrap items-center justify-between mx-auto py-3 px-10">
               <div className="flex flex-row items-center">
                 <Button bgcolor={'white'} setWidth="auto" icon={menu} handleAction={() => {
                   setOpenSideBar(!openSideBar)
@@ -44,7 +46,7 @@ const Navbar = ({setAuth, userData}) => {
                   <IconImage size="small" source={notif} />
                 </div>
                 <div className="relative w-[180px] ml-2">
-                  <div className="border bg-[#ffffff] rounded-md cursor-pointer flex flex-row items-center justify-between" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)', userSelect: 'none'}} onClick={() => setOpen(!open)}>
+                  <div className="bg-[#ffffff] rounded-md cursor-pointer flex flex-row items-center justify-between" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)', userSelect: 'none'}} onClick={() => setOpen(!open)}>
                     <div className="flex flex-row">
                       <div className="bg-slate-600 w-[35px] h-auto rounded-s-md"></div>
                       <div className="ml-2">
@@ -57,13 +59,15 @@ const Navbar = ({setAuth, userData}) => {
                     </div>
                   </div>
                   {open && 
-                    <div className="absolute top-10 border border-[#ea24273f] bg-[#ffffff] rounded-lg w-[180px]">
+                    <div className={`absolute top-10 border border-[${baseColor}] bg-[#ffffff] rounded-lg w-[180px]`}>
                       {/* <div className="cursor-pointer p-1 border-b border-[#ea24273f] hover:bg-[#ddd]" style={{transition: '.1s'}} >
                         <p className="text-xs">Profile</p>
                       </div> */}
                       <div className="cursor-pointer p-1 hover:bg-[#ddd]" style={{transition: '.1s'}} onClick={() => { 
                         setAuth(false);
                         localStorage.removeItem('statusAuth');
+                        localStorage.removeItem('userToken');
+                        navigate('/login');
                       }}>
                         <p className="text-xs">Log Out</p>
                       </div>
@@ -87,7 +91,7 @@ const Navbar = ({setAuth, userData}) => {
           </div>
         </nav>
         {openSideBar &&        
-          <div className={`bg-[#0000003e] mx-auto w-full h-full fixed flex items-center justify-center overflow-hidden mt-[82px]`} style={{zIndex: 995}}>
+          <div className={`bg-[#0000003e] mx-auto w-full h-full fixed flex items-center justify-center overflow-hidden mt-[82px]`} style={{zIndex: 995}} onClick={() => setOpenSideBar(!openSideBar)}>
           </div>
         }
       </div>
