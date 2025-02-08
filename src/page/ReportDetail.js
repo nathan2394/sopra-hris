@@ -7,10 +7,6 @@ import { coverDate, formatText, getMonthName, getQueryParam } from "../config/he
 import { baseColor } from "../config/setting";
 
 const ReportDetail = () => {
-    const currentUrl = window.location.href;
-    const url = new URL(currentUrl);
-    const [isAdd] = useState(url.searchParams.get("action") === 'add' ? true : false);
-
     const [formData, setFormData] = useState({
         name: '',
         nik: '',
@@ -18,6 +14,7 @@ const ReportDetail = () => {
         depart: '',
         jobTitle: '',
         basicSalary: '',
+        paidSalary: '',
         uMakan: '',
         uhMakan: '',
         uTransport: '',
@@ -43,6 +40,7 @@ const ReportDetail = () => {
         absent: 0,
         ovt: 0,
         late: 0,
+        rapel: 0,
         deductionTotal: 0,
         allowanceTotal: 0,
         otherAllowances: 0,
@@ -61,10 +59,11 @@ const ReportDetail = () => {
                         depart: res?.data?.department,
                         jobTitle: res?.data?.employeeJobTitle,
                         basicSalary: res?.data?.basicSalary,
+                        paidSalary: res?.data?.paidSalary,
                         uMakan: res?.data?.uMakan,
                         uhMakan: res?.data?.uhMakan,
                         uTransport: res?.data?.uTransport,
-                        uHransport: res?.data?.uHransport,
+                        uHransport: res?.data?.uhTransport,
                         uJabatan: res?.data?.uJabatan,
                         uFunctional: res?.data?.uFunctional,
                         utKhusus: res?.data?.utKhusus,
@@ -86,6 +85,7 @@ const ReportDetail = () => {
                         absent: res?.data?.absent,
                         ovt: res?.data?.ovt,
                         late: res?.data?.late,
+                        rapel: res?.data?.rapel,
                         deductionTotal: res?.data?.deductionTotal,
                         allowanceTotal: res?.data?.allowanceTotal,
                         otherAllowances: res?.data?.otherAllowances,
@@ -98,7 +98,7 @@ const ReportDetail = () => {
 
     const TitleContent = ({text}) => {
         return (
-            <div className="bg-[#33333318] p-2 my-2 w-full">
+            <div className="bg-[#33333318] p-2 mb-2 w-full">
                 <p className="font-semibold text-black text-sm text-center">{text}</p>
             </div>
         );
@@ -108,7 +108,7 @@ const ReportDetail = () => {
         const data = (type === 'Allowance' || type === 'Pendapatan') ? [
             {
                 label: 'Gaji Dibayar',
-                value: formData?.basicSalary
+                value: formData?.paidSalary
             },
             {
                 label: 'Tunjangan Jabatan',
@@ -123,16 +123,24 @@ const ReportDetail = () => {
                 value: formData?.utOperational
             },
             {
+                label: 'Tunjangan Functional',
+                value: formData?.uFunctional
+            },
+            {
                 label: 'TMK',
                 value: formData?.uMasaKerja
             },
             {
-                label: `Transport (${formData?.att} hr x Rp. ${formatText(formData?.uHransport)})`,
+                label: `Transport (${formData?.att} hari x Rp. ${formatText(formData?.uHransport)})`,
                 value: formData?.uTransport
             },
             {
-                label: `Uang Makan (${formData?.meal} hr x Rp. ${formatText(formData?.uhMakan)})`,
+                label: `Uang Makan (${formData?.meal} hari x Rp. ${formatText(formData?.uhMakan)})`,
                 value: formData?.uMakan
+            },
+            {
+                label: 'Rapel',
+                value: formData?.rapel
             },
             {
                 label: 'Lain-lain',
@@ -173,7 +181,7 @@ const ReportDetail = () => {
     return (
         <>
             <TitlePage label={'Report Data'} subLabel={'Report Detail'} source={employee} type={'detail'} setNavigateBack={`/report`} />
-            <div className="border bg-white p-4 rounded-lg">
+            <div className="border bg-white p-6 rounded-lg">
 
                 <div className="flex flex-row justify-between">
                     <div className="mb-2">

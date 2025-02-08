@@ -39,8 +39,7 @@ const Report = ({setIsLoading}) => {
                         id: obj?.salaryID,
                         ...filteredObj,
                     };
-                });    
-                console.log(filteredData);            
+                });          
                 listData(filteredData);
                 setIsLoadData(false);
                 setIsLoading(false);
