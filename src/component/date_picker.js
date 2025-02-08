@@ -1,21 +1,21 @@
 import React, { useState, useRef } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import IconImage from "./icon_img";
-import { calendar } from "../config/icon";
+// import DatePicker from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
+// import IconImage from "./icon_img";
+// import { calendar } from "../config/icon";
 
 const MyDatePicker = ({label, setWidth = '100%', value}) => {
-  const [date, setDate] = useState(value || null); // Start with null value
-  const datePickerRef = useRef(null);
+  // const [date, setDate] = useState(value || null); // Start with null value
+  // const datePickerRef = useRef(null);
   
-  const openDatePicker = () => {
-    datePickerRef.current.setFocus(); // Programmatically open date picker
-  };
+  // const openDatePicker = () => {
+  //   datePickerRef.current.setFocus(); // Programmatically open date picker
+  // };
 
   return (
     <div className="mb-5" style={{width: setWidth }}>
       {label && <label className="block mb-2 text-sm font-medium text-gray-900">{label}</label> }
-      <div className="relative border border-gray-300 text-gray-900 rounded-lg" style={{width: setWidth }} onClick={openDatePicker}>
+      {/* <div className="relative border border-gray-300 text-gray-900 rounded-lg" style={{width: setWidth }} onClick={openDatePicker}>
         <DatePicker
             selected={date}
             onChange={(date) => setDate(date)} // Updates the state with selected date
@@ -29,7 +29,7 @@ const MyDatePicker = ({label, setWidth = '100%', value}) => {
         <div className="absolute right-3 top-3">
             <IconImage size="small" source={calendar} />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

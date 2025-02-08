@@ -38,7 +38,6 @@ const Layout = ({ children, setAuth, userData, isLoading = false }) => {
             </div>
           </div>
         </div>
-        {/* <Footer /> */}
       </div>
       {isLoading && <FullLoading />}
     </>

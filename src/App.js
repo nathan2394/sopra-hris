@@ -14,43 +14,7 @@ import Report from "./page/Report";
 import FullLoading from "./component/fullLoading";
 import ReportDetail from "./page/ReportDetail";
 import Layout from "./layout/layout";
-
-// const Layout = ({ children, setAuth, userData, isLoading = false }) => {
-//   const location = useLocation();
-
-//   // Define routes that should NOT use the full layout
-//   const excludedPaths = ['/login'];
-
-//   // Check if the current path matches excluded paths or is a 404
-//   const isExcludedPath = excludedPaths.includes(location.pathname);
-//   const is404Page = location.pathname !== '/' && location.pathname !== '/report/detail' && location.pathname !== '/report' && location.pathname !== '/employee' && location.pathname !== '/employee/detail'   && !excludedPaths.includes(location.pathname);
-
-//   if (isExcludedPath || is404Page) {
-//     // Render children without layout for excluded paths or 404
-//     return <>{children}</>;
-//   }
-
-//   return (
-//     <>
-//       <div style={{maxWidth: '2000px', margin: '0 auto'}}>
-//         <div className="bg-[#F5F5F5]" style={{ display: 'flex', height: '100vh', flexDirection: 'column' }}>
-//           <Navbar setAuth={setAuth} userData={userData} />
-//           {/* <Sidebar /> */}
-//           <div style={{zIndex: 99}}>
-//             <div style={{ padding: '20px', paddingTop: '5.5rem'}}>
-//               <div className="px-5 max-w-full">
-//                 {children}
-//               </div>
-//             </div>
-            
-//           </div>
-//         </div>
-//         {/* <Footer /> */}
-//       </div>
-//       {isLoading && <FullLoading /> }
-//     </>
-//   );
-// };
+import PrivacyPolicy from "./page/PrivacyPolicy";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -63,11 +27,7 @@ const App = () => {
 
     if(localData) setUserData(JSON.parse(localData));
     //if(isAuth) setIsAuthenticated(isAuth === 'true' ? true : false);
-  }, [])
-
-  // useEffect(() => {
-
-  // }. [])
+  }, []);
 
   return (
     <Router>
@@ -100,6 +60,7 @@ const App = () => {
             </ProtectedRoute>
           } />
           <Route path="*" element={<NotFound />} />
+          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
         </Routes>
       </Layout>
     </Router>

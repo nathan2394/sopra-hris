@@ -88,6 +88,7 @@ const AuthPage = ({setAuth}) => {
                         {/* <div className="bg-[#ddd] my-4 h-[1px]" /> */}
 
                         <Button text={'Sign In with Google'} position={"center"} bgcolor={'white'} color={'black'} icon={google} handleAction={() => login()} />
+                        <Link to={'/privacypolicy'}> <p className={`text-xs underline text-[${baseColor}] pt-2`}>Privacy Policy</p> </Link>
                     </div>
                 </div>
             </div>
