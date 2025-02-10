@@ -1,4 +1,4 @@
-const Input = ({label, setName, type, placeholder, setWidth = '100%', handleAction, value = '', textAlign = 'left', readOnly = false}) => {
+const Input = ({label, setName, type, placeholder, sufix, setWidth = '100%', handleAction, value = '', textAlign = 'left', readOnly = false}) => {
     
     const formatDate = (dateString) => {
         return dateString ? dateString.split("T")[0] : null; // Extracts only 'YYYY-MM-DD'
@@ -11,7 +11,18 @@ const Input = ({label, setName, type, placeholder, setWidth = '100%', handleActi
         // </div>
         <div className="mb-5" style={{width: setWidth }}>
             {label && <label className="block mb-2 text-xs font-medium text-gray-900">{label}</label> }
-            <input type={type} value={type === 'date' ? formatDate(value) || null : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`} placeholder={placeholder} onChange={handleAction ? handleAction : null} required disabled={readOnly} />
+            {sufix ? 
+                <div className="flex">
+                    <span class="inline-flex items-center px-3 text-sm border border-gray-300 rounded-l-lg">
+                        <p className="text-xs">{sufix}</p>
+                    </span>
+                    <input type={type} value={type === 'date' ? formatDate(value) || null : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-r-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`} placeholder={placeholder} onChange={handleAction ? handleAction : null} required disabled={readOnly} />
+                </div>
+            : 
+                <div className="flex">
+                    <input type={type} value={type === 'date' ? formatDate(value) || null : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`} placeholder={placeholder} onChange={handleAction ? handleAction : null} required disabled={readOnly} />
+                </div>
+            }
         </div>
     )
 }
