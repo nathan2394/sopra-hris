@@ -41,6 +41,7 @@ const AuthPage = ({setAuth}) => {
                             localStorage.setItem('statusAuth', true);
                             localStorage.setItem('userToken', res?.token);
                             localStorage.setItem('userdata', JSON.stringify(res.data));
+                            //setUserData(res.data);
                             navigate('/');
                         }
                     });

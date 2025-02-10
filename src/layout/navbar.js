@@ -5,10 +5,11 @@ import React, { useState } from "react";
 import Button from "../component/button";
 import { baseColor } from "../config/setting";
 
-const Navbar = ({setAuth, userData}) => {
+const Navbar = ({setAuth}) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [openSideBar, setOpenSideBar] = useState(false);
+  const userData = JSON.parse(localStorage.getItem('userdata'));
   const listMenu = [
     {
         title: 'Master Payroll',
@@ -67,6 +68,7 @@ const Navbar = ({setAuth, userData}) => {
                         setAuth(false);
                         localStorage.removeItem('statusAuth');
                         localStorage.removeItem('userToken');
+                        localStorage.removeItem('userdata');
                         navigate('/login');
                       }}>
                         <p className="text-xs">Log Out</p>
