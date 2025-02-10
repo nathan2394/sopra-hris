@@ -4,6 +4,7 @@ export const logout = '/icon/logout.svg';
 export const user = '/icon/user.svg';
 export const excel = '/icon/file_excel.svg';
 // export const download = '/icon/arrow_down_dwnld.svg';
+export const save = 'icon/save.png';
 export const download = '/icon/download.png';
 export const upload = '/icon/upload.png';
 export const exportData = '/icon/export.png';
