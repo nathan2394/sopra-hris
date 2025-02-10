@@ -281,7 +281,7 @@ const EmployeeForm = () => {
                                         <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.uFunctional)}</p></div>
                                         <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.utKhusus)}</p></div>
                                         <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.utOperational)}</p></div>
-                                        <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.utOperational)}</p></div>
+                                        <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.uMasaKerja)}</p></div>
                                         <div className={`w-full p-2 bg-[#ffffff] border border-[#ddd] ${masterPayroll?.length === idx+1 ? 'rounded-br-lg' : ''}`}><p className="text-xs text-end">{formatText(val?.bpjs)}</p></div>
                                     </div>
                                 </>))}

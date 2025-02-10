@@ -32,7 +32,6 @@ const Layout = ({ children, setAuth, isLoading = false }) => {
       <div style={{ maxWidth: "2000px", margin: "0 auto" }}>
         <div className="bg-[#F5F5F5]" style={{ display: "flex", height: "100vh", flexDirection: "column" }}>
           <Navbar setAuth={setAuth} userData={userData} />
-          {/* <Sidebar /> */}
           <div style={{ zIndex: 99 }}>
             <div style={{ padding: "20px", paddingTop: "5.5rem" }}>
               <div className="px-5 max-w-full">{children}</div>

@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Button from "../component/button";
 import Table from "../component/table";
 import { coverDate, exportToExcel, formatText, getCurrentDate, getMonthName } from "../config/helper";
-import { arrow_green, close, download, empty, excel, payroll, reload, upload } from "../config/icon";
+import { arrow_green, close, download, empty, excel, payroll, reload, save, upload } from "../config/icon";
 import IconImage from "../component/icon_img";
 import { loadData, postFormData } from "../config/api";
 import LoadingIndicator from "../component/loading_indicator";
@@ -80,7 +80,8 @@ const MasterPayroll = ({setIsLoading}) => {
     formData.append('file', fileInputRef.current.files[0]);
     handleReloadUpload(formData);
     setLoadUpload(true);
-    setIsUpload(false);
+    // setIsUpload(false);
+    // fileInputRef.current.click();
   }
 
   const chooseFile = () => {
@@ -187,10 +188,6 @@ const MasterPayroll = ({setIsLoading}) => {
     {label: "Bank", value: "bank"}
   ];
 
-  // useEffect(() => {
-  //   console.log('trigger');
-  // }, [exportType])
-
   return (
     <>
       <TitlePage label={'Master Payroll'} source={payroll} isAction={false} />
@@ -198,7 +195,7 @@ const MasterPayroll = ({setIsLoading}) => {
         <div className="flex flex-row items-center w-full">
           {/* <SearchableSelect placeHolder = 'Periode' setWidth="auto" options={months}  />
           <div className="mx-1" /> */}
-          <Button text={'Download Form'} setWidth="auto" bgcolor={baseColor} color={'white'} isLoading={isLoadTemplate} handleAction={() => downloadTemplate()} icon={download} />
+          <Button text={'Unduh Form'} setWidth="auto" bgcolor={baseColor} color={'white'} isLoading={isLoadTemplate} handleAction={() => downloadTemplate()} icon={download} />
         </div>
         <div className="flex flex-row items-center justify-end w-full">
           <SearchableSelect placeHolder = 'Select Export Type' setWidth="185px" value={exportType} setValue={setExportType} options={exportTypes}  />
@@ -207,39 +204,68 @@ const MasterPayroll = ({setIsLoading}) => {
         </div>
       </div>
 
-      {isUpload &&
-        <div className="my-4">
-          <p className="font-bold text-sm mb-1">Summary:</p>
-          <div className="w-full overflow-x-auto">
-            <div className="flex flex-row bg-[#ddd] w-full rounded-t-lg">
-              <div className="w-full p-2 border border-[#ddd] rounded-t-lg"><p className="text-sm font-semibold">Division</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold">Amt Transfer (Rp)</p></div>
-              <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold">COUNT (#pax)</p></div>
-              <div className="w-full p-2 border border-[#ddd] rounded-t-lg"><p className="text-sm font-semibold">AVG (Amt/Cnt)</p></div>
-            </div>
-            {dataUploadSummary?.map((val, idx) => (
-              <div className="flex flex-row bg-[#eee] w-full" key={idx}>
-                <div className="w-full p-2 border border-[#ddd]"><p className="text-xs font-semibold uppercase">{formatText(val?.departmentName)}</p></div>
-                <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.amountTransfer)}</p></div>
-                <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.countEmployee)}</p></div>
-                <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.avgAmountEmployee)}</p></div>
-              </div>
-            ))}
-            {dataUploadTotal?.map((val, idx) => (
-              <div className="flex flex-row bg-[#ddd] w-full rounded-b-lg" key={idx}>
-                <div className="w-full p-2 border border-[#ddd] rounded-b-lg"><p className="text-sm font-semibold">Total</p></div>
-                <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold text-end">{formatText(val?.amountTransfer)}</p></div>
-                <div className="w-full p-2 border border-[#ddd]"><p className="text-sm font-semibold text-end">{formatText(val?.countEmployee)}</p></div>
-                <div className="w-full p-2 border border-[#ddd] rounded-b-lg"><p className="text-sm font-semibold text-end">{formatText(val?.avgAmountEmployee)}</p></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      }
+      <input className="hidden" ref={fileInputRef} type="file" accept=".csv, .xlsx, .xls" onChange={handleInputChange} />
 
       {isUpload ?
-        <div className="w-full overflow-x-auto">
-          <Table dataTable={dataUploadTable} />
+        <div className="flex flex-row justify-between w-full">
+          <div className="flex flex-col mt-2 mr-2 w-[65%]">
+            <div className="bg-white rounded-lg p-4 w-full">
+              <p className="font-bold text-sm">{'Rincian Informasi Payroll'}</p>
+              <div className="bg-[#ddd] my-3 h-[1.5px]" />
+              <div className="min-h-[180px]">
+                <div className="flex flex-row items-start">
+                  <p className="font-normal text-xs pb-2 w-[100px]">Periode Payroll</p>
+                  <p className="font-normal text-xs pb-2 w-[10px]">:</p>
+                  <p className="font-normal text-xs pb-2">{period}</p>
+                </div>
+                <div className="flex flex-row items-start">
+                  <p className="font-normal text-xs pb-2 w-[100px]">Jumlah Hari</p>
+                  <p className="font-normal text-xs pb-2 w-[10px]">:</p>
+                  <p className="font-normal text-xs pb-2">{dataUploadTable?.[0]?.hks || 0}</p>
+                </div>
+                {/* <div className="flex flex-row items-start">
+                  <p className="font-normal text-xs pb-2 w-[100px]">Jumlah Karyawan</p>
+                  <p className="font-normal text-xs pb-2 w-[10px]">:</p>
+                  <p className="font-normal text-xs pb-2">{dataUploadTotal?.[0]?.hks || 0}</p>
+                </div> */}
+              </div>
+              <div className="bg-[#ddd] my-3 h-[1.5px]" />
+              <div className="flex flex-row justify-end">
+                <Button text={'Upload Ulang'} setWidth={'auto'} bgcolor={'white'} showBorder={true} color={baseColor} handleAction={() => reloadFile()} icon={reload} />
+                {/* <div className="mx-1" />
+                <Button text={'Simpan Data'} setWidth={'auto'} bgcolor={baseColor} showBorder={true} color={'white'} handleAction={() => chooseFile()} icon={save} /> */}
+              </div>
+            </div>
+
+            <div className="w-full overflow-x-auto mt-4">
+              <div className="flex flex-row bg-[#333333c3] text-white w-full rounded-t-lg">
+                <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs font-semibold">Division</p></div>
+                <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs font-semibold">Amt Transfer (Rp)</p></div>
+                <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs font-semibold">COUNT (#pax)</p></div>
+                <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs font-semibold">AVG (Amt/Cnt)</p></div>
+              </div>
+              {dataUploadSummary?.map((val, idx) => (
+                <div className="flex flex-row bg-[#fff] w-full" key={idx}>
+                  <div className="w-full p-2 bg-[#333333c3] text-white border border-[#ffffff11]"><p className="text-xs font-semibold uppercase">{formatText(val?.departmentName)}</p></div>
+                  <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.amountTransfer)}</p></div>
+                  <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.countEmployee)}</p></div>
+                  <div className="w-full p-2 border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.avgAmountEmployee)}</p></div>
+                </div>
+              ))}
+              {dataUploadTotal?.map((val, idx) => (
+                <div className="flex flex-row bg-[#3333337e] text-white w-full rounded-b-lg" key={idx}>
+                  <div className="w-full p-2 bg-[#333333c3] text-center border border-[#ffffff11] rounded-bl-lg"><p className="text-xs font-semibold">Total</p></div>
+                  <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs font-semibold text-end">{formatText(val?.amountTransfer)}</p></div>
+                  <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs font-semibold text-end">{formatText(val?.countEmployee)}</p></div>
+                  <div className="w-full p-2 border border-[#ffffff11] rounded-br-lg"><p className="text-xs font-semibold text-end">{formatText(val?.avgAmountEmployee)}</p></div>
+                </div>
+              ))}
+            </div>
+
+          </div>
+          <div className="w-full h-[560px] overflow-x-auto">
+            <Table dataTable={dataUploadTable} />
+          </div>
         </div>
         :
         <div className="border border-[#ddd] bg-[#ffffff] rounded-lg w-full my-2 min-h-[400px] flex flex-col items-center justify-center p-6">
@@ -247,15 +273,16 @@ const MasterPayroll = ({setIsLoading}) => {
             <LoadingIndicator position="bottom" label="Calculate..." showText={true} size="large" />
             :
             <div className="flex flex-col items-center justify-center p-6">
-              <img className="w-[28%] mx-auto" alt="logo" src={empty} />
-              <p className="font-bold text-sm">Opps, Nothing to See Here!</p>
-              <p className="font-normal text-xs text-center w-[300px] text-gray-500">Nothing to see here yet. Please upload your payroll form by clicking the “Upload Form” button.</p>
+              <p className="font-bold text-lg py-4">Upload Data Disini</p>
+              <p className="font-normal text-xs text-center w-[300px] text-gray-500">Silahkan pilih “Unggah Form” untuk mengunggah form yang sudah diisi dengan data terbaru. Pastikan form sudah sama dengan form yang diunduh melalui “Unduh Form”.</p>
+              <div className="my-4" />
+              <Button text={'Unggah Form'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={() => chooseFile()} icon={upload} />
             </div>
           }
         </div>
       }
 
-      <div className="flex flex-row justify-between items-center pt-2">
+      {/* <div className="flex flex-row justify-between items-center pt-2">
         <p className="font-bold text-sm">Payroll Period : <span className="font-semibold text-gray-500">{period}</span></p>
         <div className="flex flex-row">
           <div style={ !isUpload ? { opacity: '0.3', pointerEvents: 'none' } : {}}>
@@ -265,11 +292,10 @@ const MasterPayroll = ({setIsLoading}) => {
           <Button text={'Upload Form'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={() => chooseFile()} icon={upload} />
           <input className="hidden" ref={fileInputRef} type="file" accept=".csv, .xlsx, .xls" onChange={handleInputChange} />
         </div>
-      </div>
+      </div> */}
 
     </>
   );
 };
   
-  export default MasterPayroll;
-  
+export default MasterPayroll;  
