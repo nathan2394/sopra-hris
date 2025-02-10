@@ -27,7 +27,7 @@ const App = () => {
 
     if(localData) setUserData(JSON.parse(localData));
     //if(isAuth) setIsAuthenticated(isAuth === 'true' ? true : false);
-  }, []);
+  }, [userData]);
 
   return (
     <Router>
