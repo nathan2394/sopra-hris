@@ -15,6 +15,7 @@ import FullLoading from "./component/fullLoading";
 import ReportDetail from "./page/ReportDetail";
 import Layout from "./layout/layout";
 import PrivacyPolicy from "./page/PrivacyPolicy";
+import EmployeeReport from "./page/Employee/EmployeeSalaryReport";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -47,6 +48,11 @@ const App = () => {
           <Route path="/employee/detail" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <EmployeeForm setIsLoading={setIsLoading} />
+            </ProtectedRoute>
+          } />
+          <Route path="/employee/salaryreport" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <EmployeeReport setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
           <Route path="/report/detail" element={
