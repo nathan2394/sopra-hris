@@ -8,7 +8,7 @@ import { baseColor } from "../config/setting";
 import axios from 'axios';
 import { postData } from "../config/api";
 
-const AuthPage = ({setAuth, setUserData}) => {
+const AuthPage = ({setAuth}) => {
     const [ user, setUser ] = useState([]);
     const isLoggedIn = localStorage.getItem("statusAuth");
 
