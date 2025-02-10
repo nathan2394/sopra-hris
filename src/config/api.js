@@ -18,7 +18,6 @@ export const loadData = async ({ url, params = [] }) => {
     }
     
     try {
-        console.log('User Token:', userToken); // Debugging
         const result = await axios.get(`${api_endpoint}/${url}${paramsUrl}`, {
             headers: {
                 'Authorization': `Bearer ${userToken}`,

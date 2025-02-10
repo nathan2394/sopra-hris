@@ -52,13 +52,26 @@ export const coverDate = (val, displayYear = 'default') => {
         const inputDate = val;
         const date = new Date(inputDate);
     
-        const day = date.getDate().toString().padStart(2, "0");;
-        const month = date.toLocaleString("en-GB", { month: "short" });
-        const year = displayYear !== 'default' ? date.getFullYear().toString().slice(-2) : date.getFullYear().toString();
+        if(displayYear !== 'default'){
+            let day = date.getDate();
+            let month = date.getMonth() + 1; // Months are zero based
+            let year = date.getFullYear().toString().slice(-2); // Get last two digits of year
+          
+            // Pad day and month with leading zeros if needed
+            day = day < 10 ? '0' + day : day;
+            month = month < 10 ? '0' + month : month;
+          
+            // Return formatted date
+            return `${day}/${month}/${year}`;
+        }else{            
+            const day = date.getDate().toString().padStart(2, "0");;
+            const month = date.toLocaleString("en-GB", { month: "short" });
+            const year = displayYear !== 'default' ? date.getFullYear().toString().slice(-2) : date.getFullYear().toString();
+            
+            const formattedDate = `${day}-${month}-${year}`;
         
-        const formattedDate = `${day}-${month}-${year}`;
-    
-        return formattedDate;
+            return formattedDate;
+        }
     }
     return val;
 }

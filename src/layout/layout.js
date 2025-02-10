@@ -3,8 +3,9 @@ import { useLocation } from "react-router-dom";
 import Navbar from "./navbar";
 import FullLoading from "../component/fullLoading";
 
-const Layout = ({ children, setAuth, userData, isLoading = false }) => {
+const Layout = ({ children, setAuth, isLoading = false }) => {
   const location = useLocation();
+  const userData = JSON.parse(localStorage.getItem('userdata'));
 
   // Define routes that should NOT use the full layout
   const excludedPaths = ["/login"];

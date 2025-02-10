@@ -10,6 +10,10 @@ const SearchableSelect = ({label, placeHolder = 'Select...', options, value, set
     }
   }, [value])
 
+  useEffect(() => {
+    if(setValue) setValue(selectedOption?.value)
+  }, [selectedOption])
+
   return (
     <div className={label ? 'mb-5' : ''} style={{width: setWidth }}>
         {label && <label className="block mb-2 text-xs font-medium text-gray-900">{label}</label> }

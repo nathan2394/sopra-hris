@@ -18,20 +18,20 @@ import PrivacyPolicy from "./page/PrivacyPolicy";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userData, setUserData] = useState({});
+  // const [userData, setUserData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const localData = localStorage.getItem('userdata');
-    //const isAuth = localStorage.getItem('statusAuth');
+  // useEffect(() => {
+  //   const localData = localStorage.getItem('userdata');
+  //   //const isAuth = localStorage.getItem('statusAuth');
 
-    if(localData) setUserData(JSON.parse(localData));
-    //if(isAuth) setIsAuthenticated(isAuth === 'true' ? true : false);
-  }, [userData]);
+  //   if(localData) setUserData(JSON.parse(localData));
+  //   //if(isAuth) setIsAuthenticated(isAuth === 'true' ? true : false);
+  // }, []);
 
   return (
     <Router>
-      <Layout setAuth={setIsAuthenticated} userData={userData} isLoading={isLoading}>
+      <Layout setAuth={setIsAuthenticated} isLoading={isLoading}>
         <Routes>
           <Route path="/login" element={<AuthPage setAuth={setIsAuthenticated} />} />
           <Route path="/" element={
