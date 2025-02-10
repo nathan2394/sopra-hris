@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import Button from "../component/button";
 import Table from "../component/table";
@@ -88,6 +88,7 @@ const MasterPayroll = ({setIsLoading}) => {
   }
 
   const exportFile = (type, event) => {
+    console.log(exportType, type)
     if (event) {
       event.preventDefault();
     }
@@ -186,17 +187,21 @@ const MasterPayroll = ({setIsLoading}) => {
     {label: "Bank", value: "bank"}
   ];
 
+  // useEffect(() => {
+  //   console.log('trigger');
+  // }, [exportType])
+
   return (
     <>
       <TitlePage label={'Master Payroll'} source={payroll} isAction={false} />
       <div className="flex flex-row justify-between items-center pt-1">
         <div className="flex flex-row items-center w-full">
-          <SearchableSelect placeHolder = 'Periode' setWidth="auto" options={months}  />
-          <div className="mx-1" />
+          {/* <SearchableSelect placeHolder = 'Periode' setWidth="auto" options={months}  />
+          <div className="mx-1" /> */}
           <Button text={'Download Form'} setWidth="auto" bgcolor={baseColor} color={'white'} isLoading={isLoadTemplate} handleAction={() => downloadTemplate()} icon={download} />
         </div>
         <div className="flex flex-row items-center justify-end w-full">
-          <SearchableSelect placeHolder = 'Select Export Type' setWidth="185px" options={exportTypes}  />
+          <SearchableSelect placeHolder = 'Select Export Type' setWidth="185px" value={exportType} setValue={setExportType} options={exportTypes}  />
           <div className="mx-1" />
           <Button text={'Export Data'} setWidth={'auto'} bgcolor={baseColor} color={'white'} isLoading={isLoadExport} handleAction={(e) => exportFile(exportType, e)} />
         </div>
