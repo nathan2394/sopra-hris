@@ -11,7 +11,7 @@ const Layout = ({ children, setAuth, isLoading = false }) => {
   const excludedPaths = ["/login"];
 
   // Define known valid paths
-  const validPaths = ["/", "/report/detail", "/report", "/employee", "/employee/detail"];
+  const validPaths = ["/", "/report/detail", "/report", "/employee", "/employee/detail", "/employee/salaryreport"];
 
   // Get the actual path considering HashRouter (if applicable)
   const currentPath = location.pathname + (location.hash ? location.hash.replace("#", "") : "");

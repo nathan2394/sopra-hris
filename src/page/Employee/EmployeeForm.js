@@ -10,7 +10,7 @@ import SearchableSelect from "../../component/select2";
 import MyDatePicker from "../../component/date_picker";
 
 const EmployeeForm = () => {
-
+    const getId = getQueryParam("id");
     const [isAdd] = useState(getQueryParam("action") === 'add' ? true : false);
 
     const [formData, setFormData] = useState({
@@ -54,8 +54,18 @@ const EmployeeForm = () => {
     const [isEdit, setIsEdit] = useState(false);
     const [isReadOnly, setIsReadOnly] = useState(true);
 
+    const subMenu = [
+        {
+            title: 'Data Personal',
+            navRoute: `/employee/detail?id=`+getId,
+        },
+        {
+            title: 'Data Gaji Bulanan',
+            navRoute: '/employee/salaryreport?id='+getId,
+        }
+    ];
+
     useEffect(()=> {
-        const getId = getQueryParam("id");
         if(getId){
             loadData({url: `Employees/${getId}`}).then((res) => {
                 if(res?.data){
@@ -158,7 +168,7 @@ const EmployeeForm = () => {
 
     return (
         <>
-            <TitlePage label={'Data Karyawan'} subLabel={'Data Personal'} source={employee} type={'detail'} setNavigateBack={`/employee`} />
+            <TitlePage label={'Data Karyawan'} subLabel={'Data Personal'} subMenu={subMenu} source={employee} type={'detail'} setNavigateBack={`/employee`} />
             <div className="flex flex-row justify-between">
                 <div className="bg-white rounded-lg p-4 w-full mr-2">
                     <p className="font-bold text-sm">{'Detil Data Karyawan'}</p>

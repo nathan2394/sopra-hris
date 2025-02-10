@@ -232,8 +232,8 @@ const MasterPayroll = ({setIsLoading}) => {
               <div className="bg-[#ddd] my-3 h-[1.5px]" />
               <div className="flex flex-row justify-end">
                 <Button text={'Upload Ulang'} setWidth={'auto'} bgcolor={'white'} showBorder={true} color={baseColor} handleAction={() => reloadFile()} icon={reload} />
-                {/* <div className="mx-1" />
-                <Button text={'Simpan Data'} setWidth={'auto'} bgcolor={baseColor} showBorder={true} color={'white'} handleAction={() => chooseFile()} icon={save} /> */}
+                <div className="mx-1" />
+                <Button text={'Simpan Data'} setWidth={'auto'} bgcolor={baseColor} showBorder={true} color={'white'}  icon={save} />
               </div>
             </div>
 

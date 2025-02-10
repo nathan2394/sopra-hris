@@ -4,22 +4,8 @@ import Button from "./button";
 import IconImage from "./icon_img";
 import { Link, useNavigate } from 'react-router-dom';
 
-const TitlePage = ({label, subLabel = '', source, type = 'header', setNavigateBack, isAction = false, handleSearch = false, handleFilter = false, handleExport = false, handleAdd = false }) => { 
+const TitlePage = ({label, subLabel = '', subMenu = [], source, type = 'header', setNavigateBack, isAction = false, handleSearch = false, handleFilter = false, handleExport = false, handleAdd = false }) => { 
     const navigate = useNavigate();
-    const menu = [
-        // {
-        //     title: 'Master Payroll',
-        //     navRoute: '/',
-        // },
-        // {
-        //     title: 'Employee Data',
-        //     navRoute: '/employee',
-        // },
-        // {
-        //     title: 'Report Salary',
-        //     navRoute: '/report'
-        // }
-    ];
 
     return (
         <>
@@ -30,16 +16,25 @@ const TitlePage = ({label, subLabel = '', source, type = 'header', setNavigateBa
                         <p className="font-bold text-sm pl-2">{label}</p>
                     </div>
                 :
-                    <div className="flex flex-row items-center">
-                        <Link to={setNavigateBack}>
-                            <div className="flex flex-row items-center">
-                                <IconImage size="small" source={source} />
-                                <p className="font-bold text-sm pl-2">{label}</p>
-                            </div>
-                        </Link>
-                        <p className="font-bold text-sm px-2">{`>`}</p>
-                        <p className="font-bold text-sm pl-2 underline">{subLabel}</p>
-                    </div>
+                    <>
+                        <div className="flex flex-row items-center">
+                            <Link to={setNavigateBack}>
+                                <div className="flex flex-row items-center">
+                                    <IconImage size="small" source={source} />
+                                    <p className="font-bold text-sm pl-2">{label}</p>
+                                </div>
+                            </Link>
+                            <p className="font-bold text-sm px-2">{`>`}</p>
+                            <p className="font-bold text-sm pl-2 underline">{subLabel}</p>
+                        </div>
+                        <div className="flex flex-row">
+                            {subMenu?.map((data, idx) => (
+                                <div className="ml-2" key={idx}>
+                                    <Button bgcolor={subLabel === data?.title ? baseColor : '#33333340'} color={'white'} text={data?.title} handleAction={() => navigate(data?.navRoute)} />
+                                </div>
+                            ))}
+                        </div>
+                    </>
                 } 
                 {(type === 'header' && isAction) &&                
                     <div className="flex flex-row items-center">
