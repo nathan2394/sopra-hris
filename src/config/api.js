@@ -1,11 +1,9 @@
 import axios from 'axios';
 
-const userToken = localStorage.getItem('userToken');
-
 export const loadData = async ({ url, params = [] }) => {
-    // const api_endpoint = process.env.API_ENDPOINT;
+    const userToken = localStorage.getItem('userToken'); // Fetch inside function
     const api_endpoint = 'https://sopra-hris.mixtra.co.id';
-    //console.log(api_endpoint)
+
     let paramsUrl = '';
     try {
         if(params.length > 0) {
@@ -20,12 +18,12 @@ export const loadData = async ({ url, params = [] }) => {
     }
     
     try {
-        // console.log(`${api_endpoint}/${url}${paramsUrl}`);
+        console.log('User Token:', userToken); // Debugging
         const result = await axios.get(`${api_endpoint}/${url}${paramsUrl}`, {
             headers: {
                 'Authorization': `Bearer ${userToken}`,
             },
-        })
+        });
         return Promise.resolve(result.data);
     } catch (err) {
         console.error(err);
@@ -36,7 +34,9 @@ export const loadData = async ({ url, params = [] }) => {
     }
 };
 
+
 export const postData = async ({url, formData = null}) => {
+    const userToken = localStorage.getItem('userToken');
     const api_endpoint = 'https://sopra-hris.mixtra.co.id';
 
     try {
@@ -57,6 +57,7 @@ export const postData = async ({url, formData = null}) => {
 };
 
 export const postFormData = async ({url, formData = null}) => {
+    const userToken = localStorage.getItem('userToken');
     const api_endpoint = 'https://sopra-hris.mixtra.co.id';
 
     try {
@@ -78,6 +79,7 @@ export const postFormData = async ({url, formData = null}) => {
 };
 
 export const deleteData = async ({ url, id }) => {
+    const userToken = localStorage.getItem('userToken');
     const api_endpoint = 'https://sopra-hris.mixtra.co.id';
     try {
         let res;
