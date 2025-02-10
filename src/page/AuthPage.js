@@ -68,21 +68,19 @@ const AuthPage = ({setAuth}) => {
 
                 <div className="px-4 pt-6">
                     <div className="max-w-sm mx-auto w-full">
-                        <Input type={'text'} placeholder={"Username"} />
-                        <Input type={'password'} placeholder={"Password"} />
-                        <div className="flex flex-row items-center justify-between mb-5">
+                        <Input type={'text'} sufix={'+62'} placeholder={"858xxxx"} />
+                        {/* <div className="flex flex-row items-center justify-between mb-5">
                             <div className="flex items-start">
                                 <div className="flex items-center h-5">
                                 <input id="remember" type="checkbox" value="" className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required />
                                 </div>
                                 <label className="ms-2 text-sm font-medium text-black">Remember me</label>
                             </div>
-                            {/* <Link to='#' className="ms-2 text-sm font-medium underline text-[#EA2427]">Forgot Password</Link> */}
-                        </div>
+                        </div> */}
 
                         <div className="bg-[#ddd] my-4 h-[1px]" />
 
-                        <Button text={'log In'} position={"center"} showBorder={true} bgcolor={baseColor} color={'white'} handleAction={handleLogin} />
+                        <Button text={'Send OTP'} position={"center"} showBorder={true} bgcolor={baseColor} color={'white'} handleAction={handleLogin} />
                         {/* <Button text={'Create Account'} position={"center"} showBorder={true} bgcolor={'white'} color={baseColor} /> */}
 
                         {/* <div className="bg-[#ddd] my-4 h-[1px]" /> */}
