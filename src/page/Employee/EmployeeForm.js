@@ -29,6 +29,7 @@ const EmployeeForm = () => {
         groupID: '',
         accountNo: '',
         bank: '',
+        payrollType: '',
         bpjstk: '0',
         bpjskes: '0',
         tkStatus: '',
@@ -86,6 +87,7 @@ const EmployeeForm = () => {
                         departmentID: res?.data?.departmentID || '-',
                         accountNo: res?.data?.accountNo || '-',
                         bank: res?.data?.bank || '-',
+                        payrollType: res?.data?.payrollType || '-',
                         bpjstk: res?.data?.bpjstk || '0',
                         bpjskes: res?.data?.bpjskes || '0',
                         taxStatus: res?.data?.taxStatus || '',
@@ -94,7 +96,9 @@ const EmployeeForm = () => {
                         basicSalary: res?.data?.basicSalary || '-',
                         employeeTypeID: res?.data?.employeeTypeID,
                         employeeJobTitleName: res?.data?.employeeJobTitleName || '-',
-                    })
+                    });
+
+
                 }
             });
 
@@ -155,6 +159,7 @@ const EmployeeForm = () => {
                 }
             )));
         })
+
     }, []);
   
 
@@ -215,13 +220,6 @@ const EmployeeForm = () => {
                                 <Input readOnly={isAdd ? false : isReadOnly}  label={'Job Title'} type={'text'} value={formData?.employeeJobTitleName} />
                             </div>
                             <div className="flex flex-row w-full">
-                                <SearchableSelect label={'Departemen'} placeHolder={'Select Departmen'} options={listDepart} value={formData?.departmentID} isDisabled={isAdd ? false : isReadOnly} />
-                                <div className="mx-2" />
-                                <SearchableSelect label={'Divisi'} placeHolder={'Select Division'} options={listDiv} value={formData?.divisionID} isDisabled={isAdd ? false : isReadOnly} />
-                                <div className="mx-2" />
-                                <Input readOnly={isAdd ? false : isReadOnly}  label={'Job Title'} type={'text'} value={formData?.employeeJobTitleName} />
-                            </div>
-                            <div className="flex flex-row w-full">
                                 <SearchableSelect label={'Type'} placeHolder={'Select Type'} options={listType} value={formData?.employeeTypeID} isDisabled={isAdd ? false : isReadOnly} />
                                 <div className="mx-2" />
                                 <Input readOnly={isAdd ? false : isReadOnly} label={'Account No.'} type={'text'} value={formatText(formData?.accountNo)} />
@@ -266,15 +264,15 @@ const EmployeeForm = () => {
                         <div className="flex flex-col bg-[#333333c3] min-w-[200px] rounded-l-lg">
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-center font-semibold text-white">Year</p></div>
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">THP</p></div>
-                            <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">Basic Salary</p></div>
+                            <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">{`Basic Salary (${formData?.payrollType?.toLowerCase()})`}</p></div>
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">Tunjangan</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Makan (/hari)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Transport (/hari)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Jabatan (/hari)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Functional (/bln)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Khusus (/hari)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Operasional (/hari)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`TMK (/bln)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Makan (Rp/hari x 23)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Transport (Rp/hari x 23)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Jabatan (Rp/hari x 23)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Functional (Rp/bln)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Khusus (Rp/hari x 23)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Operasional (Rp/hari x 23)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`TMK (Rp/bln)`}</p></div>
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">BPJS</p></div>
                         </div>
                         {masterPayroll?.length > 0 ? 
