@@ -199,6 +199,12 @@ const EmployeeData = ({setIsLoading}) => {
         });
     };
 
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter") {
+            submitSearch();
+        }
+      };
+
     const removeFilters = (target) => {
         if(target){
             const arrFilter = listFilter?.filter(val => !val?.includes(target))
@@ -298,7 +304,7 @@ const EmployeeData = ({setIsLoading}) => {
                 {/* <!-- Modal body --> */}
                 <div className="p-6">
                     <div className="flex flex-col">
-                        <Input label={'Name'} setName='name' value={searchInput.name} type={'text'} placeholder={"Search Employee Name..."} handleAction={handleChange} />
+                        <Input label={'Name'} isFocus={true} setName='name' value={searchInput.name} type={'text'} placeholder={"Search Employee Name..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
                         <div className="mx-2" />
                         <Input label={'NIK'} setName='nik' value={searchInput.nik} type={'text'} placeholder={"Search Employee NIK..."} handleAction={handleChange} />
                         <div className="mx-2" />
@@ -421,7 +427,9 @@ const EmployeeData = ({setIsLoading}) => {
 
     return (
         <>
-            <TitlePage label={'Employee Data'} source={employee} isAction={true} handleAdd={() => navigate('/employee/detail?action=add')} handleSearch={() => openModal()} handleExport={(e) => exportFile('default', e)} handleFilter={() => openModalFilter()} />
+            <TitlePage label={'Employee Data'} source={employee} isAction={true} handleAdd={() => navigate('/employee/detail?action=add')} handleSearch={() => {
+                openModal();
+            }} handleExport={(e) => exportFile('default', e)} handleFilter={() => openModalFilter()} />
             <div>
                 {isFilter &&                
                     <div className="mt-4 flex flex-row items-center">
