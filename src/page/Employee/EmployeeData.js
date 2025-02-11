@@ -306,9 +306,9 @@ const EmployeeData = ({setIsLoading}) => {
                     <div className="flex flex-col">
                         <Input label={'Name'} isFocus={true} setName='name' value={searchInput.name} type={'text'} placeholder={"Search Employee Name..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
                         <div className="mx-2" />
-                        <Input label={'NIK'} setName='nik' value={searchInput.nik} type={'text'} placeholder={"Search Employee NIK..."} handleAction={handleChange} />
+                        <Input label={'NIK'} setName='nik' value={searchInput.nik} type={'text'} placeholder={"Search Employee NIK..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
                         <div className="mx-2" />
-                        <Input label={'No. KTP'} setName='ktp' value={searchInput.ktp} type={'text'} placeholder={"Search Employee No. KTP..."} handleAction={handleChange} />
+                        <Input label={'No. KTP'} setName='ktp' value={searchInput.ktp} type={'text'} placeholder={"Search Employee No. KTP..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
                     </div>
                     <div className="flex flex-row w-full">
                         <Button text="Close" setWidth={'full'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => closeModal()} />
