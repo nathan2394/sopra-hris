@@ -266,13 +266,13 @@ const EmployeeForm = () => {
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">THP</p></div>
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">{`Basic Salary (${formData?.payrollType?.toLowerCase()})`}</p></div>
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">Tunjangan</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Makan (Rp/hari x 23)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Transport (Rp/hari x 23)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Jabatan (Rp/hari x 23)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Functional (Rp/bln)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Khusus (Rp/hari x 23)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`Operasional (Rp/hari x 23)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-start font-semibold text-white">{`TMK (Rp/bln)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Makan (Rp/hari x 23)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Transport (Rp/hari x 23)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Jabatan (Rp/hari x 23)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Functional (Rp/bln)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Khusus (Rp/hari x 23)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Operasional (Rp/hari x 23)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`TMK (Rp/bln)`}</p></div>
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">BPJS</p></div>
                         </div>
                         {masterPayroll?.length > 0 ? 
