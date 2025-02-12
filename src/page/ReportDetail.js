@@ -131,6 +131,10 @@ const ReportDetail = () => {
                 value: formData?.uMasaKerja
             },
             {
+                label: 'Lembur',
+                value: formData?.uLembur
+            },
+            {
                 label: `Transport (${formData?.att} hari x Rp. ${formatText(formData?.uHransport)})`,
                 value: formData?.uTransport
             },
