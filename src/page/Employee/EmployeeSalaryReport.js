@@ -92,7 +92,7 @@ const EmployeeReport = ({setIsLoading}) => {
             <div>
 
                 {!isLoadData ? 
-                    <Table dataTable={data} isAction={true} detailPath={'/report/detail?id='} />
+                    <Table dataTable={data} isAction={true} detailPath={`/salaryreport?employeeId=${getId}&id=`} />
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />
