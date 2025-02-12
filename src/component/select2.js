@@ -24,9 +24,9 @@ const SearchableSelect = ({label, placeHolder = 'Select...', options, value, set
             isSearchable
             placeholder={placeHolder}
             noOptionsMessage={() => "No options found"} 
-            isDisabled={isDisabled} 
+            // isDisabled={isDisabled} 
             classNames={{
-                control: () => "border border-gray-300 rounded-lg shadow-sm bg-white text-xs hover:border-blue-500 p-[2px]",
+                control: () => `border border-gray-300 rounded-lg shadow-sm bg-white text-xs hover:border-blue-500 p-[2px] ${isDisabled ? 'pointer-events-none bg-[]' : ''}`,
                 menu: () => "bg-white border border-gray-300 rounded-lg mt-1 text-xs shadow-lg",
                 option: ({ isFocused, isSelected }) =>
                     `px-4 py-2 cursor-pointer text-xs ${
@@ -34,7 +34,7 @@ const SearchableSelect = ({label, placeHolder = 'Select...', options, value, set
                 }`,
             }}
             styles={{
-                control: (base) => ({...base, borderRadius: '0.5rem'})
+                control: (base) => ({...base, borderRadius: '0.5rem', backgroundColor: isDisabled ? '#f4f2f2cc' : ''})
             }}
         />
     </div>

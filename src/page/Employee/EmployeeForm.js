@@ -66,101 +66,95 @@ const EmployeeForm = () => {
         }
     ];
 
-    useEffect(()=> {
-        if(getId){
-            loadData({url: `Employees/${getId}`}).then((res) => {
-                if(res?.data){
-                    setFormData({
-                        ...formData,
-                        name: res?.data?.employeeName || '-',
-                        nik: res?.data?.nik || '-',
-                        ktp: res?.data?.ktp || '-',
-                        gender: res?.data?.gender  || '-',
-                        religion: res?.data?.religion  || '-',
-                        email: res?.data?.email || '-',
-                        phoneNumber: res?.data?.phoneNumber || '-',
-                        placeOfBirth: res?.data?.placeOfBirth || '-',
-                        dateOfBirth: res?.data?.dateOfBirth || '-',
-                        startWorkingDate: res?.data?.startWorkingDate || '-',
-                        groupID: res?.data?.groupID,
-                        functionID: res?.data?.functionID  || '-',
-                        departmentID: res?.data?.departmentID || '-',
-                        accountNo: res?.data?.accountNo || '-',
-                        bank: res?.data?.bank || '-',
-                        payrollType: res?.data?.payrollType || '-',
-                        bpjstk: res?.data?.bpjstk || '0',
-                        bpjskes: res?.data?.bpjskes || '0',
-                        taxStatus: res?.data?.taxStatus || '',
-                        tkStatus: res?.data?.bpjskes || '',
-                        divisionID: res?.data?.divisionID || '-',
-                        basicSalary: res?.data?.basicSalary || '-',
-                        employeeTypeID: res?.data?.employeeTypeID,
-                        employeeJobTitleName: res?.data?.employeeJobTitleName || '-',
-                    });
-
-
-                }
-            });
-
-            loadData({url: `Salary/MasterSalaryByEmpID/${getId}`}).then((res) => {
-                if(res?.data?.length > 0){
-                    setMasterPayroll(res?.data);
-                }
-            })
-
-            loadData({url: `EmployeeDetails`, params: [{title: 'filter', value: `employee:${getId}`}]}).then((res) => {
-                if(res?.data?.length > 0){
-                    setAllowanceDeduction(res?.data);
-                }
-            })
-        }
-
-        loadData({url: 'EmployeeType'}).then((res) => {
-            setListType(res?.data?.map((data) => (
-                {
-                    value: data?.employeeTypeID,
-                    label: data?.name
-                }
-            )));
-        })
-
-        loadData({url: 'Functions'}).then((res) => {
-            setListFunc(res?.data?.map((data) => (
-                {
-                    value: data?.functionID,
-                    label: data?.name
-                }
-            )));
-        })
-
-        loadData({url: 'Groups'}).then((res) => {
-            setListGroup(res?.data?.map((data) => (
-                {
-                    value: data?.groupID,
-                    label: `${data?.type}` + `${data?.name ? ` - ${data?.name}` : ''}`
-                }
-            )));
-        })
-
-        loadData({url: 'Departments'}).then((res) => {
-            setListDepart(res?.data?.map((data) => (
-                {
-                    value: data?.departmentID,
-                    label: data?.name
-                }
-            )));
-        })
-
-        loadData({url: 'Divisions'}).then((res) => {
-            setListDiv(res?.data?.map((data) => (
-                {
-                    value: data?.divisionID,
-                    label: data?.name
-                }
-            )));
-        })
-
-    }, []);
+    useEffect(() => {
+        Promise.all([
+            loadData({url: 'Departments'}),
+            loadData({url: 'Groups'}),
+            loadData({url: 'Divisions'}),
+            loadData({url: 'Functions'}),
+            loadData({url: 'EmployeeType'})
+        ]).then(([departmentsRes, groupsRes, divisionsRes, functionsRes, employeeTypesRes]) => {
+            // Set departments list
+            setListDepart(departmentsRes?.data?.map((data) => ({
+                value: data?.departmentID,
+                label: data?.name
+            })));
+            
+            // Set groups list
+            setListGroup(groupsRes?.data?.map((data) => ({
+                value: data?.groupID,
+                label: `${data?.type}` + `${data?.name ? ` - ${data?.name}` : ''}`
+            })));
+            
+            // Set divisions list
+            setListDiv(divisionsRes?.data?.map((data) => ({
+                value: data?.divisionID,
+                label: data?.name
+            })));
+            
+            // Set functions list
+            setListFunc(functionsRes?.data?.map((data) => ({
+                value: data?.functionID,
+                label: data?.name
+            })));
+            
+            // Set employee types list
+            setListType(employeeTypesRes?.data?.map((data) => ({
+                value: data?.employeeTypeID,
+                label: data?.name
+            })));
+            
+            // Now fetch employee data if getId exists
+            if (getId) {
+                Promise.all([
+                    loadData({url: `Employees/${getId}`}),
+                    loadData({url: `Salary/MasterSalaryByEmpID/${getId}`}),
+                    loadData({url: `EmployeeDetails`, params: [{title: 'filter', value: `employee:${getId}`}]}),
+                ]).then(([employeeRes, masterSalaryRes, allowanceDeductionRes]) => {
+                    // Process employee data
+                    if (employeeRes?.data) {
+                        setFormData({
+                            ...formData,
+                            name: employeeRes?.data?.employeeName || '-',
+                            nik: employeeRes?.data?.nik || '-',
+                            ktp: employeeRes?.data?.ktp || '-',
+                            gender: employeeRes?.data?.gender || '-',
+                            religion: employeeRes?.data?.religion || '-',
+                            email: employeeRes?.data?.email || '-',
+                            phoneNumber: employeeRes?.data?.phoneNumber || '-',
+                            placeOfBirth: employeeRes?.data?.placeOfBirth || '-',
+                            dateOfBirth: employeeRes?.data?.dateOfBirth || '-',
+                            startWorkingDate: employeeRes?.data?.startWorkingDate || '-',
+                            groupID: employeeRes?.data?.groupID,
+                            functionID: employeeRes?.data?.functionID || '-',
+                            departmentID: employeeRes?.data?.departmentID || '-',
+                            accountNo: employeeRes?.data?.accountNo || '-',
+                            bank: employeeRes?.data?.bank || '-',
+                            payrollType: employeeRes?.data?.payrollType || '-',
+                            bpjstk: employeeRes?.data?.bpjstk || '0',
+                            bpjskes: employeeRes?.data?.bpjskes || '0',
+                            taxStatus: employeeRes?.data?.taxStatus || '',
+                            tkStatus: employeeRes?.data?.bpjskes || '',
+                            divisionID: employeeRes?.data?.divisionID || '-',
+                            basicSalary: employeeRes?.data?.basicSalary || '-',
+                            employeeTypeID: employeeRes?.data?.employeeTypeID,
+                            employeeJobTitleName: employeeRes?.data?.employeeJobTitleName || '-',
+                        });
+                    }
+                    
+                    // Set master payroll
+                    if (masterSalaryRes?.data?.length > 0) {
+                        setMasterPayroll(masterSalaryRes?.data);
+                    }
+                    
+                    // Set allowance and deduction
+                    if (allowanceDeductionRes?.data?.length > 0) {
+                        setAllowanceDeduction(allowanceDeductionRes?.data);
+                    }
+                });
+            }
+        });
+    }, [getId]);
   
 
     const TitleContent = ({text}) => {
@@ -173,7 +167,7 @@ const EmployeeForm = () => {
 
     return (
         <>
-            <TitlePage label={'Data Karyawan'} subLabel={'Data Personal'} subMenu={subMenu} source={employee} type={'detail'} setNavigateBack={`/employee`} />
+            <TitlePage label={'Data Karyawan'} subLabel={'Data Personal'} isAction={true} subMenu={isAdd ? [] : subMenu} source={employee} type={'detail'} setNavigateBack={`/employee`} />
             <div className="flex flex-row justify-between">
                 <div className="bg-white rounded-lg p-4 w-full mr-2">
                     <p className="font-bold text-sm">{'Detil Data Karyawan'}</p>
@@ -264,7 +258,7 @@ const EmployeeForm = () => {
                         <div className="flex flex-col bg-[#333333c3] min-w-[200px] rounded-l-lg">
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-center font-semibold text-white">Year</p></div>
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">THP</p></div>
-                            <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">{`Basic Salary (${formData?.payrollType?.toLowerCase()})`}</p></div>
+                            <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">{`Basic Salary ${formData?.payrollType ? '('+ formData?.payrollType.toLowerCase() + ')' : ''}`}</p></div>
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">Tunjangan</p></div>
                             <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Makan (Rp/hari x 23)`}</p></div>
                             <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Transport (Rp/hari x 23)`}</p></div>

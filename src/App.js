@@ -16,6 +16,7 @@ import ReportDetail from "./page/ReportDetail";
 import Layout from "./layout/layout";
 import PrivacyPolicy from "./page/PrivacyPolicy";
 import EmployeeReport from "./page/Employee/EmployeeSalaryReport";
+import EmployeePaySlip from "./page/Employee/EmployeePaySlip";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -53,6 +54,11 @@ const App = () => {
           <Route path="/employee/salaryreport" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <EmployeeReport setIsLoading={setIsLoading} />
+            </ProtectedRoute>
+          } />
+          <Route path="/salaryreport" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <EmployeePaySlip setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
           <Route path="/report/detail" element={

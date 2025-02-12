@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
 import { deleteData, loadData } from "../../config/api";
 import { coverDate, exportToExcel, getCurrentDate } from "../../config/helper";
@@ -98,6 +98,24 @@ const EmployeeData = ({setIsLoading}) => {
         fetchEmployeeData();
     }, []);
 
+    useEffect(() => {
+        const handleKeyDownSubmit = (event) => {
+            if (event.key === "Enter") {
+                setCheckValue(selectedValues);
+                setModalFilterOpen(false);
+            }
+        };
+    
+        if (isModalFilterOpen) {
+            document.addEventListener("keydown", handleKeyDownSubmit);
+        }
+    
+        return () => {
+            document.removeEventListener("keydown", handleKeyDownSubmit);
+        };
+    }, [isModalFilterOpen, selectedValues]);
+    
+
     const fetchEmployeeData = () => {
         setIsLoadData(true);
         setIsLoading(true);
@@ -163,22 +181,24 @@ const EmployeeData = ({setIsLoading}) => {
     }, [listFilter, checkedValue]);
 
     useEffect(() => {
-        setSearchForm({
-            ...searchForm,
-            group: checkedValue?.group?.map(item => item?.id)?.join(),
-            department : checkedValue?.department?.map(item => item?.id)?.join(),
-            division : checkedValue?.division?.map(item => item?.id)?.join(),
-            type: checkedValue?.type?.map(item => item?.id)?.join()
-        })
+        if(checkedValue){
+            setSearchForm({
+                ...searchForm,
+                group: checkedValue?.group?.map(item => item?.id)?.join(),
+                department : checkedValue?.department?.map(item => item?.id)?.join(),
+                division : checkedValue?.division?.map(item => item?.id)?.join(),
+                type: checkedValue?.type?.map(item => item?.id)?.join()
+            })
+        }
     }, [checkedValue])
 
     const submitSearch = () => {
         // fetchEmployeeData();
         
         let arr = [];
-        if(searchInput?.name) arr?.push(`Name: ${searchInput?.name}`);
-        if(searchInput?.nik) arr?.push(`NIK: ${searchInput?.nik}`);
-        if(searchInput?.ktp) arr?.push(`No.KTP: ${searchInput?.ktp}`);
+        if(searchInput?.name) arr?.push(`name: ${searchInput?.name}`);
+        if(searchInput?.nik) arr?.push(`nik: ${searchInput?.nik}`);
+        if(searchInput?.ktp) arr?.push(`no.ktp: ${searchInput?.ktp}`);
         setSearchForm({
             ...searchForm,
             name: searchInput?.name,
@@ -186,7 +206,7 @@ const EmployeeData = ({setIsLoading}) => {
             ktp: searchInput?.ktp
         })
         setListFilter([
-            ...listFilter,
+            ...listFilter?.filter(data => !data?.includes('name') && !data?.includes('nik') && !data?.includes('no.ktp')),
             ...arr
         ]);
         setModalOpen(false);
@@ -343,8 +363,8 @@ const EmployeeData = ({setIsLoading}) => {
     };
 
     const submitFilter = () => {
-        setModalFilterOpen(false);
         setCheckValue(selectedValues);
+        setModalFilterOpen(false);
     }
 
     const renderFilter = () => {
@@ -393,9 +413,9 @@ const EmployeeData = ({setIsLoading}) => {
                             <CollapseMenu key={idx} title={value.title}>
                                 {value?.data?.map((val, index) => (
                                     <div key={index}>
-                                        <div className="flex flex-row py-2 px-4">
-                                            <input type="checkbox" value={val?.id} checked={arrFilter[value?.target]?.some((v) => v?.id === val?.id) || false} onChange={() => handleCheckbox(val, value?.target)} />
-                                            <p className="text-xs pl-2">{val?.value}</p>
+                                        <div className="flex flex-row py-2 px-4 cursor-pointer">
+                                            <input type="checkbox" id={`check${value?.target}${val?.id}`} value={val?.id} checked={arrFilter[value?.target]?.some((v) => v?.id === val?.id) || false} onChange={() => handleCheckbox(val, value?.target)} />
+                                            <label for={`check${value?.target}${val?.id}`} className="text-xs pl-2">{val?.value}</label>
                                         </div>
                                     </div>
                                 ))}
@@ -404,11 +424,11 @@ const EmployeeData = ({setIsLoading}) => {
                     </div>
 
                     <div className="p-4 flex flex-row items-center">
-                        <Button setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={() => {
+                        <Button setWidth={'auto'} bgcolor={'white'} handleAction={() => {
                             setSelectedValues({});
                         }} icon={reload} />
                         <div className="mx-1" />
-                        <Button text={'Submit'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={() => submitFilter()} />
+                        <Button text={'Submit Filter'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={() => submitFilter()} />
                     </div>
                  </div>
             </Modal>
@@ -432,38 +452,55 @@ const EmployeeData = ({setIsLoading}) => {
             }} handleExport={(e) => exportFile('default', e)} handleFilter={() => openModalFilter()} />
             <div>
                 {isFilter &&                
-                    <div className="mt-4 flex flex-row items-center">
-                        <IconImage size="small" source={filter} />
-                        <p className="font-bold text-sm pl-2">Filter By:</p>
-                        <div className="flex flex-wrap gap-2 pl-2">
-                            {listFilter?.map((val, idx) => (
-                                <div className="flex flex-row pl-2" key={idx}>
-                                    <span className="px-2 py-1 bg-gray-200 rounded-full flex items-center">
-                                    {val}
-                                        <button
-                                            onClick={() => removeFilters(val)}
-                                            className={`ml-2 text-[${baseColor}] font-bold`}
-                                        >
-                                            ✕
-                                        </button>
-                                    </span>
-                                </div>
-                            ))}
-                            <div className="flex flex-wrap gap-2 pl-2">
-                                {Object.entries(checkedValue).map(([label, values]) =>
-                                    values.map((item) => (
-                                        <span key={`${label}-${item.id}`} className="px-2 py-1 bg-gray-200 rounded-full flex items-center">
-                                        {label}: {item.value}
+                    <div className="mt-4 flex flex-row items-center justify-between">
+                        <div className="flex flex-row items-center">
+                            <IconImage size="small" source={filter} />
+                            <p className="font-bold text-sm px-2">Filter By:</p>
+                            <div className="flex flex-wrap gap-1">
+                                {listFilter?.map((val, idx) => (
+                                    <div className="flex flex-row pl-2 text-xs" key={idx}>
+                                        <span className="px-2 py-1 bg-white border border-gray-200 rounded-full flex items-center text-xs" style={{fontSize: '12px'}}>
+                                        {val}
                                             <button
-                                                onClick={() => removeFilter(label, item.id)}
-                                                className={`ml-2 text-[${baseColor}] font-bold`}
+                                                onClick={() => removeFilters(val)}
+                                                className={`ml-2 text-[${baseColor}] font-bold text-xs`}
                                             >
                                                 ✕
                                             </button>
                                         </span>
-                                    ))
-                                )}
+                                    </div>
+                                ))}
+                                <div className="flex flex-wrap gap-1">
+                                    {Object.entries(checkedValue).map(([label, values]) =>
+                                        values.map((item) => (
+                                            <span key={`${label}-${item.id}`} className="px-2 py-1 bg-white border border-gray-200 rounded-full flex items-center text-xs" style={{fontSize: '12px'}}>
+                                            {label}: {item.value}
+                                                <button
+                                                    onClick={() => removeFilter(label, item.id)}
+                                                    className={`ml-2 text-[${baseColor}] font-bold`}
+                                                >
+                                                    ✕
+                                                </button>
+                                            </span>
+                                        ))
+                                    )}
+                                </div>
                             </div>
+                        </div>
+                        <div>
+                            <Button text="Reset Filter" bgcolor={baseColor} color={'white'} setWidth="auto" handleAction={() => {
+                                setSearchForm({
+                                    name    : '',
+                                    nik     : '',
+                                    ktp     : '',
+                                    group   : 0,
+                                    department : 0,
+                                    division : 0,
+                                    type: 0
+                                });
+                                setCheckValue({});
+                                setListFilter([]);
+                            }} />
                         </div>
                     </div>
                 }
