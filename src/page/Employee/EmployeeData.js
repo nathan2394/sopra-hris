@@ -410,7 +410,7 @@ const EmployeeData = ({setIsLoading}) => {
                     {/* <!-- Modal body --> */}
                     <div className="pt-4 min-h-[400px] max-h-[450px] overflow-y-auto">
                         {listFilterData?.map((value, idx) => (
-                            <CollapseMenu key={idx} title={value.title}>
+                            <CollapseMenu key={idx} title={value.title} isSetOpen={idx === 0 ? true : false}>
                                 {value?.data?.map((val, index) => (
                                     <div key={index}>
                                         <div className="flex flex-row py-2 px-4 cursor-pointer">
@@ -498,6 +498,7 @@ const EmployeeData = ({setIsLoading}) => {
                                     division : 0,
                                     type: 0
                                 });
+                                setSelectedValues({});
                                 setCheckValue({});
                                 setListFilter([]);
                             }} />

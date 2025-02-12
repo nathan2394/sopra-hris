@@ -2,8 +2,8 @@ import React, { useRef, useState } from "react";
 import { arrow_green } from "../config/icon"
 import IconImage from "./icon_img";
 
-const CollapseMenu = ({title = 'Select', children}) => {
-    const [isOpen, setIsOpen] = useState(false);
+const CollapseMenu = ({title = 'Select', children, isSetOpen = false}) => {
+    const [isOpen, setIsOpen] = useState(isSetOpen);
 
     return (
         <div className="cursor-pointer">
