@@ -101,18 +101,19 @@ const EmployeeData = ({setIsLoading}) => {
     useEffect(() => {
         const handleKeyDownSubmit = (event) => {
             if (event.key === "Enter") {
-                submitFilter();
+                setCheckValue(selectedValues);
+                setModalFilterOpen(false);
             }
         };
     
         if (isModalFilterOpen) {
-            document.addEventListener("keyup", handleKeyDownSubmit);
+            document.addEventListener("keydown", handleKeyDownSubmit);
         }
     
         return () => {
             document.removeEventListener("keydown", handleKeyDownSubmit);
         };
-    }, [isModalFilterOpen]);
+    }, [isModalFilterOpen, selectedValues]);
     
 
     const fetchEmployeeData = () => {
