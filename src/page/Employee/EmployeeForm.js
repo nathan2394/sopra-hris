@@ -44,6 +44,7 @@ const EmployeeForm = ({setIsLoading}) => {
         basicSalary: 0,
         employeeTypeID: '',
         employeeJobTitleName: '',
+        employeeJobTitleID: '',
     });
 
     const [masterPayroll, setMasterPayroll] = useState([]);
@@ -54,6 +55,7 @@ const EmployeeForm = ({setIsLoading}) => {
     const [listFunc, setListFunc] = useState([]);
     const [listDepart, setListDepart] = useState([]);
     const [listDiv, setListDiv] = useState([]);
+    const [listJobTitle, setListJobTitle] = useState([]);
 
     const [isEdit, setIsEdit] = useState(false);
     const [isReadOnly, setIsReadOnly] = useState(true);
@@ -75,8 +77,9 @@ const EmployeeForm = ({setIsLoading}) => {
             loadData({url: 'Groups'}),
             loadData({url: 'Divisions'}),
             loadData({url: 'Functions'}),
-            loadData({url: 'EmployeeType'})
-        ]).then(([departmentsRes, groupsRes, divisionsRes, functionsRes, employeeTypesRes]) => {
+            loadData({url: 'EmployeeType'}),
+            loadData({url: 'EmployeeJobTitles'}),
+        ]).then(([departmentsRes, groupsRes, divisionsRes, functionsRes, employeeTypesRes, employeeJobTitlesRes]) => {
             // Set departments list
             setListDepart(departmentsRes?.data?.map((data) => ({
                 value: data?.departmentID,
@@ -104,6 +107,11 @@ const EmployeeForm = ({setIsLoading}) => {
             // Set employee types list
             setListType(employeeTypesRes?.data?.map((data) => ({
                 value: data?.employeeTypeID,
+                label: data?.name
+            })));
+
+            setListJobTitle(employeeJobTitlesRes?.data?.map((data) => ({
+                value: data?.employeeJobTitleID,
                 label: data?.name
             })));
             
@@ -164,6 +172,7 @@ const EmployeeForm = ({setIsLoading}) => {
                         basicSalary: employeeRes?.data?.basicSalary || null,
                         employeeTypeID: employeeRes?.data?.employeeTypeID,
                         employeeJobTitleName: employeeRes?.data?.employeeJobTitleName || '-',
+                        employeeJobTitleID: employeeRes?.data?.employeeJobTitleID,
                     });
 
                 }
@@ -184,12 +193,18 @@ const EmployeeForm = ({setIsLoading}) => {
     }
 
     const handleChange = (event) => {
-        //console.log('trst',event.target.name, event.target.value)
         setFormData({
           ...formData,
           [event.target.name]: event.target.value,
         });
     };
+
+    const handleChangeSelect = (target, value) => {
+        setFormData({
+            ...formData,
+            [target]: value,
+          });
+    }
 
     const handleSubmit = () => {
         setIsLoading(true);
@@ -234,11 +249,13 @@ const EmployeeForm = ({setIsLoading}) => {
 
         if(formBody?.employeeID){
             if(isAdd && !getId){
-                postData({url: '/Employees', formData: formBody})?.then((res) => {
+                console.log('is add', formBody)
+                postData({url: 'Employees', formData: formBody})?.then((res) => {
                     navigate('/employee');
                 })
             }else{
-                updateData({url: '/Employees', formData: formBody})?.then((res) => {
+                console.log('is edit', formBody)
+                updateData({url: 'Employees', formData: formBody})?.then((res) => {
                     fetchEmployeeDetail();
                 })
             }
@@ -306,19 +323,20 @@ const EmployeeForm = ({setIsLoading}) => {
                             <div className="flex flex-row w-full mt-5">
                                 <Input handleAction={handleChange} setName={`startWorkingDate`} readOnly={isAdd ? false : isReadOnly}  label={'Tanggal Mulai Bekerja'} type={'date'} value={formData?.startWorkingDate} />
                                 <div className="mx-2" />
-                                <SearchableSelect name={`groupID`} label={'Grade'} placeHolder={'Select Grade'} options={listGroup} value={formData?.groupID} isDisabled={isAdd ? false : isReadOnly} />
+                                <SearchableSelect handleAction={handleChangeSelect}  name={`groupID`} label={'Grade'} placeHolder={'Select Grade'} options={listGroup} value={formData?.groupID} isDisabled={isAdd ? false : isReadOnly} />
                                 <div className="mx-2" />
-                                <SearchableSelect name={`functionID`} label={'Fungsi'} placeHolder={'Select Function'} options={listFunc} value={formData?.functionID} isDisabled={isAdd ? false : isReadOnly} />
+                                <SearchableSelect handleAction={handleChangeSelect}  name={`functionID`} label={'Fungsi'} placeHolder={'Select Function'} options={listFunc} value={formData?.functionID} isDisabled={isAdd ? false : isReadOnly} />
                             </div>
                             <div className="flex flex-row w-full">
-                                <SearchableSelect name={`departmentID`} label={'Departemen'} placeHolder={'Select Departmen'} options={listDepart} value={formData?.departmentID} isDisabled={isAdd ? false : isReadOnly} />
+                                <SearchableSelect handleAction={handleChangeSelect}  name={`departmentID`} label={'Departemen'} placeHolder={'Select Departmen'} options={listDepart} value={formData?.departmentID} isDisabled={isAdd ? false : isReadOnly} />
                                 <div className="mx-2" />
-                                <SearchableSelect name={`divisionID`} label={'Divisi'} placeHolder={'Select Division'} options={listDiv} value={formData?.divisionID} isDisabled={isAdd ? false : isReadOnly} />
+                                <SearchableSelect handleAction={handleChangeSelect}  name={`divisionID`} label={'Divisi'} placeHolder={'Select Division'} options={listDiv} value={formData?.divisionID} isDisabled={isAdd ? false : isReadOnly} />
                                 <div className="mx-2" />
-                                <Input handleAction={handleChange} setName={`employeeJobTitleName`} readOnly={isAdd ? false : isReadOnly}  label={'Job Title'} type={'text'} value={formData?.employeeJobTitleName} />
+                                {/* <Input handleAction={handleChange} setName={`employeeJobTitleName`} readOnly={isAdd ? false : isReadOnly}  label={'Job Title'} type={'text'} value={formData?.employeeJobTitleName} /> */}
+                                <SearchableSelect handleAction={handleChangeSelect}  name={`employeeJobTitleID`} label={'Job Title'} placeHolder={'Select Job Title'} options={listJobTitle} value={formData?.employeeJobTitleID} isDisabled={isAdd ? false : isReadOnly} />
                             </div>
                             <div className="flex flex-row w-full">
-                                <SearchableSelect name={`employeeTypeID`} label={'Type'} placeHolder={'Select Type'} options={listType} value={formData?.employeeTypeID} isDisabled={isAdd ? false : isReadOnly} />
+                                <SearchableSelect handleAction={handleChangeSelect}  name={`employeeTypeID`} label={'Type'} placeHolder={'Select Type'} options={listType} value={formData?.employeeTypeID} isDisabled={isAdd ? false : isReadOnly} />
                                 <div className="mx-2" />
                                 <Input handleAction={handleChange} setName={`accountNo`} readOnly={isAdd ? false : isReadOnly} label={'Account No.'} type={'text'} value={formatText(formData?.accountNo)} />
                                 <div className="mx-2" />
@@ -343,7 +361,7 @@ const EmployeeForm = ({setIsLoading}) => {
                             {allowanceDeduction?.filter(obj => obj?.amount > 0)?.length > 0 ?
                                 allowanceDeduction?.filter(obj => obj?.amount > 0)?.map((data, idx) => (
                                     <div className="px-1 border border-[#ddd] rounded-lg mb-2" key={idx}>
-                                        <div key={idx} className="flex flex-col w-full p-2">
+                                        <div className="flex flex-col w-full p-2">
                                             <p className="font-semibold text-xs pb-1">{data?.allowanceDeductionName}</p>
                                             <p className={`font-normal text-xs ${data?.allowanceDeductionType === 'Allowance' ? `text-[${baseColor}]` : 'text-[#D22F27]'}`}>{data?.allowanceDeductionName?.toLowerCase()?.includes('lembur') ? 'Eligible' : (data?.allowanceDeductionType === 'Allowance' ? '+' : '-') + formatText(data?.amount)}</p>
                                         </div>

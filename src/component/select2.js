@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 
-const SearchableSelect = ({label, placeHolder = 'Select...', options, value, setValue, isDisabled = false, setWidth = '100%'}) => {
+const SearchableSelect = ({label, name, placeHolder = 'Select...', options, value, setValue, isDisabled = false, setWidth = '100%', handleAction = null}) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   useEffect(() => {
@@ -20,7 +20,15 @@ const SearchableSelect = ({label, placeHolder = 'Select...', options, value, set
         <Select
             options={options}
             value={selectedOption}
-            onChange={setSelectedOption}
+            onChange={handleAction ? (value) => {
+                setSelectedOption(value)
+                handleAction(name, value?.value)
+              }
+              :
+              (value) => {
+                setSelectedOption(value)
+              }
+            }
             isSearchable
             placeholder={placeHolder}
             noOptionsMessage={() => "No options found"} 
