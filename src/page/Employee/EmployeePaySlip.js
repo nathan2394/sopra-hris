@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { loadData } from "../../config/api";
 import { coverDate, formatText, getMonthName, getQueryParam } from "../../config/helper";
 import TitlePage from "../../component/titlePage";
@@ -183,7 +183,7 @@ const EmployeePaySlip = () => {
 
     return (
         <>
-            <TitlePage label={'Detil Karyawan'} subLabel={'Slip Gaji'} source={employee} type={'detail'} setNavigateBack={`/employee/detail?id=${employeeId}`} />
+            <TitlePage label={'Data Personal'} subLabel={'Detil Gaji'} source={employee} type={'detail'} setNavigateBack={`/employee/detail?id=${employeeId}`} />
             <div className="border bg-white p-6 rounded-lg">
 
                 <div className="flex flex-row justify-between">

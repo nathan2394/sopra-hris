@@ -66,3 +66,19 @@ code {
   cursor: pointer;
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+  height: 5px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #369D00; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #369D00; 
+}

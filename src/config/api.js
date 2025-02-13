@@ -77,6 +77,27 @@ export const postFormData = async ({url, formData = null}) => {
     }
 };
 
+export const updateData = async ({ url, formData = null }) => {
+    const userToken = localStorage.getItem('userToken');
+    const api_endpoint = 'https://sopra-hris.mixtra.co.id';
+
+    try {
+        const response = await axios.put(`${api_endpoint}/${url}`, formData, {
+            headers: {
+                'Authorization': `Bearer ${userToken}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error while posting data:', error);
+        // throw error;
+        return {
+            status: error.status,
+            response: error.response
+        }
+    }
+}
+
 export const deleteData = async ({ url, id }) => {
     const userToken = localStorage.getItem('userToken');
     const api_endpoint = 'https://sopra-hris.mixtra.co.id';
