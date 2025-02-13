@@ -88,7 +88,7 @@ const EmployeeReport = ({setIsLoading}) => {
 
     return (
         <>
-            <TitlePage label={'Data Karyawan'} subLabel={'Data Gaji Bulanan'} subMenu={subMenu} source={list} type={'detail'} setNavigateBack={`/employee`} />
+            <TitlePage label={'Data Karyawan'} subLabel={'Data Gaji Bulanan'} subMenu={subMenu} source={list} type={'detail'} isAction={true} setNavigateBack={`/employee`} />
             <div>
 
                 {!isLoadData ? 

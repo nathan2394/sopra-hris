@@ -1,20 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import TitlePage from "../../component/titlePage";
 import Input from "../../component/input";
-import { employee, empty, payroll } from "../../config/icon";
-import { loadData } from "../../config/api";
-import { coverDate, formatText, getMonthName, getQueryParam } from "../../config/helper";
+import { employee, empty } from "../../config/icon";
+import { loadData, postData, updateData } from "../../config/api";
+import { formatText, getQueryParam } from "../../config/helper";
 import { baseColor } from "../../config/setting";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SearchableSelect from "../../component/select2";
-import MyDatePicker from "../../component/date_picker";
+// import MyDatePicker from "../../component/date_picker";
 
-const EmployeeForm = () => {
+const EmployeeForm = ({setIsLoading}) => {
+    const navigate = useNavigate();
     const getId = getQueryParam("id");
     const [isAdd] = useState(getQueryParam("action") === 'add' ? true : false);
 
     const [formData, setFormData] = useState({
         name: '',
+        nickName: '',
         nik: '',
         ktp: '',
         gender: '',
@@ -24,6 +26,10 @@ const EmployeeForm = () => {
         placeOfBirth: '',
         dateOfBirth: '',
         startWorkingDate: '',
+        startJointDate: '',
+        endWorkingDate: '',
+        motherMaidenName: '',
+        education: '',
         functionID: '',
         departmentID: '',
         groupID: '',
@@ -38,9 +44,6 @@ const EmployeeForm = () => {
         basicSalary: 0,
         employeeTypeID: '',
         employeeJobTitleName: '',
-        allowancedeductionDetails: [],
-        masterEmployeePayroll: [],
-        salaryHistories: [],
     });
 
     const [masterPayroll, setMasterPayroll] = useState([]);
@@ -106,52 +109,7 @@ const EmployeeForm = () => {
             
             // Now fetch employee data if getId exists
             if (getId) {
-                Promise.all([
-                    loadData({url: `Employees/${getId}`}),
-                    loadData({url: `Salary/MasterSalaryByEmpID/${getId}`}),
-                    loadData({url: `EmployeeDetails`, params: [{title: 'filter', value: `employee:${getId}`}]}),
-                ]).then(([employeeRes, masterSalaryRes, allowanceDeductionRes]) => {
-                    // Process employee data
-                    if (employeeRes?.data) {
-                        setFormData({
-                            ...formData,
-                            name: employeeRes?.data?.employeeName || '-',
-                            nik: employeeRes?.data?.nik || '-',
-                            ktp: employeeRes?.data?.ktp || '-',
-                            gender: employeeRes?.data?.gender || '-',
-                            religion: employeeRes?.data?.religion || '-',
-                            email: employeeRes?.data?.email || '-',
-                            phoneNumber: employeeRes?.data?.phoneNumber || '-',
-                            placeOfBirth: employeeRes?.data?.placeOfBirth || '-',
-                            dateOfBirth: employeeRes?.data?.dateOfBirth || '-',
-                            startWorkingDate: employeeRes?.data?.startWorkingDate || '-',
-                            groupID: employeeRes?.data?.groupID,
-                            functionID: employeeRes?.data?.functionID || '-',
-                            departmentID: employeeRes?.data?.departmentID || '-',
-                            accountNo: employeeRes?.data?.accountNo || '-',
-                            bank: employeeRes?.data?.bank || '-',
-                            payrollType: employeeRes?.data?.payrollType || '-',
-                            bpjstk: employeeRes?.data?.bpjstk || '0',
-                            bpjskes: employeeRes?.data?.bpjskes || '0',
-                            taxStatus: employeeRes?.data?.taxStatus || '',
-                            tkStatus: employeeRes?.data?.bpjskes || '',
-                            divisionID: employeeRes?.data?.divisionID || '-',
-                            basicSalary: employeeRes?.data?.basicSalary || '-',
-                            employeeTypeID: employeeRes?.data?.employeeTypeID,
-                            employeeJobTitleName: employeeRes?.data?.employeeJobTitleName || '-',
-                        });
-                    }
-                    
-                    // Set master payroll
-                    if (masterSalaryRes?.data?.length > 0) {
-                        setMasterPayroll(masterSalaryRes?.data);
-                    }
-                    
-                    // Set allowance and deduction
-                    if (allowanceDeductionRes?.data?.length > 0) {
-                        setAllowanceDeduction(allowanceDeductionRes?.data);
-                    }
-                });
+                fetchEmployeeDetail();
             }
         });
     }, [getId]);
@@ -165,80 +123,226 @@ const EmployeeForm = () => {
         );
     }
 
+    const fetchEmployeeDetail = () => {
+        setIsLoading(true);
+        if (getId) {
+            Promise.all([
+                loadData({url: `Employees/${getId}`}),
+                loadData({url: `Salary/MasterSalaryByEmpID/${getId}`}),
+                loadData({url: `EmployeeDetails`, params: [{title: 'filter', value: `employee:${getId}`}]}),
+            ]).then(([employeeRes, masterSalaryRes, allowanceDeductionRes]) => {
+                // Process employee data
+                if (employeeRes?.data) {
+                    setFormData({
+                        ...formData,
+                        name: employeeRes?.data?.employeeName || null,
+                        nickName: employeeRes?.data?.nickName || '',
+                        nik: employeeRes?.data?.nik || null,
+                        ktp: employeeRes?.data?.ktp || null,
+                        gender: employeeRes?.data?.gender || null,
+                        religion: employeeRes?.data?.religion || null,
+                        email: employeeRes?.data?.email || null,
+                        phoneNumber: employeeRes?.data?.phoneNumber || null,
+                        placeOfBirth: employeeRes?.data?.placeOfBirth || null,
+                        dateOfBirth: employeeRes?.data?.dateOfBirth || null,
+                        startWorkingDate: employeeRes?.data?.startWorkingDate || null,
+                        startJointDate: employeeRes?.data?.startJointDate || null,
+                        endWorkingDate: employeeRes?.data?.endWorkingDate || null,
+                        motherMaidenName: employeeRes?.data?.motherMaidenName || null,
+                        education: employeeRes?.data?.education || null,
+                        groupID: employeeRes?.data?.groupID,
+                        functionID: employeeRes?.data?.functionID || null,
+                        departmentID: employeeRes?.data?.departmentID || null,
+                        accountNo: employeeRes?.data?.accountNo || null,
+                        bank: employeeRes?.data?.bank || null,
+                        payrollType: employeeRes?.data?.payrollType || null,
+                        bpjstk: employeeRes?.data?.bpjstk || '0',
+                        bpjskes: employeeRes?.data?.bpjskes || '0',
+                        taxStatus: employeeRes?.data?.taxStatus || '',
+                        tkStatus: employeeRes?.data?.bpjskes || '',
+                        divisionID: employeeRes?.data?.divisionID || null,
+                        basicSalary: employeeRes?.data?.basicSalary || null,
+                        employeeTypeID: employeeRes?.data?.employeeTypeID,
+                        employeeJobTitleName: employeeRes?.data?.employeeJobTitleName || '-',
+                    });
+
+                }
+                
+                // Set master payroll
+                if (masterSalaryRes?.data?.length > 0) {
+                    setMasterPayroll(masterSalaryRes?.data);
+                }
+                
+                // Set allowance and deduction
+                if (allowanceDeductionRes?.data?.length > 0) {
+                    setAllowanceDeduction(allowanceDeductionRes?.data);
+                }
+
+                setIsLoading(false);
+            });
+        }
+    }
+
+    const handleChange = (event) => {
+        //console.log('trst',event.target.name, event.target.value)
+        setFormData({
+          ...formData,
+          [event.target.name]: event.target.value,
+        });
+    };
+
+    const handleSubmit = () => {
+        setIsLoading(true);
+        setIsReadOnly(!isReadOnly);
+        setIsEdit(!isEdit);
+
+        const formBody = {
+            "employeeID": getId || 0,
+            "nik": formData?.nik,
+            "employeeName": formData?.name,
+            "nickName": formData?.nickName,
+            "placeOfBirth": formData?.placeOfBirth,
+            "dateOfBirth": formData?.dateOfBirth,
+            "gender": formData?.gender,
+            "email": formData?.email,
+            "phoneNumber": formData?.phoneNumber,
+            "ktp": formData?.ktp,
+            "startWorkingDate": formData?.startWorkingDate,
+            "startJointDate": formData?.startJointDate,
+            "endWorkingDate": formData?.endWorkingDate,
+            "employeeTypeID": formData?.employeeTypeID,
+            "groupID": formData?.groupID,
+            "departmentID": formData?.departmentID,
+            "divisionID": formData?.divisionID,
+            "functionID": formData?.functionID,
+            "jobTitleID": formData?.jobTitleID,
+            "religion": formData?.religion,
+            "bpjstk": formData?.bpjstk,
+            "bpjskes": formData?.bpjskes,
+            "education": formData?.education,
+            "taxStatus": formData?.taxStatus,
+            "motherMaidenName": formData?.motherMaidenName,
+            "tkStatus": formData?.tkStatus,
+            "companyID": formData?.companyID,
+            "addressKTP": formData?.addressKTP,
+            "addressDomisili": formData?.addressDomisili,
+            "basicSalary": formData?.basicSalary,
+            "accountNo": formData?.accountNo,
+            "bank": formData?.bank,
+            "payrollType": formData?.payrollType
+        }
+
+        if(formBody?.employeeID){
+            if(isAdd && !getId){
+                postData({url: '/Employees', formData: formBody})?.then((res) => {
+                    navigate('/employee');
+                })
+            }else{
+                updateData({url: '/Employees', formData: formBody})?.then((res) => {
+                    fetchEmployeeDetail();
+                })
+            }
+        }
+    }
+
     return (
         <>
             <TitlePage label={'Data Karyawan'} subLabel={'Data Personal'} isAction={true} subMenu={isAdd ? [] : subMenu} source={employee} type={'detail'} setNavigateBack={`/employee`} />
             <div className="flex flex-row justify-between">
-                <div className="bg-white rounded-lg p-4 w-full mr-2">
-                    <p className="font-bold text-sm">{'Detil Data Karyawan'}</p>
+                <div className="bg-white rounded-lg  w-full mr-2">
+                    <div className="flex flex-row justify-between px-4 pt-2">
+                        <p className="font-bold text-sm">{isAdd ? 'Data Karyawan' : 'Detil Data Karyawan'}</p>
+                        <div className="flex flex-row">
+                            {isEdit ?                             
+                                <>
+                                    <p className="text-[#D22F27] text-sm pr-1 cursor-pointer" onClick={() => {
+                                        setIsReadOnly(!isReadOnly);
+                                        setIsEdit(!isEdit)
+                                    }}>Cancel</p>
+                                    <p className="text-[#369D00] text-sm pl-1  cursor-pointer" onClick={() => handleSubmit()}>Submit</p>
+                                </>
+                                :
+                                <>
+                                {isAdd ? 
+                                    <p className="text-[#369D00] text-sm cursor-pointer" onClick={() => handleSubmit()}>Add Data</p>
+                                    :
+                                    <p className="text-[#369D00] text-sm cursor-pointer" onClick={() => {
+                                        setIsReadOnly(!isReadOnly);
+                                        setIsEdit(!isEdit)
+                                    }}>Edit Data</p>
+                                }
+                                </>
+                            }
+                        </div>
+                    </div>
                     <div className="bg-[#ddd] my-3 h-[1.5px]" />
                     <div className="max-h-[560px] overflow-y-auto">
-                        <div>
+                        <div className="px-4">
                             <TitleContent text={`Data Diri Karyawan`} />
                             <div className="flex flex-row w-full mt-5">
-                                <Input readOnly={isAdd ? false : isReadOnly}  label={'Name'} type={'text'} value={formData?.name} />
+                                <Input handleAction={handleChange} setName={`name`} readOnly={isAdd ? false : isReadOnly}  label={'Name'} type={'text'} value={formData?.name} />
                                 <div className="mx-2" />
-                                <Input readOnly={isAdd ? false : isReadOnly}  label={'NIK'}  type={'text'} value={formData?.nik} />
+                                <Input handleAction={handleChange} setName={`nik`} readOnly={isAdd ? false : isReadOnly}  label={'NIK'}  type={'text'} value={formData?.nik} />
                                 <div className="mx-2" />
-                                <Input readOnly={isAdd ? false : isReadOnly}  label={'No. KTP'} type={'text'} value={formData?.ktp} />
+                                <Input handleAction={handleChange} setName={`ktp`} readOnly={isAdd ? false : isReadOnly}  label={'No. KTP'} type={'text'} value={formData?.ktp} />
                             </div>
                             <div className="flex flex-row w-full">
-                                <Input readOnly={isAdd ? false : isReadOnly}  label={'Gender'} type={'text'} value={formData?.gender} />
+                                <Input handleAction={handleChange} setName={`gender`} readOnly={isAdd ? false : isReadOnly}  label={'Gender'} type={'text'} value={formData?.gender} />
                                 <div className="mx-2" />
-                                <Input readOnly={isAdd ? false : isReadOnly}  label={'E-mail'}  type={'email'} value={formData?.email} />
+                                <Input handleAction={handleChange} setName={`email`} readOnly={isAdd ? false : isReadOnly}  label={'E-mail'}  type={'email'} value={formData?.email} />
                                 <div className="mx-2" />
-                                <Input readOnly={isAdd ? false : isReadOnly}  label={'No. Telp'} type={'text'} value={formData?.phoneNumber} />
+                                <Input handleAction={handleChange} setName={`phoneNumber`} readOnly={isAdd ? false : isReadOnly}  label={'No. Telp'} type={'text'} value={formData?.phoneNumber} />
                             </div>
                             <div className="flex flex-row w-full">
-                                <Input readOnly={isAdd ? false : isReadOnly}  label={'Tempat Lahir'} type={'text'} value={formData?.placeOfBirth} />
+                                <Input handleAction={handleChange} setName={`placeOfBirth`} readOnly={isAdd ? false : isReadOnly}  label={'Tempat Lahir'} type={'text'} value={formData?.placeOfBirth} />
                                 <div className="mx-2" />
-                                <Input readOnly={isAdd ? false : isReadOnly}  label={'Tanggal Lahir'}  type={'date'} value={formData?.dateOfBirth} />
+                                <Input handleAction={handleChange} setName={`dateOfBirth`} readOnly={isAdd ? false : isReadOnly}  label={'Tanggal Lahir'}  type={'date'} value={formData?.dateOfBirth} />
                                 <div className="mx-2" />
-                                <Input readOnly={isAdd ? false : isReadOnly}  label={'Agama'} type={'text'} value={formData?.religion} />
+                                <Input handleAction={handleChange} setName={`religion`} readOnly={isAdd ? false : isReadOnly}  label={'Agama'} type={'text'} value={formData?.religion} />
                             </div>
                         </div>
-                        <div>
+                        <div className="px-4">
                             <TitleContent text={`Data Pekerjaan`} />
                             <div className="flex flex-row w-full mt-5">
-                                <Input readOnly={isAdd ? false : isReadOnly}  label={'Tanggal Mulai Bekerja'} type={'date'} value={formData?.startWorkingDate} />
+                                <Input handleAction={handleChange} setName={`startWorkingDate`} readOnly={isAdd ? false : isReadOnly}  label={'Tanggal Mulai Bekerja'} type={'date'} value={formData?.startWorkingDate} />
                                 <div className="mx-2" />
-                                <SearchableSelect label={'Grade'} placeHolder={'Select Grade'} options={listGroup} value={formData?.groupID} isDisabled={isAdd ? false : isReadOnly} />
+                                <SearchableSelect name={`groupID`} label={'Grade'} placeHolder={'Select Grade'} options={listGroup} value={formData?.groupID} isDisabled={isAdd ? false : isReadOnly} />
                                 <div className="mx-2" />
-                                <SearchableSelect label={'Fungsi'} placeHolder={'Select Function'} options={listFunc} value={formData?.functionID} isDisabled={isAdd ? false : isReadOnly} />
+                                <SearchableSelect name={`functionID`} label={'Fungsi'} placeHolder={'Select Function'} options={listFunc} value={formData?.functionID} isDisabled={isAdd ? false : isReadOnly} />
                             </div>
                             <div className="flex flex-row w-full">
-                                <SearchableSelect label={'Departemen'} placeHolder={'Select Departmen'} options={listDepart} value={formData?.departmentID} isDisabled={isAdd ? false : isReadOnly} />
+                                <SearchableSelect name={`departmentID`} label={'Departemen'} placeHolder={'Select Departmen'} options={listDepart} value={formData?.departmentID} isDisabled={isAdd ? false : isReadOnly} />
                                 <div className="mx-2" />
-                                <SearchableSelect label={'Divisi'} placeHolder={'Select Division'} options={listDiv} value={formData?.divisionID} isDisabled={isAdd ? false : isReadOnly} />
+                                <SearchableSelect name={`divisionID`} label={'Divisi'} placeHolder={'Select Division'} options={listDiv} value={formData?.divisionID} isDisabled={isAdd ? false : isReadOnly} />
                                 <div className="mx-2" />
-                                <Input readOnly={isAdd ? false : isReadOnly}  label={'Job Title'} type={'text'} value={formData?.employeeJobTitleName} />
+                                <Input handleAction={handleChange} setName={`employeeJobTitleName`} readOnly={isAdd ? false : isReadOnly}  label={'Job Title'} type={'text'} value={formData?.employeeJobTitleName} />
                             </div>
                             <div className="flex flex-row w-full">
-                                <SearchableSelect label={'Type'} placeHolder={'Select Type'} options={listType} value={formData?.employeeTypeID} isDisabled={isAdd ? false : isReadOnly} />
+                                <SearchableSelect name={`employeeTypeID`} label={'Type'} placeHolder={'Select Type'} options={listType} value={formData?.employeeTypeID} isDisabled={isAdd ? false : isReadOnly} />
                                 <div className="mx-2" />
-                                <Input readOnly={isAdd ? false : isReadOnly} label={'Account No.'} type={'text'} value={formatText(formData?.accountNo)} />
+                                <Input handleAction={handleChange} setName={`accountNo`} readOnly={isAdd ? false : isReadOnly} label={'Account No.'} type={'text'} value={formatText(formData?.accountNo)} />
                                 <div className="mx-2" />
-                                <Input readOnly={isAdd ? false : isReadOnly} label={'Bank'} type={'text'} value={formatText(formData?.bank)} />
+                                <Input handleAction={handleChange} setName={`bank`} readOnly={isAdd ? false : isReadOnly} label={'Bank'} type={'text'} value={formatText(formData?.bank)} />
                             </div>
                             <div className="flex flex-row w-full">
-                                <Input readOnly={isAdd ? false : isReadOnly} label={'BPJSTK'} type={'text'} value={formatText(formData?.bpjstk)} />
+                                <Input handleAction={handleChange} setName={`bpjstk`} readOnly={isAdd ? false : isReadOnly} label={'BPJSTK'} type={'text'} value={formatText(formData?.bpjstk)} />
                                 <div className="mx-2" />
-                                <Input readOnly={isAdd ? false : isReadOnly} label={'BPJSKES'} type={'text'} value={formatText(formData?.bpjskes)} />
+                                <Input handleAction={handleChange} setName={`bpjskes`} readOnly={isAdd ? false : isReadOnly} label={'BPJSKES'} type={'text'} value={formatText(formData?.bpjskes)} />
                                 <div className="mx-2" />
-                                <Input readOnly={isAdd ? false : isReadOnly} label={'Basic Salary'} type={'text'} value={formatText(formData?.basicSalary)} />
+                                <Input handleAction={handleChange} setName={`basicSalary`} readOnly={isAdd ? false : isReadOnly} label={'Basic Salary'} type={'text'} value={formatText(formData?.basicSalary)} />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="ml-2 w-[40%]">
+                <div className={`ml-2 ${masterPayroll?.length > 1 ? 'w-[35%]' : 'w-[45%]'}`}>
                     <div className="bg-white rounded-lg p-4 mb-4">
                         <p className="font-bold text-sm">{'Rincian Tunjangan & Potongan'}</p>
                         <div className="bg-[#ddd] my-3 h-[1.5px]" />
                         <div className="min-h-[120px] max-h-[160px] overflow-y-auto">
                             {allowanceDeduction?.filter(obj => obj?.amount > 0)?.length > 0 ?
                                 allowanceDeduction?.filter(obj => obj?.amount > 0)?.map((data, idx) => (
-                                    <div className="px-1 border border-[#ddd] rounded-lg mb-2">
+                                    <div className="px-1 border border-[#ddd] rounded-lg mb-2" key={idx}>
                                         <div key={idx} className="flex flex-col w-full p-2">
                                             <p className="font-semibold text-xs pb-1">{data?.allowanceDeductionName}</p>
                                             <p className={`font-normal text-xs ${data?.allowanceDeductionType === 'Allowance' ? `text-[${baseColor}]` : 'text-[#D22F27]'}`}>{data?.allowanceDeductionName?.toLowerCase()?.includes('lembur') ? 'Eligible' : (data?.allowanceDeductionType === 'Allowance' ? '+' : '-') + formatText(data?.amount)}</p>
@@ -262,7 +366,7 @@ const EmployeeForm = () => {
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">Tunjangan</p></div>
                             <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Makan (Rp/hari x 23)`}</p></div>
                             <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Transport (Rp/hari x 23)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Jabatan (Rp/hari x 23)`}</p></div>
+                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Jabatan (Rp/bln)`}</p></div>
                             <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Functional (Rp/bln)`}</p></div>
                             <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Khusus (Rp/hari x 23)`}</p></div>
                             <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Operasional (Rp/hari x 23)`}</p></div>
@@ -272,7 +376,7 @@ const EmployeeForm = () => {
                         {masterPayroll?.length > 0 ? 
                             <div className={`flex flex-row ${masterPayroll?.length > 1 ? 'max-w-[300px]' : 'w-full'} overflow-x-auto`}>
                                 {masterPayroll?.sort((a,b) => a.year - b.year)?.map((val, idx) => (<>
-                                    <div className={`flex flex-col bg-[#333333c3] ${masterPayroll?.length > 1 ? 'min-w-[150px]' : 'w-full' } ${masterPayroll?.length === idx+1 ? 'rounded-r-lg' : ''}`} key={idx}>
+                                    <div className={`flex flex-col bg-[#333333c3] ${masterPayroll?.length > 1 ? 'min-w-[128px]' : 'w-full' } ${masterPayroll?.length === idx+1 ? 'rounded-r-lg' : ''}`} key={idx}>
                                         <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-6"><p className="text-xs text-center font-semibold text-white">{val?.year}</p></div>
                                         <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.thp)}</p></div>
                                         <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-end">{formatText(val?.basicSalary)}</p></div>
@@ -295,6 +399,7 @@ const EmployeeForm = () => {
                                         <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-center">{formatText(0)}</p></div>
                                         <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-center">{formatText(0)}</p></div>
                                         <div className="w-full p-2 bg-[#ffffff] border border-[#ddd] h-[35px]"></div>
+                                        <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-center">{formatText(0)}</p></div>
                                         <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-center">{formatText(0)}</p></div>
                                         <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-center">{formatText(0)}</p></div>
                                         <div className="w-full p-2 bg-[#ffffff] border border-[#ddd]"><p className="text-xs text-center">{formatText(0)}</p></div>
