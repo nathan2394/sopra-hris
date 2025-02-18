@@ -6,7 +6,7 @@ const Button = ({type = 'button', setWidth = 'full', position = 'left', text = '
     const buttonLength = setWidth === 'full' ? 'w-full' : 'auto';
     const labelPositon = position === 'center' ? 'justify-center' : ''; 
     return (
-        <div className={`py-2 ${setWidth === 'full' ? 'w-full' : 'auto'}`}>
+        <div className={`py-1 ${setWidth === 'full' ? 'w-full' : 'auto'}`}>
             {/* <button className={`rounded-lg p-1 font-bold`} style={{background: bgcolor, color: color}} type="submit">{text}</button> */}
             <button className={`${type === 'inputFile' ? 'rounded-l-md' : 'rounded-md' } ${buttonLength} p-2 font-bold cursor-pointer ${showBorder ? `border-2 border-[#369D00]` : '' }`} style={{background: bgcolor, color: color, boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}} onClick={flagFilter ? () => handleAction(text) : handleAction}>
                 <div className={`flex flex-row items-start ${labelPositon}`}>

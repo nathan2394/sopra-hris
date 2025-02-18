@@ -7,18 +7,17 @@ import Input from "../../component/input";
 import Button from "../../component/button";
 import { baseColor } from "../../config/setting";
 import TitlePage from "../../component/titlePage";
-import { employee, filter, reload } from "../../config/icon";
+import { employee, filter, kehadiran, reload } from "../../config/icon";
 import IconImage from "../../component/icon_img";
 import Table from "../../component/table";
 import LoadingIndicator from "../../component/loading_indicator";
 import CollapseMenu from "../../component/collapse_menu";
 import AlertPopUp from "../../component/popupAlert";
 
-const EmployeeData = ({setIsLoading}) => {
+const AttendanceData = ({setIsLoading}) => {
     const navigate = useNavigate();
-    const localFilter = JSON.parse(localStorage?.getItem('filterEmpl'));
-    //console.log(localFilter?.checkedValue, JSON.stringify(localFilter?.checkedValue));
 
+    const [isSubmit, setIsSubmit] = useState(false);
     const [listData, setListData] = useState([]);
     const [isModalOpen, setModalOpen] = useState(false);
     const [isLoadData, setIsLoadData] = useState(true);
@@ -28,17 +27,17 @@ const EmployeeData = ({setIsLoading}) => {
     const [listDepart, setListDepart] = useState([]);
     const [listDiv, setListDiv] = useState([]);
 
-    const [checkedValue, setCheckValue] = useState(localFilter?.checkedValue ?? {});
+    const [checkedValue, setCheckValue] = useState({});
     const [selectedValues, setSelectedValues] = useState({});
 
     const [searchForm, setSearchForm] = useState({
-        name    : localFilter?.name ?? '',
-        nik     : localFilter?.nik ?? '',
-        ktp     : localFilter?.ktp ?? '',
-        group   : localFilter?.group ?? 0,
-        department : localFilter?.department ?? 0,
-        division : localFilter?.division ?? 0,
-        type: localFilter?.type ?? 0
+        name    : '',
+        nik     : '',
+        ktp     : '',
+        group   : 0,
+        department : 0,
+        division : 0,
+        type: 0
     });
 
     const [searchInput, setSearchInput] = useState({
@@ -50,7 +49,7 @@ const EmployeeData = ({setIsLoading}) => {
     const [isAlert, setIsAlert] = useState(false);
 
     const [isFilter, setIsFilter] = useState(false);
-    const [listFilter, setListFilter] = useState(localFilter?.listFilter ?? []);
+    const [listFilter, setListFilter] = useState([]);
 
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
@@ -175,17 +174,6 @@ const EmployeeData = ({setIsLoading}) => {
         if(!isLoadData){
             // console.log('trigger', searchForm?.group, searchForm?.department, searchForm?.division)
             fetchEmployeeData();
-            localStorage?.setItem('filterEmpl', JSON.stringify({
-                name    : searchForm?.name,
-                nik     : searchForm?.nik,
-                ktp     : searchForm?.ktp,
-                group   : searchForm?.group,
-                department : searchForm?.department,
-                division : searchForm?.division,
-                type: searchForm?.type,
-                listFilter: listFilter,
-                checkedValue: checkedValue
-            }))
         }
     }, [searchForm?.group, searchForm?.department, searchForm?.division, searchForm?.name, searchForm?.nik, searchForm?.ktp, searchForm?.type])
 
@@ -448,6 +436,10 @@ const EmployeeData = ({setIsLoading}) => {
         )
     }
 
+    const handleSubmitPeriod = () => {
+        setIsSubmit(true);
+    }
+
     const handleDetele = (id) => {
         console.log('trigger');
         setIsAlert(true);
@@ -460,9 +452,9 @@ const EmployeeData = ({setIsLoading}) => {
 
     return (
         <>
-            <TitlePage label={'Employee Data'} source={employee} isAction={true} handleAdd={() => navigate('/employee/detail?action=add')} handleSearch={() => {
+            <TitlePage label={'Kehadiran'} source={kehadiran} handleSubmit={handleSubmitPeriod} isAction={true} handleSearch={() => {
                 openModal();
-            }} handleExport={(e) => exportFile('default', e)} handleFilter={() => openModalFilter()} />
+            }} handleFilter={() => openModalFilter()} />
             <div>
                 {isFilter &&                
                     <div className="mt-4 flex flex-row items-center justify-between">
@@ -520,7 +512,7 @@ const EmployeeData = ({setIsLoading}) => {
                 }
 
                 {!isLoadData ? 
-                    <Table dataTable={listData} isAction={true} detailPath={'/employee/detail?id='}  />
+                    <Table dataTable={isSubmit ? listData : []} isAction={true} detailPath={'/employee/detail?id='}  />
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />
@@ -534,4 +526,4 @@ const EmployeeData = ({setIsLoading}) => {
     );
 }
 
-export default EmployeeData;
+export default AttendanceData;

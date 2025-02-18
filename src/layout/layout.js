@@ -11,7 +11,7 @@ const Layout = ({ children, setAuth, isLoading = false }) => {
   const excludedPaths = ["/login"];
 
   // Define known valid paths
-  const validPaths = ["/", "/report/detail", "/report", "/employee", "/employee/detail", "/employee/salaryreport", "/salaryreport"];
+  const validPaths = ["/", "/report/detail", "/report", "/employee", "/employee/detail", "/employee/salaryreport", "/salaryreport", "/attendance", "/calculator"];
 
   // Get the actual path considering HashRouter (if applicable)
   const currentPath = location.pathname + (location.hash ? location.hash.replace("#", "") : "");
@@ -33,7 +33,7 @@ const Layout = ({ children, setAuth, isLoading = false }) => {
         <div className="bg-[#F5F5F5]" style={{ display: "flex", height: "100vh", flexDirection: "column" }}>
           <Navbar setAuth={setAuth} userData={userData} />
           <div style={{ zIndex: 99 }}>
-            <div style={{ padding: "20px", paddingTop: "5.5rem" }}>
+            <div style={{ padding: "20px", paddingTop: "5rem" }}>
               <div className="px-5 max-w-full">{children}</div>
             </div>
           </div>

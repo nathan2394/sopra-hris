@@ -16,21 +16,27 @@ export const close_white = 'icon/close_white.svg';
 
 export const notif = '/icon/notification.png';
 export const arrow_red = '/icon/arrow_down_red.png';
-export const arrow_green = '/icon/arrow_down_green.png';
+export const arrow_g = '/icon/arrow_down_g.png';
 export const payroll = '/icon/payroll.png';
 export const reload = '/icon/reload.png';
 export const employee = '/icon/employee.png';
 export const list = '/icon/list.png';
 
-export const payroll_green = '/icon/payroll_green.png';
-export const employee_green = '/icon/employee_green.png';
-export const list_green = '/icon/list_green.png';
+export const payroll_g = '/icon/payroll_g.png';
+export const employee_g = '/icon/employee_g.png';
+export const list_g = '/icon/list_g.png';
 
-export const filterData = '/icon/filter.png';
+export const filterData = '/icon/filter_g.png';
 
 export const filter = 'icon/filter.svg';
 export const sort_asc = 'icon/sort_up.svg';
 export const sort_desc = 'icon/sort_down.svg';
+
+export const kehadiran = '/icon/kehadiran.png';
+export const kehadiran_g = '/icon/kehadiran_g.png';
+export const calculator = '/icon/calculator.png';
+export const calculator_g = '/icon/calculator_g.png';
+export const calculator_w = '/icon/calculator_w.png';
 
 //logo
 export const sopra = '/logo/sopra.png';

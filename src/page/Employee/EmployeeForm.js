@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import TitlePage from "../../component/titlePage";
 import Input from "../../component/input";
-import { employee, empty } from "../../config/icon";
+import { calculator_w, employee, empty } from "../../config/icon";
 import { loadData, postData, updateData } from "../../config/api";
 import { formatText, getQueryParam } from "../../config/helper";
 import { baseColor } from "../../config/setting";
 import { Link, useNavigate } from "react-router-dom";
 import SearchableSelect from "../../component/select2";
+import Button from "../../component/button";
 // import MyDatePicker from "../../component/date_picker";
 
 const EmployeeForm = ({setIsLoading}) => {
@@ -172,7 +173,7 @@ const EmployeeForm = ({setIsLoading}) => {
                         basicSalary: employeeRes?.data?.basicSalary || null,
                         employeeTypeID: employeeRes?.data?.employeeTypeID,
                         employeeJobTitleName: employeeRes?.data?.employeeJobTitleName || '-',
-                        employeeJobTitleID: employeeRes?.data?.employeeJobTitleID,
+                        employeeJobTitleID: employeeRes?.data?.jobTitleID,
                     });
 
                 }
@@ -249,12 +250,10 @@ const EmployeeForm = ({setIsLoading}) => {
 
         if(formBody?.employeeID){
             if(isAdd && !getId){
-                console.log('is add', formBody)
                 postData({url: 'Employees', formData: formBody})?.then((res) => {
                     navigate('/employee');
                 })
             }else{
-                console.log('is edit', formBody)
                 updateData({url: 'Employees', formData: formBody})?.then((res) => {
                     fetchEmployeeDetail();
                 })
@@ -262,11 +261,17 @@ const EmployeeForm = ({setIsLoading}) => {
         }
     }
 
+    const PaidStatus = ({status = 'bulanan'}) => {
+        return (
+            <div className={status === 'bulanan' ? "h-[10px] w-[10px] bg-[#5AADFF]" : "h-[10px] w-[10px] bg-[#FFD600]"} style={{borderRadius: '1px'}} />
+        )
+    }
+
     return (
         <>
             <TitlePage label={'Data Karyawan'} subLabel={'Data Personal'} isAction={true} subMenu={isAdd ? [] : subMenu} source={employee} type={'detail'} setNavigateBack={`/employee`} />
             <div className="flex flex-row justify-between">
-                <div className="bg-white rounded-lg  w-full mr-2">
+                <div className="bg-white rounded-lg w-full mr-2">
                     <div className="flex flex-row justify-between px-4 pt-2">
                         <p className="font-bold text-sm">{isAdd ? 'Data Karyawan' : 'Detil Data Karyawan'}</p>
                         <div className="flex flex-row">
@@ -293,7 +298,7 @@ const EmployeeForm = ({setIsLoading}) => {
                         </div>
                     </div>
                     <div className="bg-[#ddd] my-3 h-[1.5px]" />
-                    <div className="max-h-[560px] overflow-y-auto">
+                    <div className="max-h-[600px] overflow-y-auto">
                         <div className="px-4">
                             <TitleContent text={`Data Diri Karyawan`} />
                             <div className="flex flex-row w-full mt-5">
@@ -376,19 +381,73 @@ const EmployeeForm = ({setIsLoading}) => {
                         </div>
                     </div>
 
+                    <div className="flex flex-row justify-between items-center mb-2">
+                        <div className="flex flex-row">
+                            <div className="flex flex-row items-center p-2 rounded-lg w-[120px] bg-white" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
+                                <div className="h-[10px] w-[10px] bg-blue-500" />
+                                <p className="text-xs ml-2">Bulanan</p>
+                            </div>
+                            <div className="flex flex-row items-center p-2 ml-4 rounded-lg w-[120px] bg-white" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
+                                <div className="h-[10px] w-[10px] bg-orange-300" />
+                                <p className="text-xs ml-2">Harian</p>
+                            </div>
+                        </div>
+                        <Button setWidth="auto" bgcolor={baseColor} icon={calculator_w} handleAction={() => {
+                            localStorage.setItem('calc', JSON.stringify({
+                                hks: 23,
+                                hka: 23,
+                                att: 23,
+                                meal: 23,
+                                ovt: 23,
+                                groupID: formData?.groupID,
+                                basicSalary: formData?.basicSalary,
+                                payrollType: formData?.payrollType,
+                                bpjs: masterPayroll?.length > 0 ? masterPayroll?.[0]?.bpjs : 0,
+                                employeeId: getId
+                            }))
+                            navigate('/calculator');
+                        }} />
+                    </div>
+
                     <div className="flex flex-row justify-end">
                         <div className="flex flex-col bg-[#333333c3] min-w-[200px] rounded-l-lg">
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-center font-semibold text-white">Year</p></div>
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">THP</p></div>
-                            <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">{`Basic Salary ${formData?.payrollType ? '('+ formData?.payrollType.toLowerCase() + ')' : ''}`}</p></div>
+                            <div className="flex flex-row items-center justify-between w-full p-2 border border-[#ffffff11]">
+                                <p className="text-xs text-start font-semibold text-white">
+                                {`Basic Salary`}
+                                </p>
+                                <PaidStatus status={formData?.payrollType.toLowerCase()} />
+                            </div>
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">Tunjangan</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Makan (Rp/hari x 23)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Transport (Rp/hari x 23)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Jabatan (Rp/bln)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Functional (Rp/bln)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Khusus (Rp/hari x 23)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`Operasional (Rp/hari x 23)`}</p></div>
-                            <div className="w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] px-4"><p className="text-xs text-start font-semibold text-white">{`TMK (Rp/bln)`}</p></div>
+                            <div className="flex flex-row items-center justify-between w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] pl-5">
+                                <p className="text-xs text-start font-semibold text-white">{`Makan`}</p>
+                                <PaidStatus status={'harian'} />
+                            </div>
+                            <div className="flex flex-row items-center justify-between w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] pl-5">
+                                <p className="text-xs text-start font-semibold text-white">{`Transport`}</p>
+                                <PaidStatus status={'harian'} />
+                            </div>
+                            <div className="flex flex-row items-center justify-between w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] pl-5">
+                                <p className="text-xs text-start font-semibold text-white">{`Jabatan`}</p>
+                                <PaidStatus status={'bulanan'} />
+                            </div>
+                            <div className="flex flex-row items-center justify-between w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] pl-5">
+                                <p className="text-xs text-start font-semibold text-white">{`Functional`}</p>
+                                <PaidStatus status={'bulanan'} />
+                            </div>
+                            <div className="flex flex-row items-center justify-between w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] pl-5">
+                                <p className="text-xs text-start font-semibold text-white">{`Khusus`}</p>
+                                <PaidStatus status={'harian'} />
+                            </div>
+                            <div className="flex flex-row items-center justify-between w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] pl-5">
+                                <p className="text-xs text-start font-semibold text-white">{`Operasional`}</p>
+                                <PaidStatus status={'harian'} />
+                            </div>
+                            <div className="flex flex-row items-center justify-between w-full p-2 bg-[#ffffff1f] border border-[#ffffff10] pl-5">
+                                <p className="text-xs text-start font-semibold text-white">{`TMK`}</p>
+                                <PaidStatus status={'bulanan'} />
+                            </div>
                             <div className="w-full p-2 border border-[#ffffff11]"><p className="text-xs text-start font-semibold text-white">BPJS</p></div>
                         </div>
                         {masterPayroll?.length > 0 ? 
