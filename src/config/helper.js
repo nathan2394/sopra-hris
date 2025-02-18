@@ -1,6 +1,36 @@
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
+export const months = [
+    {label: "January", value: 1}, 
+    {label: "February", value: 2}, 
+    {label: "March", value: 3}, 
+    {label: "April", value: 4}, 
+    {label: "May", value: 5}, 
+    {label: "June", value: 6}, 
+    {label: "July", value: 7}, 
+    {label: "August", value: 8}, 
+    {label: "September", value: 9}, 
+    {label: "October", value: 10}, 
+    {label: "November", value: 11}, 
+    {label: "December", value: 12}
+];
+
+export const years = [
+    {label: "2025", value: 2025}, 
+    {label: "2024", value: 2024}, 
+    {label: "2023", value: 2023}, 
+    {label: "2022", value: 2022}, 
+    {label: "2021", value: 2021}, 
+    {label: "2020", value: 2020}, 
+    {label: "2019", value: 2019}, 
+    {label: "2018", value: 2018}, 
+    {label: "2017", value: 2017}, 
+    {label: "2016", value: 2016}, 
+    {label: "2015", value: 2015}, 
+    {label: "2014", value: 2014}
+];
+
 export const exportToExcel = (dataTable, filename = 'data', template = 'default') => {
     let arrObj = dataTable;
     // if(template !== 'default'){
@@ -109,6 +139,34 @@ export const formatText = (value) => {
         return value;
     }
 };
+
+// export const formatNum = (value) => {
+//     if(value){
+//         let rawValue = value?.replace(/,/g, '');
+//         console.log(rawValue)
+//         const num = Number(rawValue);
+//         return num.toLocaleString("id-ID");
+//     }
+//     // console.log(num, rawValue)
+//     // if (typeof value === "number") {
+//     //     //console.log(value,'test')
+//     //     let rawValue = value;
+//     //     if(value){
+//     //         rawValue = value?.replace(/,/g, '');
+//     //     }
+//     //     return rawValue.toLocaleString("id-ID");
+//     // } 
+    
+//     // if (typeof value === "string") {
+//     //     console.log(value,'testing')
+//     //     const num = Number(value);
+//     //     if (!isNaN(num)) {
+//     //         return num.toLocaleString("id-ID");
+//     //     }
+//     // }
+
+//     return value;
+// };
 
 export const getQueryParam = (param) => {
     const hash = window.location.hash; // e.g. "#/employee?id=123"

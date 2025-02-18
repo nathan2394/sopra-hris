@@ -17,6 +17,8 @@ import Layout from "./layout/layout";
 import PrivacyPolicy from "./page/PrivacyPolicy";
 import EmployeeReport from "./page/Employee/EmployeeSalaryReport";
 import EmployeePaySlip from "./page/Employee/EmployeePaySlip";
+import AttendanceData from "./page/Attendance/AttendanceData";
+import Calculator from "./page/Calculator/calculator";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -61,6 +63,11 @@ const App = () => {
               <EmployeePaySlip setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
+          <Route path="/attendance" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <AttendanceData setIsLoading={setIsLoading} />
+            </ProtectedRoute>
+          } />
           <Route path="/report/detail" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <ReportDetail setIsLoading={setIsLoading} />
@@ -69,6 +76,11 @@ const App = () => {
           <Route path="/report" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <Report setIsLoading={setIsLoading} />
+            </ProtectedRoute>
+          } />
+          <Route path="/calculator" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Calculator setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
           <Route path="*" element={<NotFound />} />

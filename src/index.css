@@ -82,3 +82,9 @@ code {
 ::-webkit-scrollbar-thumb:hover {
   background: #369D00; 
 }
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

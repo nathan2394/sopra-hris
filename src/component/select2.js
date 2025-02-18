@@ -5,10 +5,11 @@ const SearchableSelect = ({label, name, placeHolder = 'Select...', options, valu
   const [selectedOption, setSelectedOption] = useState(null);
 
   useEffect(() => {
-    if(options?.length > 0 && value) {
-      setSelectedOption(options?.find(data => data?.value === value));
+    console.log("Updating selectedOption:", value, options);
+    if (options?.length > 0 && value !== undefined) {
+      setSelectedOption(options.find((data) => data.value === value) || null);
     }
-  }, [value])
+  }, [value, options]);  
 
   useEffect(() => {
     if(setValue) setValue(selectedOption?.value)

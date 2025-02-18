@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import IconImage from "../component/icon_img";
-import { arrow_green, employee_green, list_green, logout, menu, notif, payroll_green, sopra_full, sopra_logo, user } from "../config/icon";
+import { arrow_g, calculator_g, employee_g, kehadiran_g, list_g, logout, menu, notif, payroll_g, sopra_full, sopra_logo, user } from "../config/icon";
 import React, { useState } from "react";
 import Button from "../component/button";
 import { baseColor } from "../config/setting";
@@ -14,19 +14,36 @@ const Navbar = ({setAuth}) => {
     {
         title: 'Master Payroll',
         navRoute: '/',
-        icon: payroll_green
+        icon: payroll_g
     },
     {
-        title: 'Employee Data',
+        title: 'Data Karyawan',
         navRoute: '/employee',
-        icon: employee_green
+        icon: employee_g
+    },
+    {
+        title: 'Kehadiran',
+        navRoute: '/attendance',
+        icon: kehadiran_g,
     },
     {
         title: 'Report Salary',
         navRoute: '/report',
-        icon: list_green
+        icon: list_g
+    },
+    {
+        title: 'Kalkulator',
+        navRoute: '/calculator',
+        icon: calculator_g
     }
   ];
+
+  const handleNavigation = (target) => {
+    localStorage?.removeItem('calc');
+    localStorage?.removeItem('filterEmpl');
+    setOpenSideBar(false);
+    navigate(target);
+  }
 
     return (
       <div className="relative">
@@ -56,7 +73,7 @@ const Navbar = ({setAuth}) => {
                       </div>
                     </div>
                     <div className="p-2">
-                      <IconImage size="small" source={arrow_green} />
+                      <IconImage size="small" source={arrow_g} />
                     </div>
                   </div>
                   {open && 
@@ -81,19 +98,22 @@ const Navbar = ({setAuth}) => {
             {openSideBar &&           
               <div className="absolute bg-white w-[400px]" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)', zIndex: 999}}>
                 {listMenu?.map((data, idx) => (
-                  <Link key={idx} to={data?.navRoute} onClick={() => setOpenSideBar(false)}>
-                    <div className={`bg-white hover:bg-[#379d0067] py-3 px-10 border-b border-[#ddd] flex flex-row items-center`}>
+                  <div key={idx} onClick={() => { 
+                    // e.preventDefault(); // Prevent default navigation
+                    handleNavigation(data?.navRoute);
+                  }}>
+                    <div className={`bg-white hover:bg-[#379d0067] py-3 px-10 border-b border-[#ddd] flex flex-row items-center cursor-pointer`}>
                       <IconImage size="small" source={data?.icon} />
                       <p className="ml-3 text-sm">{data?.title}</p>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             }
           </div>
         </nav>
         {openSideBar &&        
-          <div className={`bg-[#0000003e] mx-auto w-full h-full fixed flex items-center justify-center overflow-hidden mt-[82px]`} style={{zIndex: 995}} onClick={() => setOpenSideBar(!openSideBar)}>
+          <div className={`bg-[#0000003e] mx-auto w-full h-full fixed flex items-center justify-center overflow-hidden mt-[65px]`} style={{zIndex: 995}} onClick={() => setOpenSideBar(!openSideBar)}>
           </div>
         }
       </div>

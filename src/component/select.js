@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { arrow_green } from "../config/icon"
+import { arrow_g } from "../config/icon"
 import IconImage from "./icon_img";
 
 const Select = ({data = [], defaultLabel = '', name, handleAction = null, type, setWidth = '100%', filterVal = null, setFilter = null, value = null, setValue = null, isError = null, setIsFilter, listFilter = [], setListFilter}) => {
@@ -12,7 +12,7 @@ const Select = ({data = [], defaultLabel = '', name, handleAction = null, type, 
                 </div>
                 <div className="bg-gray-400 h-[36px] w-[1px]"></div>
                 <div className="p-2">
-                    <IconImage size="small" source={arrow_green} />
+                    <IconImage size="small" source={arrow_g} />
                 </div>
             </div>
             {(open && data?.length > 0) &&             
