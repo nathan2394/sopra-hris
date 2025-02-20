@@ -131,8 +131,9 @@ const EmployeeData = ({setIsLoading}) => {
 
         loadData({url: 'Employees', params: params}).then((res) => {
             if(res?.data?.length > 0){
-                const filteredData = res.data.map((obj) => (
+                const filteredData = res.data.map((obj, idx) => (
                     {
+                        'no' : idx+1,
                         'id' : obj?.employeeID,
                         'nik': obj?.nik,
                         'employeeName': obj?.employeeName,
@@ -317,6 +318,20 @@ const EmployeeData = ({setIsLoading}) => {
                 exportToExcel(filteredData, `Data_Employee_${todayDate}`, `${type === 'bank' ? 'bank' : 'default'}`)
             }
         })
+    }
+
+    const beforeNavigate = (targetId, index) => {
+        localStorage?.setItem('empolyeeList', JSON.stringify( listData?.map((obj, idx) => (
+            {
+                id: obj?.id,
+                name: obj?.employeeName,
+                nik: obj?.nik,
+                ktp: obj?.ktp,
+                index: idx
+            }
+        ))));
+        localStorage?.setItem('emplIndx', index)
+        navigate(`/employee/detail?id=${targetId}`)
     }
 
     const renderModal = () => (
@@ -520,7 +535,7 @@ const EmployeeData = ({setIsLoading}) => {
                 }
 
                 {!isLoadData ? 
-                    <Table dataTable={listData} isAction={true} detailPath={'/employee/detail?id='}  />
+                    <Table dataTable={listData} isAction={true} beforeNavigate={beforeNavigate} detailPath={'/employee/detail?id='}  />
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />

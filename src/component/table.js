@@ -5,7 +5,7 @@ import { baseColor } from "../config/setting";
 import { employee, empty, sort_asc, sort_desc } from "../config/icon";
 import IconImage from "./icon_img";
 
-const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', actionDelete, actionEdit }) => {
+const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', beforeNavigate = null, actionDelete, actionEdit }) => {
   const [listTable, setListTable] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
@@ -35,7 +35,7 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', a
         <table className="table-auto  text-xs rounded-lg overflow-hidden border border-[#595858]">
           <thead className="text-[10px] text-white uppercase bg-[#333333c3]">
             <tr>
-              {labelHeader?.map((val, idx) => (
+              {labelHeader?.filter(data => !data?.includes('id'))?.map((val, idx) => (
                 <th
                   scope="col"
                   key={idx}
@@ -73,33 +73,34 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', a
                 } cursor-pointer`}
                 key={index}
               >
-                {Object.values(row)?.map((val, idx) => (
-                  <th
-                    scope="row"
-                    key={idx}
-                    className={`p-[8px] font-normal border border-[#d2cfcf] text-black whitespace-nowrap ${
-                      checkType(val) === "number"
-                        ? "text-right"
-                        : "text-left"
-                    } ${
-                      idx === 0 && index === listTable?.length - 1
-                        ? "first:rounded-bl-lg"
-                        : ""
-                    } ${
-                      idx === Object.values(row).length - 1 &&
-                      index === listTable?.length - 1
-                        ? "last:rounded-br-lg"
-                        : ""
-                    }`}
-                  >
-                    {isAction 
-                    ? 
-                      <Link to={row?.id ? `${detailPath}${row?.id}` : '#'}>{formatText(val)}</Link>
-                    :
-                      formatText(val)
-                    }
-                  </th>
-                ))}
+                {Object.entries(row)?.map(([key, val], idx) => {
+                  if (key === "id") return null; // Skip rendering if key is "id"
+
+                  return (
+                    <th
+                      scope="row"
+                      key={idx}
+                      className={`p-[8px] font-normal border border-[#d2cfcf] text-black whitespace-nowrap ${
+                        checkType(val) === "number" ? "text-right" : "text-left"
+                      } ${
+                        idx === 0 && index === listTable?.length - 1
+                          ? "first:rounded-bl-lg"
+                          : ""
+                      } ${
+                        idx === Object.keys(row).length - 1 && index === listTable?.length - 1
+                          ? "last:rounded-br-lg"
+                          : ""
+                      }`}
+                    >
+                      {isAction
+                        ? beforeNavigate 
+                          ? <div onClick={() => beforeNavigate(row?.id, idx)}>{formatText(val)}</div>
+                          : <Link to={row?.id ? `${detailPath}${row?.id}` : '#'}>{formatText(val)}</Link>
+                        : formatText(val)}
+                    </th>
+                  );
+                })}
+
                 {(isAction && (actionDelete || actionEdit)) &&
                   <th scope="row" className={`p-[10px] font-normal border border-[#d2cfcf] text-black whitespace-nowrap ${"text-left"}`}>
                       <div className="flex flex-row items-center justify-center">

@@ -135,7 +135,7 @@ const Calculator = ({setIsLoading}) => {
                                 <div className="flex flex-row justify-between w-full">
                                     <p className="font-normal text-xs pb-2 w-[300px]">{val?.name}</p>
                                     <p className="font-normal text-xs pb-2 ">: Rp.</p>
-                                    <p className={`font-normal text-xs pb-2 text-end w-[100px] ${val?.type === 'Deduction' ? `text-[#D22F27]` : `text-[#369D00]`}`}>{`${val?.type === 'Deduction' ? '- ' : '+ '} ${formatText(val?.amount) || 0}`}</p>
+                                    <p className={`font-normal text-xs pb-2 text-end w-[100px] ${val?.type === 'Deduction' ? `text-[#D22F27]` : `text-[#369D00]`}`}>{`${val?.type === 'Deduction' ? '- ' : val?.amount > 0 ? '+ ' : ''} ${formatText(val?.amount) || 0}`}</p>
                                 </div>
                             </div>
                         ))}

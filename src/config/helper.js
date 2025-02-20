@@ -31,6 +31,8 @@ export const years = [
     {label: "2014", value: 2014}
 ];
 
+export const currYear = new Date().getFullYear();
+
 export const exportToExcel = (dataTable, filename = 'data', template = 'default') => {
     let arrObj = dataTable;
     // if(template !== 'default'){
@@ -178,4 +180,20 @@ export const getQueryParam = (param) => {
 export const checkType = (value) => {
     const checkType = typeof value;
     return checkType;
+}
+
+export const getPrevNextIds = (currentId, data) => {
+    
+    // Find the index of the current item
+    const currentIndex = data?.findIndex(item => String(item.id) === String(currentId));
+    // console.log('trigger', currentId, data, currentIndex)
+    if (currentIndex === -1) return { prevId: null, nextId: null };
+
+    // Get previous and next IDs
+    const prevId = currentIndex > 0 ? data[currentIndex - 1].id : null;
+    const nextId = currentIndex < data.length - 1 ? data[currentIndex + 1].id : null;
+
+    console.log(prevId, nextId);
+
+    return { prevId, nextId };
 }

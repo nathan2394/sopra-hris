@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import TitlePage from "../../component/titlePage";
 import Input from "../../component/input";
-import { calculator_w, employee, empty } from "../../config/icon";
+import { arrow_left_g, arrow_right_g, calculator_w, d_arrow_left_g, d_arrow_right_g, employee, empty } from "../../config/icon";
 import { loadData, postData, updateData } from "../../config/api";
-import { formatText, getQueryParam } from "../../config/helper";
+import { currYear, formatText, getQueryParam } from "../../config/helper";
 import { baseColor } from "../../config/setting";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SearchableSelect from "../../component/select2";
 import Button from "../../component/button";
 // import MyDatePicker from "../../component/date_picker";
@@ -14,6 +14,29 @@ const EmployeeForm = ({setIsLoading}) => {
     const navigate = useNavigate();
     const getId = getQueryParam("id");
     const [isAdd] = useState(getQueryParam("action") === 'add' ? true : false);
+
+    const listData = JSON.parse(localStorage?.getItem('empolyeeList'));
+    const [targetSearch, setTargetSearch] = useState('name');
+    const listSearch = [
+        {
+            value: 'name',
+            label: 'Nama',
+        },
+        {
+            value: 'nik',
+            label: 'NIK',
+        },
+        {
+            value: 'ktp',
+            label: 'KTP'
+        }
+    ];
+
+    const currentIndex = listData?.findIndex(obj => obj?.id === parseInt(getId))
+    const prevId = listData[currentIndex-1]?.id ?? 0;
+    const nextId = listData[currentIndex+1]?.id ?? 0;
+    const prevDataId = listData[0]?.id;
+    const lastDataId = listData[listData?.length-1]?.id;
 
     const [formData, setFormData] = useState({
         name: '',
@@ -72,67 +95,7 @@ const EmployeeForm = ({setIsLoading}) => {
         }
     ];
 
-    useEffect(() => {
-        Promise.all([
-            loadData({url: 'Departments'}),
-            loadData({url: 'Groups'}),
-            loadData({url: 'Divisions'}),
-            loadData({url: 'Functions'}),
-            loadData({url: 'EmployeeType'}),
-            loadData({url: 'EmployeeJobTitles'}),
-        ]).then(([departmentsRes, groupsRes, divisionsRes, functionsRes, employeeTypesRes, employeeJobTitlesRes]) => {
-            // Set departments list
-            setListDepart(departmentsRes?.data?.map((data) => ({
-                value: data?.departmentID,
-                label: data?.name
-            })));
-            
-            // Set groups list
-            setListGroup(groupsRes?.data?.map((data) => ({
-                value: data?.groupID,
-                label: `${data?.type}` + `${data?.name ? ` - ${data?.name}` : ''}`
-            })));
-            
-            // Set divisions list
-            setListDiv(divisionsRes?.data?.map((data) => ({
-                value: data?.divisionID,
-                label: data?.name
-            })));
-            
-            // Set functions list
-            setListFunc(functionsRes?.data?.map((data) => ({
-                value: data?.functionID,
-                label: data?.name
-            })));
-            
-            // Set employee types list
-            setListType(employeeTypesRes?.data?.map((data) => ({
-                value: data?.employeeTypeID,
-                label: data?.name
-            })));
-
-            setListJobTitle(employeeJobTitlesRes?.data?.map((data) => ({
-                value: data?.employeeJobTitleID,
-                label: data?.name
-            })));
-            
-            // Now fetch employee data if getId exists
-            if (getId) {
-                fetchEmployeeDetail();
-            }
-        });
-    }, [getId]);
-  
-
-    const TitleContent = ({text}) => {
-        return (
-            <div className="bg-[#333333c3] p-2 my-2 w-full rounded-lg">
-                <p className="font-semibold text-white text-sm text-center">{text}</p>
-            </div>
-        );
-    }
-
-    const fetchEmployeeDetail = () => {
+    const fetchEmployeeDetail = useCallback(() => {
         setIsLoading(true);
         if (getId) {
             Promise.all([
@@ -191,6 +154,65 @@ const EmployeeForm = ({setIsLoading}) => {
                 setIsLoading(false);
             });
         }
+    }, [getId])
+
+    useEffect(() => {
+        Promise.all([
+            loadData({url: 'Departments'}),
+            loadData({url: 'Groups'}),
+            loadData({url: 'Divisions'}),
+            loadData({url: 'Functions'}),
+            loadData({url: 'EmployeeType'}),
+            loadData({url: 'EmployeeJobTitles'}),
+        ]).then(([departmentsRes, groupsRes, divisionsRes, functionsRes, employeeTypesRes, employeeJobTitlesRes]) => {
+            // Set departments list
+            setListDepart(departmentsRes?.data?.map((data) => ({
+                value: data?.departmentID,
+                label: data?.name
+            })));
+            
+            // Set groups list
+            setListGroup(groupsRes?.data?.map((data) => ({
+                value: data?.groupID,
+                label: `${data?.type}` + `${data?.name ? ` - ${data?.name}` : ''}`
+            })));
+            
+            // Set divisions list
+            setListDiv(divisionsRes?.data?.map((data) => ({
+                value: data?.divisionID,
+                label: data?.name
+            })));
+            
+            // Set functions list
+            setListFunc(functionsRes?.data?.map((data) => ({
+                value: data?.functionID,
+                label: data?.name
+            })));
+            
+            // Set employee types list
+            setListType(employeeTypesRes?.data?.map((data) => ({
+                value: data?.employeeTypeID,
+                label: data?.name
+            })));
+
+            setListJobTitle(employeeJobTitlesRes?.data?.map((data) => ({
+                value: data?.employeeJobTitleID,
+                label: data?.name
+            })));
+            
+            // Now fetch employee data if getId exists
+            if (getId) {
+                fetchEmployeeDetail();
+            }
+        });
+    }, [getId, fetchEmployeeDetail]);
+
+    const TitleContent = ({text}) => {
+        return (
+            <div className="bg-[#333333c3] p-2 my-2 w-full rounded-lg">
+                <p className="font-semibold text-white text-sm text-center">{text}</p>
+            </div>
+        );
     }
 
     const handleChange = (event) => {
@@ -261,6 +283,13 @@ const EmployeeForm = ({setIsLoading}) => {
         }
     }
 
+    const handleAfterExecute = (targetId) => {
+        if(targetId){
+            setIsLoading(true);
+            navigate(`/employee/detail?id=${targetId}`);
+        }
+    }
+
     const PaidStatus = ({status = 'bulanan'}) => {
         return (
             <div className={status === 'bulanan' ? "h-[10px] w-[10px] bg-[#5AADFF]" : "h-[10px] w-[10px] bg-[#FFD600]"} style={{borderRadius: '1px'}} />
@@ -277,21 +306,23 @@ const EmployeeForm = ({setIsLoading}) => {
                         <div className="flex flex-row">
                             {isEdit ?                             
                                 <>
-                                    <p className="text-[#D22F27] text-sm pr-1 cursor-pointer" onClick={() => {
+                                    <p className="text-[#D22F27] text-sm pr-2 font-semibold cursor-pointer" onClick={() => {
                                         setIsReadOnly(!isReadOnly);
                                         setIsEdit(!isEdit)
                                     }}>Cancel</p>
-                                    <p className="text-[#369D00] text-sm pl-1  cursor-pointer" onClick={() => handleSubmit()}>Submit</p>
+                                    <p className="text-[#369D00] text-sm pl-1 font-semibold cursor-pointer" onClick={() => handleSubmit()}>Submit</p>
                                 </>
                                 :
                                 <>
                                 {isAdd ? 
                                     <p className="text-[#369D00] text-sm cursor-pointer" onClick={() => handleSubmit()}>Add Data</p>
                                     :
-                                    <p className="text-[#369D00] text-sm cursor-pointer" onClick={() => {
-                                        setIsReadOnly(!isReadOnly);
-                                        setIsEdit(!isEdit)
-                                    }}>Edit Data</p>
+                                    <>
+                                        <p className="text-[#369D00] text-sm font-semibold cursor-pointer underline" onClick={() => {
+                                            setIsReadOnly(!isReadOnly);
+                                            setIsEdit(!isEdit)
+                                        }}>Edit Data</p>
+                                    </>
                                 }
                                 </>
                             }
@@ -362,7 +393,7 @@ const EmployeeForm = ({setIsLoading}) => {
                     <div className="bg-white rounded-lg p-4 mb-4">
                         <p className="font-bold text-sm">{'Rincian Tunjangan & Potongan'}</p>
                         <div className="bg-[#ddd] my-3 h-[1.5px]" />
-                        <div className="min-h-[120px] max-h-[160px] overflow-y-auto">
+                        <div className="min-h-[120px] max-h-[120px] overflow-y-auto">
                             {allowanceDeduction?.filter(obj => obj?.amount > 0)?.length > 0 ?
                                 allowanceDeduction?.filter(obj => obj?.amount > 0)?.map((data, idx) => (
                                     <div className="px-1 border border-[#ddd] rounded-lg mb-2" key={idx}>
@@ -374,8 +405,8 @@ const EmployeeForm = ({setIsLoading}) => {
                                 ))
                                 :
                                 <div className="flex flex-col items-center justify-center p-6">
-                                    <img className="w-[28%] mx-auto" alt="logo" src={empty} />
-                                    <p className="font-bold text-sm">Opps, Nothing to See Here!</p>
+                                    <img className="w-[22%] mx-auto" alt="logo" src={empty} />
+                                    <p className="font-bold text-xs">Opps, Nothing to See Here!</p>
                                 </div>
                             }
                         </div>
@@ -384,11 +415,11 @@ const EmployeeForm = ({setIsLoading}) => {
                     <div className="flex flex-row justify-between items-center mb-2">
                         <div className="flex flex-row">
                             <div className="flex flex-row items-center p-2 rounded-lg w-[120px] bg-white" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
-                                <div className="h-[10px] w-[10px] bg-blue-500" />
+                                <PaidStatus status="bulanan" />
                                 <p className="text-xs ml-2">Bulanan</p>
                             </div>
                             <div className="flex flex-row items-center p-2 ml-4 rounded-lg w-[120px] bg-white" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
-                                <div className="h-[10px] w-[10px] bg-orange-300" />
+                                <PaidStatus status="harian" />
                                 <p className="text-xs ml-2">Harian</p>
                             </div>
                         </div>
@@ -398,11 +429,11 @@ const EmployeeForm = ({setIsLoading}) => {
                                 hka: 23,
                                 att: 23,
                                 meal: 23,
-                                ovt: 23,
+                                ovt: 0,
                                 groupID: formData?.groupID,
                                 basicSalary: formData?.basicSalary,
                                 payrollType: formData?.payrollType,
-                                bpjs: masterPayroll?.length > 0 ? masterPayroll?.[0]?.bpjs : 0,
+                                bpjs: masterPayroll?.length > 0 ? masterPayroll?.find(obj => obj?.year === currYear)?.bpjs : 0,
                                 employeeId: getId
                             }))
                             navigate('/calculator');
@@ -488,6 +519,25 @@ const EmployeeForm = ({setIsLoading}) => {
                             </div>
                         }
                     </div>
+                </div>
+            </div>
+            <div className="bg-[#ddd] mt-6 mb-3 h-[1.5px]" />
+            <div className="flex flex-row items-center justify-between mt-4">
+                <div className="flex flex-row items-center w-full">
+                    <SearchableSelect setWidth="10%" options={listSearch} value={targetSearch} setValue={setTargetSearch} />
+                    <div className="mx-2" />
+                    <SearchableSelect setWidth="24%" placeHolder={'Cari Karwayan...'} options={listData?.map((obj) => ({value: obj?.id, label: obj?.[targetSearch]}))} isDisabled={targetSearch === '' ? true : false} handleAfterExecute={handleAfterExecute} />
+                </div>
+                <div className="flex flex-row items-center">
+                    <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_left_g} handleAction={() => navigate(`/employee/detail?id=${prevDataId}`)} />
+                    <div className="mx-2" />
+                    <Button setWidth="auto" bgcolor={'white'} icon={arrow_left_g} handleAction={prevId > 0 ? () => navigate(`/employee/detail?id=${prevId}`) : null} />
+                    <div className="mx-[6px]" />
+                    <Button setWidth="auto" bgcolor={'white'} text={`${currentIndex+1}/${listData?.length}`} />
+                    <div className="mx-[6px]" />
+                    <Button setWidth="auto" bgcolor={'white'} icon={arrow_right_g} handleAction={nextId > 0 ? () => navigate(`/employee/detail?id=${nextId}`) : null} />
+                    <div className="mx-2" />
+                    <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_right_g} handleAction={() => navigate(`/employee/detail?id=${lastDataId}`)} />
                 </div>
             </div>
         </>
