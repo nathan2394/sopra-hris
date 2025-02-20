@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import TitlePage from "../../component/titlePage";
 import Input from "../../component/input";
-import { calculator_w, employee, empty } from "../../config/icon";
+import { arrow_left_g, arrow_right_g, calculator_w, d_arrow_left_g, d_arrow_right_g, employee, empty } from "../../config/icon";
 import { loadData, postData, updateData } from "../../config/api";
-import { currYear, formatText, getQueryParam } from "../../config/helper";
+import { currYear, formatText, getPrevNextIds, getQueryParam } from "../../config/helper";
 import { baseColor } from "../../config/setting";
 import { useNavigate } from "react-router-dom";
 import SearchableSelect from "../../component/select2";
@@ -14,6 +14,29 @@ const EmployeeForm = ({setIsLoading}) => {
     const navigate = useNavigate();
     const getId = getQueryParam("id");
     const [isAdd] = useState(getQueryParam("action") === 'add' ? true : false);
+
+    const listData = JSON.parse(localStorage?.getItem('empolyeeList'));
+    const [targetSearch, setTargetSearch] = useState('name');
+    const listSearch = [
+        {
+            value: 'name',
+            label: 'Nama',
+        },
+        {
+            value: 'nik',
+            label: 'NIK',
+        },
+        {
+            value: 'ktp',
+            label: 'KTP'
+        }
+    ];
+
+    const currentIndex = listData?.findIndex(obj => obj?.id === parseInt(getId))
+    const prevId = listData[currentIndex-1]?.id ?? 0;
+    const nextId = listData[currentIndex+1]?.id ?? 0;
+    const prevDataId = listData[0]?.id;
+    const lastDataId = listData[listData?.length-1]?.id;
 
     const [formData, setFormData] = useState({
         name: '',
@@ -183,7 +206,6 @@ const EmployeeForm = ({setIsLoading}) => {
             }
         });
     }, [getId, fetchEmployeeDetail]);
-  
 
     const TitleContent = ({text}) => {
         return (
@@ -258,6 +280,13 @@ const EmployeeForm = ({setIsLoading}) => {
                     fetchEmployeeDetail();
                 })
             }
+        }
+    }
+
+    const handleAfterExecute = (targetId) => {
+        if(targetId){
+            setIsLoading(true);
+            navigate(`/employee/detail?id=${targetId}`);
         }
     }
 
@@ -490,6 +519,25 @@ const EmployeeForm = ({setIsLoading}) => {
                             </div>
                         }
                     </div>
+                </div>
+            </div>
+            <div className="bg-[#ddd] mt-6 mb-3 h-[1.5px]" />
+            <div className="flex flex-row items-center justify-between mt-4">
+                <div className="flex flex-row items-center w-full">
+                    <SearchableSelect setWidth="10%" options={listSearch} value={targetSearch} setValue={setTargetSearch} />
+                    <div className="mx-2" />
+                    <SearchableSelect setWidth="24%" placeHolder={'Cari Karwayan...'} options={listData?.map((obj) => ({value: obj?.id, label: obj?.[targetSearch]}))} isDisabled={targetSearch === '' ? true : false} handleAfterExecute={handleAfterExecute} />
+                </div>
+                <div className="flex flex-row items-center">
+                    <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_left_g} handleAction={() => navigate(`/employee/detail?id=${prevDataId}`)} />
+                    <div className="mx-2" />
+                    <Button setWidth="auto" bgcolor={'white'} icon={arrow_left_g} handleAction={prevId > 0 ? () => navigate(`/employee/detail?id=${prevId}`) : null} />
+                    <div className="mx-[6px]" />
+                    <Button setWidth="auto" bgcolor={'white'} text={`${currentIndex+1}/${listData?.length}`} />
+                    <div className="mx-[6px]" />
+                    <Button setWidth="auto" bgcolor={'white'} icon={arrow_right_g} handleAction={nextId > 0 ? () => navigate(`/employee/detail?id=${nextId}`) : null} />
+                    <div className="mx-2" />
+                    <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_right_g} handleAction={() => navigate(`/employee/detail?id=${lastDataId}`)} />
                 </div>
             </div>
         </>

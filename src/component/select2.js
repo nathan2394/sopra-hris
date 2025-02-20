@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 
-const SearchableSelect = ({label, name, placeHolder = 'Select...', options, value, setValue, isDisabled = false, setWidth = '100%', handleAction = null}) => {
+const SearchableSelect = ({label, name, placeHolder = 'Select...', options, value, setValue, isDisabled = false, setWidth = '100%', handleAction = null, handleAfterExecute = null}) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   useEffect(() => {
@@ -12,7 +12,12 @@ const SearchableSelect = ({label, name, placeHolder = 'Select...', options, valu
   }, [value, options]);  
 
   useEffect(() => {
-    if(setValue) setValue(selectedOption?.value)
+    if(setValue){
+      setValue(selectedOption?.value);
+    } 
+    if(handleAfterExecute){
+      handleAfterExecute(selectedOption?.value);
+    } 
   }, [selectedOption])
 
   return (
@@ -34,6 +39,7 @@ const SearchableSelect = ({label, name, placeHolder = 'Select...', options, valu
             placeholder={placeHolder}
             noOptionsMessage={() => "No options found"} 
             // isDisabled={isDisabled} 
+            menuPlacement="top"
             classNames={{
                 control: () => `border border-gray-300 rounded-lg shadow-sm bg-white text-xs hover:border-blue-500 p-[2px] ${isDisabled ? 'pointer-events-none bg-[]' : ''}`,
                 menu: () => "bg-white border border-gray-300 rounded-lg mt-1 text-xs shadow-lg",

@@ -17,6 +17,12 @@ export const close_white = 'icon/close_white.svg';
 export const notif = '/icon/notification.png';
 export const arrow_red = '/icon/arrow_down_red.png';
 export const arrow_g = '/icon/arrow_down_g.png';
+
+export const d_arrow_right_g = '/icon/d_arrow_right_g.svg';
+export const arrow_right_g = '/icon/arrow_right_g.png';
+export const d_arrow_left_g = '/icon/d_arrow_left_g.svg';
+export const arrow_left_g = '/icon/arrow_left_g.png';
+
 export const payroll = '/icon/payroll.png';
 export const reload = '/icon/reload.png';
 export const employee = '/icon/employee.png';
