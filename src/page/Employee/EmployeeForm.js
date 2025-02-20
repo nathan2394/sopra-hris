@@ -3,7 +3,7 @@ import TitlePage from "../../component/titlePage";
 import Input from "../../component/input";
 import { arrow_left_g, arrow_right_g, calculator_w, d_arrow_left_g, d_arrow_right_g, employee, empty } from "../../config/icon";
 import { loadData, postData, updateData } from "../../config/api";
-import { currYear, formatText, getPrevNextIds, getQueryParam } from "../../config/helper";
+import { currYear, formatText, getQueryParam } from "../../config/helper";
 import { baseColor } from "../../config/setting";
 import { useNavigate } from "react-router-dom";
 import SearchableSelect from "../../component/select2";
@@ -393,7 +393,7 @@ const EmployeeForm = ({setIsLoading}) => {
                     <div className="bg-white rounded-lg p-4 mb-4">
                         <p className="font-bold text-sm">{'Rincian Tunjangan & Potongan'}</p>
                         <div className="bg-[#ddd] my-3 h-[1.5px]" />
-                        <div className="min-h-[120px] max-h-[160px] overflow-y-auto">
+                        <div className="min-h-[120px] max-h-[120px] overflow-y-auto">
                             {allowanceDeduction?.filter(obj => obj?.amount > 0)?.length > 0 ?
                                 allowanceDeduction?.filter(obj => obj?.amount > 0)?.map((data, idx) => (
                                     <div className="px-1 border border-[#ddd] rounded-lg mb-2" key={idx}>
@@ -405,8 +405,8 @@ const EmployeeForm = ({setIsLoading}) => {
                                 ))
                                 :
                                 <div className="flex flex-col items-center justify-center p-6">
-                                    <img className="w-[28%] mx-auto" alt="logo" src={empty} />
-                                    <p className="font-bold text-sm">Opps, Nothing to See Here!</p>
+                                    <img className="w-[22%] mx-auto" alt="logo" src={empty} />
+                                    <p className="font-bold text-xs">Opps, Nothing to See Here!</p>
                                 </div>
                             }
                         </div>

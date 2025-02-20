@@ -131,8 +131,9 @@ const EmployeeData = ({setIsLoading}) => {
 
         loadData({url: 'Employees', params: params}).then((res) => {
             if(res?.data?.length > 0){
-                const filteredData = res.data.map((obj) => (
+                const filteredData = res.data.map((obj, idx) => (
                     {
+                        'no' : idx+1,
                         'id' : obj?.employeeID,
                         'nik': obj?.nik,
                         'employeeName': obj?.employeeName,
