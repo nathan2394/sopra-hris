@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import TitlePage from "../../component/titlePage";
 import Input from "../../component/input";
 import { calculator_w, employee, empty } from "../../config/icon";
 import { loadData, postData, updateData } from "../../config/api";
-import { formatText, getQueryParam } from "../../config/helper";
+import { currYear, formatText, getQueryParam } from "../../config/helper";
 import { baseColor } from "../../config/setting";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SearchableSelect from "../../component/select2";
 import Button from "../../component/button";
 // import MyDatePicker from "../../component/date_picker";
@@ -72,67 +72,7 @@ const EmployeeForm = ({setIsLoading}) => {
         }
     ];
 
-    useEffect(() => {
-        Promise.all([
-            loadData({url: 'Departments'}),
-            loadData({url: 'Groups'}),
-            loadData({url: 'Divisions'}),
-            loadData({url: 'Functions'}),
-            loadData({url: 'EmployeeType'}),
-            loadData({url: 'EmployeeJobTitles'}),
-        ]).then(([departmentsRes, groupsRes, divisionsRes, functionsRes, employeeTypesRes, employeeJobTitlesRes]) => {
-            // Set departments list
-            setListDepart(departmentsRes?.data?.map((data) => ({
-                value: data?.departmentID,
-                label: data?.name
-            })));
-            
-            // Set groups list
-            setListGroup(groupsRes?.data?.map((data) => ({
-                value: data?.groupID,
-                label: `${data?.type}` + `${data?.name ? ` - ${data?.name}` : ''}`
-            })));
-            
-            // Set divisions list
-            setListDiv(divisionsRes?.data?.map((data) => ({
-                value: data?.divisionID,
-                label: data?.name
-            })));
-            
-            // Set functions list
-            setListFunc(functionsRes?.data?.map((data) => ({
-                value: data?.functionID,
-                label: data?.name
-            })));
-            
-            // Set employee types list
-            setListType(employeeTypesRes?.data?.map((data) => ({
-                value: data?.employeeTypeID,
-                label: data?.name
-            })));
-
-            setListJobTitle(employeeJobTitlesRes?.data?.map((data) => ({
-                value: data?.employeeJobTitleID,
-                label: data?.name
-            })));
-            
-            // Now fetch employee data if getId exists
-            if (getId) {
-                fetchEmployeeDetail();
-            }
-        });
-    }, [getId]);
-  
-
-    const TitleContent = ({text}) => {
-        return (
-            <div className="bg-[#333333c3] p-2 my-2 w-full rounded-lg">
-                <p className="font-semibold text-white text-sm text-center">{text}</p>
-            </div>
-        );
-    }
-
-    const fetchEmployeeDetail = () => {
+    const fetchEmployeeDetail = useCallback(() => {
         setIsLoading(true);
         if (getId) {
             Promise.all([
@@ -191,6 +131,66 @@ const EmployeeForm = ({setIsLoading}) => {
                 setIsLoading(false);
             });
         }
+    }, [getId])
+
+    useEffect(() => {
+        Promise.all([
+            loadData({url: 'Departments'}),
+            loadData({url: 'Groups'}),
+            loadData({url: 'Divisions'}),
+            loadData({url: 'Functions'}),
+            loadData({url: 'EmployeeType'}),
+            loadData({url: 'EmployeeJobTitles'}),
+        ]).then(([departmentsRes, groupsRes, divisionsRes, functionsRes, employeeTypesRes, employeeJobTitlesRes]) => {
+            // Set departments list
+            setListDepart(departmentsRes?.data?.map((data) => ({
+                value: data?.departmentID,
+                label: data?.name
+            })));
+            
+            // Set groups list
+            setListGroup(groupsRes?.data?.map((data) => ({
+                value: data?.groupID,
+                label: `${data?.type}` + `${data?.name ? ` - ${data?.name}` : ''}`
+            })));
+            
+            // Set divisions list
+            setListDiv(divisionsRes?.data?.map((data) => ({
+                value: data?.divisionID,
+                label: data?.name
+            })));
+            
+            // Set functions list
+            setListFunc(functionsRes?.data?.map((data) => ({
+                value: data?.functionID,
+                label: data?.name
+            })));
+            
+            // Set employee types list
+            setListType(employeeTypesRes?.data?.map((data) => ({
+                value: data?.employeeTypeID,
+                label: data?.name
+            })));
+
+            setListJobTitle(employeeJobTitlesRes?.data?.map((data) => ({
+                value: data?.employeeJobTitleID,
+                label: data?.name
+            })));
+            
+            // Now fetch employee data if getId exists
+            if (getId) {
+                fetchEmployeeDetail();
+            }
+        });
+    }, [getId, fetchEmployeeDetail]);
+  
+
+    const TitleContent = ({text}) => {
+        return (
+            <div className="bg-[#333333c3] p-2 my-2 w-full rounded-lg">
+                <p className="font-semibold text-white text-sm text-center">{text}</p>
+            </div>
+        );
     }
 
     const handleChange = (event) => {
@@ -277,21 +277,23 @@ const EmployeeForm = ({setIsLoading}) => {
                         <div className="flex flex-row">
                             {isEdit ?                             
                                 <>
-                                    <p className="text-[#D22F27] text-sm pr-1 cursor-pointer" onClick={() => {
+                                    <p className="text-[#D22F27] text-sm pr-2 font-semibold cursor-pointer" onClick={() => {
                                         setIsReadOnly(!isReadOnly);
                                         setIsEdit(!isEdit)
                                     }}>Cancel</p>
-                                    <p className="text-[#369D00] text-sm pl-1  cursor-pointer" onClick={() => handleSubmit()}>Submit</p>
+                                    <p className="text-[#369D00] text-sm pl-1 font-semibold cursor-pointer" onClick={() => handleSubmit()}>Submit</p>
                                 </>
                                 :
                                 <>
                                 {isAdd ? 
                                     <p className="text-[#369D00] text-sm cursor-pointer" onClick={() => handleSubmit()}>Add Data</p>
                                     :
-                                    <p className="text-[#369D00] text-sm cursor-pointer" onClick={() => {
-                                        setIsReadOnly(!isReadOnly);
-                                        setIsEdit(!isEdit)
-                                    }}>Edit Data</p>
+                                    <>
+                                        <p className="text-[#369D00] text-sm font-semibold cursor-pointer underline" onClick={() => {
+                                            setIsReadOnly(!isReadOnly);
+                                            setIsEdit(!isEdit)
+                                        }}>Edit Data</p>
+                                    </>
                                 }
                                 </>
                             }
@@ -384,11 +386,11 @@ const EmployeeForm = ({setIsLoading}) => {
                     <div className="flex flex-row justify-between items-center mb-2">
                         <div className="flex flex-row">
                             <div className="flex flex-row items-center p-2 rounded-lg w-[120px] bg-white" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
-                                <div className="h-[10px] w-[10px] bg-blue-500" />
+                                <PaidStatus status="bulanan" />
                                 <p className="text-xs ml-2">Bulanan</p>
                             </div>
                             <div className="flex flex-row items-center p-2 ml-4 rounded-lg w-[120px] bg-white" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
-                                <div className="h-[10px] w-[10px] bg-orange-300" />
+                                <PaidStatus status="harian" />
                                 <p className="text-xs ml-2">Harian</p>
                             </div>
                         </div>
@@ -398,11 +400,11 @@ const EmployeeForm = ({setIsLoading}) => {
                                 hka: 23,
                                 att: 23,
                                 meal: 23,
-                                ovt: 23,
+                                ovt: 0,
                                 groupID: formData?.groupID,
                                 basicSalary: formData?.basicSalary,
                                 payrollType: formData?.payrollType,
-                                bpjs: masterPayroll?.length > 0 ? masterPayroll?.[0]?.bpjs : 0,
+                                bpjs: masterPayroll?.length > 0 ? masterPayroll?.find(obj => obj?.year === currYear)?.bpjs : 0,
                                 employeeId: getId
                             }))
                             navigate('/calculator');

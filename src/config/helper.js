@@ -31,6 +31,8 @@ export const years = [
     {label: "2014", value: 2014}
 ];
 
+export const currYear = new Date().getFullYear();
+
 export const exportToExcel = (dataTable, filename = 'data', template = 'default') => {
     let arrObj = dataTable;
     // if(template !== 'default'){
