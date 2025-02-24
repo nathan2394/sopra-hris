@@ -24,6 +24,7 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   // const [userData, setUserData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [contentFootet, setContentFootet] = useState(null);
 
   // useEffect(() => {
   //   const localData = localStorage.getItem('userdata');
@@ -50,7 +51,7 @@ const App = () => {
           } />
           <Route path="/employee/detail" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <EmployeeForm setIsLoading={setIsLoading} />
+              <EmployeeForm setIsLoading={setIsLoading} setContentFootet={setContentFootet} />
             </ProtectedRoute>
           } />
           <Route path="/employee/salaryreport" element={
