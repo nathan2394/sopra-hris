@@ -2,8 +2,9 @@ import { useLocation } from "react-router-dom";
 // import FullLoading from "./FullLoading";
 import Navbar from "./navbar";
 import FullLoading from "../component/fullLoading";
+import Footer from "./footer";
 
-const Layout = ({ children, setAuth, isLoading = false }) => {
+const Layout = ({ children, setAuth, contentFootet = null, isLoading = false }) => {
   const location = useLocation();
   const userData = JSON.parse(localStorage.getItem('userdata'));
 
@@ -34,9 +35,12 @@ const Layout = ({ children, setAuth, isLoading = false }) => {
           <Navbar setAuth={setAuth} userData={userData} />
           <div style={{ zIndex: 99 }}>
             <div style={{ padding: "20px", paddingTop: "5rem" }}>
-              <div className="px-5 max-w-full">{children}</div>
+              <div className="px-5 max-w-full relative">{children}</div>
             </div>
           </div>
+          {contentFootet && 
+            <Footer content={contentFootet}/>
+          }
         </div>
       </div>
       {isLoading && <FullLoading />}
