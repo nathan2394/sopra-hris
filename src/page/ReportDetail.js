@@ -139,7 +139,7 @@ const ReportDetail = () => {
                 value: formData?.uTransport
             },
             {
-                label: `Uang Makan (${formData?.meal} hari x Rp. ${formatText(formData?.uhMakan)})`,
+                label: `U Makan (${formData?.meal} hari x Rp. ${formatText(formData?.uhMakan)})`,
                 value: formData?.uMakan
             },
             {

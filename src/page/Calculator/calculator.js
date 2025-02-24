@@ -54,7 +54,7 @@ const Calculator = ({setIsLoading}) => {
 
     const handleReset = () => {
         setCalulateResult([]);
-        localStorage?.removeItem('calc');
+        // localStorage?.removeItem('calc');
         setFormData({
             hks: 0,
             hka: 0,
@@ -93,7 +93,7 @@ const Calculator = ({setIsLoading}) => {
     }
 
     return (<>
-        {calcLocaldata ? 
+        {JSON?.stringify(calcLocaldata) !== "{}" ? 
             <TitlePage type={'detail'} label={'Data Karyawan'} label2={'Data Personal'} subLabel={'Kalkulator'} source={employee} setNavigateBack={'/employee'} setNavigateBack2={`/employee/detail?id=${calcLocaldata?.employeeId}`}/>
             : 
             <TitlePage label={'Kalkulator'} source={calculator} />
