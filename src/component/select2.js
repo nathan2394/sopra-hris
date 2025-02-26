@@ -101,6 +101,11 @@ const SearchableSelect = ({
             backgroundColor: isDisabled ? "#f4f2f2cc" : "",
             paddingLeft: useSearchIcon ? "30px" : "", // Adjust padding only when search icon is active
           }),
+          menuList: (provided) => ({
+            ...provided,
+            maxHeight: "150px", // Set max height
+            overflowY: "auto", // Enable scrolling if too many options
+          }),
         }}
         components={{ DropdownIndicator }} // Set custom dropdown indicator
       />
