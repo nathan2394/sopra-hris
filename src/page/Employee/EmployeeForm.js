@@ -34,6 +34,18 @@ const EmployeeForm = ({setIsLoading}) => {
     ];
 
     const [isHovered, setIsHovered] = useState({});
+    // const initialList = {};
+
+    useEffect(() => {
+        const initialList = {};
+        if(listFilterEmpl?.checkedValue){
+            Object.entries(listFilterEmpl?.checkedValue)?.map(([label]) => {
+                initialList[label] = false;
+            })
+            setIsHovered(initialList);
+        }
+    }, [])
+    
     const currentIndex = listData?.findIndex(obj => obj?.id === parseInt(getId))
     const prevId = listData[currentIndex-1]?.id ?? 0;
     const nextId = listData[currentIndex+1]?.id ?? 0;
@@ -301,7 +313,7 @@ const EmployeeForm = ({setIsLoading}) => {
     return (
         <>
             <TitlePage label={'Data Karyawan'} subLabel={'Data Personal'} isAction={true} subMenu={isAdd ? [] : subMenu} source={employee} type={'detail'} setNavigateBack={`/employee`} />
-            <div className={`flex flex-row justify-between ${!isAdd ? 'mb-20' : 'mb-2' }`}>
+            <div className={`flex flex-row justify-between ${!isAdd ? 'mb-16' : 'mb-2' }`}>
                 <div className="bg-white rounded-lg w-full mr-2">
                     <div className="flex flex-row justify-between px-4 pt-2">
                         <p className="font-bold text-sm">{isAdd ? 'Data Karyawan' : 'Detil Data Karyawan'}</p>
@@ -436,7 +448,9 @@ const EmployeeForm = ({setIsLoading}) => {
                                 basicSalary: formData?.basicSalary,
                                 payrollType: formData?.payrollType,
                                 bpjs: masterPayroll?.length > 0 ? masterPayroll?.find(obj => obj?.year === currYear)?.bpjs : 0,
-                                employeeId: getId
+                                employeeId: getId,
+                                khusus: masterPayroll?.length > 0 ? masterPayroll?.find(obj => obj?.year === currYear)?.utKhusus : 0,
+                                operational: masterPayroll?.length > 0 ? masterPayroll?.find(obj => obj?.year === currYear)?.utOperational : 0
                             }))
                             navigate('/calculator');
                         }} />
@@ -530,34 +544,43 @@ const EmployeeForm = ({setIsLoading}) => {
                         <div className="flex flex-row items-center w-full">
                             <SearchableSelect setWidth="30%" options={listSearch} value={targetSearch} setValue={setTargetSearch} />
                             <div className="mx-1" />
-                            <SearchableSelect setWidth="54%" placeHolder={'Cari Karwayan...'} options={listData?.map((obj) => ({value: obj?.id, label: obj?.[targetSearch]}))} isDisabled={targetSearch === '' ? true : false} handleAfterExecute={handleAfterExecute} />
+                            <SearchableSelect setWidth="54%" placeHolder={'Cari Karwayan...'} options={listData?.map((obj) => ({value: obj?.id, label: obj?.[targetSearch]}))} isDisabled={targetSearch === '' ? true : false} useSearchIcon={true} handleAfterExecute={handleAfterExecute} />
                         </div>
                         <div className="flex flex-row items-center justify-end w-full">
                             <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_left_g} handleAction={() => navigate(`/employee/detail?id=${prevDataId}`)} />
                             <div className="mx-2" />
                             <Button setWidth="auto" bgcolor={'white'} icon={arrow_left_g} handleAction={prevId > 0 ? () => navigate(`/employee/detail?id=${prevId}`) : null} />
                             <div className="mx-[6px]" />
-                            <Button setWidth="auto" bgcolor={'white'} text={`${currentIndex+1}/${listData?.length}`} />
+                            <Button setWidth="80px" bgcolor={'white'} position="center" text={`${currentIndex+1}/${listData?.length}`} />
                             <div className="mx-[6px]" />
                             <Button setWidth="auto" bgcolor={'white'} icon={arrow_right_g} handleAction={nextId > 0 ? () => navigate(`/employee/detail?id=${nextId}`) : null} />
                             <div className="mx-2" />
                             <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_right_g} handleAction={() => navigate(`/employee/detail?id=${lastDataId}`)} />
                         </div>
-                        {/* <div className="w-full flex flex-row items-end justify-end">
-                            {Object.entries(listFilterEmpl?.checkedValue)?.map(([label, items]) => 
+                        <div className="w-full flex flex-row items-end justify-end">
+                            {listFilterEmpl?.checkedValue &&
+                            Object.entries(listFilterEmpl?.checkedValue)?.map(([label, items]) => 
                             items?.length > 0 && (
                                 <>
-                                <div className={`py-1 w-auto pl-3`}>
-                                    {isHovered &&                                 
-                                        <div className="bg-white p-2 rounded-md" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
+                                <div className={`py-1 w-auto pl-3 relative`}>
+                                    {isHovered[label] &&                                 
+                                        <div className="bg-white p-2 min-w-[130px] rounded-md absolute bottom-12 right-0" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
                                             {items?.map((data, idx) => (
                                                 <p className="text-xs">{`${idx+1}. ${data?.value}`}</p>
                                             ))}
                                         </div>
                                     }
                                     <button className={`rounded-md w-auto p-2 bg-white`} style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}
-                                        onMouseEnter={() => setIsHovered(true)}
-                                        onMouseLeave={() => setIsHovered(false)}
+                                        onMouseEnter={() => {
+                                            const init = {...isHovered}
+                                            init[label] = true;
+                                            setIsHovered(init);
+                                        }}
+                                        onMouseLeave={() => {
+                                            const init = {...isHovered}
+                                            init[label] = false;
+                                            setIsHovered(init);
+                                        }}
                                     >
                                         <div className={`flex flex-row items-center font-normal text-sm`}>
                                             {`${items?.length} ${label === 'group' ? 'grade' : label}`}
@@ -567,7 +590,7 @@ const EmployeeForm = ({setIsLoading}) => {
                                 </>
                             ))}
 
-                        </div> */}
+                        </div>
                     </div>
                 </div>
             }
