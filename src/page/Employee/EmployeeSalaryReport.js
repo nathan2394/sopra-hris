@@ -47,33 +47,6 @@ const EmployeeReport = ({setIsLoading}) => {
         })
     }, []);
 
-    const exportFile = (type, event) => {
-        if (event) {
-          event.preventDefault();
-        }
-    
-        if(type === ''){
-          alert('Please Select Export Type');
-          return;
-        }
-    
-        setIsLoadExport(true);
-    
-        loadData({url: 'SalaryDetails', params:[{title: 'filter', value: 'month:1|year:2025'}]}).then((res) => {
-            const todayDate = getCurrentDate();
-            let filteredData = [];
-          
-            filteredData = res.data.map(obj =>
-                Object.fromEntries(
-                Object.entries(obj).filter(([key]) => !key.includes('ID')  && !key.includes('dateIn')  && !key.includes('dateUp')  && !key.includes('userIn') && !key.includes('userUp') && !key.includes('isDeleted') )
-                )
-            );
-    
-            exportToExcel(filteredData, `Data_Report_Salary_${todayDate}`, `${type === 'bank' ? 'bank' : 'default'}`)
-            setIsLoadExport(false);
-        });
-    }
-
     const subMenu = [
         {
             title: 'Data Personal',

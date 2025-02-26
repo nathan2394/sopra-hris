@@ -10,16 +10,32 @@ import { baseColor } from "../config/setting";
 import Select from "../component/select";
 import LoadingIndicator from "../component/loading_indicator";
 import IconImage from "../component/icon_img";
-import { exportToExcel, getCurrentDate } from "../config/helper";
+import { currentMonth, currYear, exportToExcel, getCurrentDate, months, years } from "../config/helper";
+import SearchableSelect from "../component/select2";
 
 const Report = ({setIsLoading}) => {
     const [data, listData] = useState([]);
     const [isLoadData, setIsLoadData] = useState(true);
     const [isLoadExport, setIsLoadExport] = useState(false);
+    const [currMonth, setCurrMonth] = useState(currentMonth);
+    const [currentYear, setCurrentYear] = useState(currYear);
+    const [isLoad, setIsLoad] = useState(true);
 
     useEffect(() => {
         setIsLoading(true);
-        loadData({url: 'SalaryDetails', params:[{title: 'filter', value: 'month:1|year:2025'}]}).then((res) => {
+        fetchReport();
+    }, []);
+
+    useEffect(() => {
+        if(!isLoad){
+            fetchReport();
+        }
+    }, [currMonth])
+
+    const fetchReport = () => {
+        setIsLoading(true);
+        setIsLoadData(true);
+        loadData({url: 'SalaryDetails', params:[{title: 'filter', value: `month:${currMonth}|year:${currentYear}`}]}).then((res) => {
             if(res?.data?.length > 0){
                 const filteredData = res.data.map(obj => {
                     const filteredObj = Object.fromEntries(
@@ -43,12 +59,15 @@ const Report = ({setIsLoading}) => {
                 listData(filteredData);
                 setIsLoadData(false);
                 setIsLoading(false);
+                setIsLoad(false);
             }else{
+                listData([]);
                 setIsLoadData(false);
                 setIsLoading(false);
+                setIsLoad(false);
             }
         })
-    }, []);
+    }
 
     const exportFile = (type, event) => {
         if (event) {
@@ -62,7 +81,7 @@ const Report = ({setIsLoading}) => {
     
         setIsLoadExport(true);
     
-        loadData({url: 'SalaryDetails', params:[{title: 'filter', value: 'month:1|year:2025'}]}).then((res) => {
+        loadData({url: 'SalaryDetails', params:[{title: 'filter', value: `month:${currMonth}|year:${currentYear}`}]}).then((res) => {
             const todayDate = getCurrentDate();
             let filteredData = [];
           
@@ -81,8 +100,12 @@ const Report = ({setIsLoading}) => {
     return (
         <>
             <TitlePage label={'Report Salary'} source={list} isAction={true} handleExport={(e) => exportFile('default', e)} />
+            <div className="flex flex-row items-center">
+                <SearchableSelect placeHolder = 'Periode' setPosition="bottom" setWidth="160px" options={months} value={currMonth} setValue={setCurrMonth}  />
+                <div className="mx-1" />
+                <SearchableSelect placeHolder = 'Year' setPosition="bottom" setWidth="100px" options={years} value={currYear} setValue={setCurrentYear}  />
+            </div>
             <div>
-
                 {!isLoadData ? 
                     <Table dataTable={data} isAction={true} detailPath={'/report/detail?id='} />
                     :
