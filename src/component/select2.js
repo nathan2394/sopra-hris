@@ -5,6 +5,7 @@ const SearchableSelect = ({
   label,
   name,
   placeHolder = "Select...",
+  setPosition = 'top',
   options,
   value,
   setValue,
@@ -77,7 +78,7 @@ const SearchableSelect = ({
         isSearchable
         placeholder={placeHolder}
         noOptionsMessage={() => "No options found"}
-        menuPlacement="top"
+        menuPlacement={setPosition}
         classNames={{
           control: () =>
             `border border-gray-300 rounded-lg shadow-sm bg-white text-xs hover:border-blue-500 p-[2px] ${
