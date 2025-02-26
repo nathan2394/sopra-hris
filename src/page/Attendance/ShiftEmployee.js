@@ -5,13 +5,13 @@ import Table from "../component/table";
 import { coverDate, exportToExcel, formatText, getCurrentDate, getMonthName } from "../config/helper";
 import { arrow_g, close, download, empty, excel, payroll, reload, save, upload } from "../config/icon";
 import IconImage from "../component/icon_img";
-import { loadData, postData, postFormData } from "../config/api";
+import { loadData, postFormData } from "../config/api";
 import LoadingIndicator from "../component/loading_indicator";
 import { baseColor } from "../config/setting";
 import TitlePage from "../component/titlePage";
 import SearchableSelect from "../component/select2";
 
-const MasterPayroll = ({setIsLoading}) => {
+const ShiftEmployee = ({setIsLoading}) => {
   const fileInputRef = useRef(null);
   const [fileUpload, setFileUpload] = useState(null);
   const [isUpload, setIsUpload] = useState(false);
@@ -33,22 +33,11 @@ const MasterPayroll = ({setIsLoading}) => {
     setIsLoading(true);
     postFormData({ url: `Salary/upload`, formData: formData })?.then((res) => {
       if(res?.data?.length > 0){
-        // const filteredData = res.data.map(obj =>
-        //   Object.fromEntries(
-        //     Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year') && !key.includes('basicSalary') && !key.startsWith('uh'))
-        //   )
-        // );
-        const filteredData = res.data.map(obj => {
-          const filteredObj = Object.fromEntries(
-            Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year') && !key.includes('basicSalary') && !key.startsWith('uh'))
-          );
-      
-          return {
-              id: obj?.salaryID,
-              ...filteredObj,
-          };
-        }); 
-
+        const filteredData = res.data.map(obj =>
+          Object.fromEntries(
+            Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year') && !key.includes('payrollType'))
+          )
+        );
         setPeriod(`${getMonthName(res?.data[0]?.month)} ${res?.data[0]?.year}`)
         setDataUploadTable(filteredData);
         setIsUpload(true);
@@ -85,18 +74,6 @@ const MasterPayroll = ({setIsLoading}) => {
       fileInputRef.current.value = '';
     }
   };
-
-  const handleSave = () => {
-    const arrListID = dataUploadTable?.map((data) => ({
-      salaryID: data?.id
-    }))
-    if(arrListID?.length > 0){
-      postData({url: 'Employees', formData: arrListID})?.then((res) => {
-        alert('Success');
-    })
-    }
-    console.log(arrListID);
-  }
 
   const reloadFile = () => {
     const formData = new FormData();
@@ -136,13 +113,11 @@ const MasterPayroll = ({setIsLoading}) => {
             "department" : val?.department,
             "division" : val?.division,
             "type" : val?.employeeType,
-            "jobTitle" : val?.employeeJobTitle,
-            "group" : val?.groupName,
+            "group" : val?.groupName + ` (${val?.groupType})`, 
             "accountNo" : val?.accountNo,
             "month" : val?.month,
             "year" : val?.year,
             "startWorkingDate" : coverDate(val?.startWorkingDate),
-            "payrollType" : val?.payrollType,
             "hks" : val?.hks,
             "hka" : val?.hka,
             "att" : val?.att,
@@ -150,7 +125,7 @@ const MasterPayroll = ({setIsLoading}) => {
             "absent" : val?.absent,
             "ovt" : val?.ovt,
             "late" : val?.late,
-            "paidSalary" : val?.paidSalary,
+            "basicSalary" : val?.basicSalary,
             "uMakan": val?.uMakan,
             "uTransport": val?.uTransport,
             "uJabatan": val?.uJabatan,
@@ -158,15 +133,12 @@ const MasterPayroll = ({setIsLoading}) => {
             "utKhusus": val?.utKhusus,
             "utOperational": val?.utOperational,
             "uLembur": val?.uLembur,
-            "uMasaKerja": val?.uMasaKerja,
-            "bpjs" : val?.bpjs,
-            "rapel" : val?.rapel,
-            "otherAllowances" : val?.otherAllowances,
-            "otherDeductions" : val?.otherDeductions,
             "allowanceTotal" : val?.allowanceTotal,
             "deductionTotal" : val?.deductionTotal,
             "thp" : val?.thp,
             "netto" : val?.netto,
+            "bpjs" : val?.bpjs,
+            "transferAmount" : val?.transferAmount
           }
         ))
       }else{
@@ -236,17 +208,17 @@ const MasterPayroll = ({setIsLoading}) => {
                   <p className="font-normal text-xs pb-2 w-[10px]">:</p>
                   <p className="font-normal text-xs pb-2">{dataUploadTable?.[0]?.hks || 0}</p>
                 </div>
-                <div className="flex flex-row items-start">
+                {/* <div className="flex flex-row items-start">
                   <p className="font-normal text-xs pb-2 w-[100px]">Jumlah Karyawan</p>
                   <p className="font-normal text-xs pb-2 w-[10px]">:</p>
-                  <p className="font-normal text-xs pb-2">{dataUploadTable?.length || 0}</p>
-                </div>
+                  <p className="font-normal text-xs pb-2">{dataUploadTotal?.[0]?.hks || 0}</p>
+                </div> */}
               </div>
               <div className="bg-[#ddd] my-3 h-[1.5px]" />
               <div className="flex flex-row justify-end">
                 <Button text={'Upload Ulang'} setWidth={'auto'} bgcolor={'white'} showBorder={true} color={baseColor} handleAction={() => reloadFile()} icon={reload} />
                 <div className="mx-1" />
-                <Button text={'Simpan Data'} setWidth={'auto'} bgcolor={baseColor} showBorder={true} color={'white'}  icon={save} handleAction={() => handleSave()} />
+                <Button text={'Simpan Data'} setWidth={'auto'} bgcolor={baseColor} showBorder={true} color={'white'}  icon={save} />
               </div>
             </div>
 
@@ -311,4 +283,4 @@ const MasterPayroll = ({setIsLoading}) => {
   );
 };
   
-export default MasterPayroll;  
+export default ShiftEmployee;  

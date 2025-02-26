@@ -20,7 +20,9 @@ const Calculator = ({setIsLoading}) => {
         groupID: calcLocaldata.groupID ?? 0,
         basicSalary: calcLocaldata.basicSalary ?? 0,
         payrollType: calcLocaldata.payrollType?.toLowerCase() ?? "",
-        bpjs: calcLocaldata.bpjs ?? 0
+        bpjs: calcLocaldata.bpjs ?? 0,
+        khusus: calcLocaldata.khusus ?? 0,
+        operational: calcLocaldata.operational ?? 0
     });
     
     const [listGroup, setListGroup] = useState([]);
@@ -64,7 +66,9 @@ const Calculator = ({setIsLoading}) => {
             groupID: 0,
             basicSalary: 0,
             payrollType: "",
-            bpjs: 0
+            bpjs: 0,
+            khusus: 0,
+            operational: 0
         })
     }
 
@@ -116,6 +120,9 @@ const Calculator = ({setIsLoading}) => {
                     <div className="mx-2" />
                     <Input textAlign={'right'} handleAction={handleChange} label={'OVT'} setName={'ovt'} setWidth="48%" value={formData?.ovt} type={'number'} />
                     <Input textAlign={'right'} handleAction={handleChange} label={'BPJS'} setName={'bpjs'} setWidth="48%" value={formData?.bpjs} type={'number'} />
+                    <div className="mx-2" />
+                    <Input textAlign={'right'} handleAction={handleChange} label={'Khusus'} setName={'khusus'} setWidth="48%" value={formData?.khusus} type={'number'} />
+                    <Input textAlign={'right'} handleAction={handleChange} label={'Operational'} setName={'operational'} setWidth="48%" value={formData?.operational} type={'number'} />
                 </div>
                 <div className="bg-[#ddd] my-3 h-[1.5px]" />
                 <div className="flex justify-end">

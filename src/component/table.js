@@ -35,7 +35,7 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', b
         <table className="table-auto  text-xs rounded-lg overflow-hidden border border-[#595858]">
           <thead className="text-[10px] text-white uppercase bg-[#333333c3]">
             <tr>
-              {labelHeader?.filter(data => !data?.includes('id'))?.map((val, idx) => (
+              {labelHeader?.filter(data => data !== 'id')?.map((val, idx) => (
                 <th
                   scope="col"
                   key={idx}
