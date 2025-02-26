@@ -34,11 +34,6 @@ const MasterPayroll = ({setIsLoading}) => {
     setIsLoading(true);
     postFormData({ url: `Salary/upload`, formData: formData })?.then((res) => {
       if(res?.data?.length > 0){
-        // const filteredData = res.data.map(obj =>
-        //   Object.fromEntries(
-        //     Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year') && !key.includes('basicSalary') && !key.startsWith('uh'))
-        //   )
-        // );
         const filteredData = res.data.map(obj => {
           const filteredObj = Object.fromEntries(
             Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year') && !key.includes('basicSalary') && !key.startsWith('uh'))
@@ -235,6 +230,7 @@ const MasterPayroll = ({setIsLoading}) => {
                   <p className="font-normal text-xs pb-2 w-[10px]">:</p>
                   <p className="font-normal text-xs pb-2">{period}</p>
                 </div>
+
                 <div className="flex flex-row items-start">
                   <p className="font-normal text-xs pb-2 w-[100px]">Jumlah Hari</p>
                   <p className="font-normal text-xs pb-2 w-[10px]">:</p>
