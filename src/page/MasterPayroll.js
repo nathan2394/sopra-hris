@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import Button from "../component/button";
 import Table from "../component/table";
-import { coverDate, exportToExcel, formatText, getCurrentDate, getMonthName } from "../config/helper";
+import { coverDate, currentMonth, currYear, exportToExcel, formatText, getCurrentDate, getMonthName } from "../config/helper";
 import { arrow_g, close, download, empty, excel, payroll, reload, save, upload } from "../config/icon";
 import IconImage from "../component/icon_img";
 import { loadData, postData, postFormData } from "../config/api";
@@ -24,6 +24,7 @@ const MasterPayroll = ({setIsLoading}) => {
   const [exportLabel, setExportLabel] = useState('');
   
   const [period, setPeriod] = useState('-');
+  const [uploadPeriod, setUploadPeriod] = useState('');
 
   const [dataUploadTable, setDataUploadTable] = useState([]);
   const [dataUploadSummary, setDataUploadSummary] = useState([]);
@@ -50,6 +51,7 @@ const MasterPayroll = ({setIsLoading}) => {
         }); 
 
         setPeriod(`${getMonthName(res?.data[0]?.month)} ${res?.data[0]?.year}`)
+        setUploadPeriod(`${res?.data[0]?.month} ${res?.data[0]?.year}`)
         setDataUploadTable(filteredData);
         setIsUpload(true);
         setIsLoading(false);
@@ -112,7 +114,6 @@ const MasterPayroll = ({setIsLoading}) => {
   }
 
   const exportFile = (type, event) => {
-    console.log(exportType, type)
     if (event) {
       event.preventDefault();
     }
@@ -122,9 +123,12 @@ const MasterPayroll = ({setIsLoading}) => {
       return;
     }
 
+    let uploadMonth = uploadPeriod?.split(" ")[0] ?? currentMonth;
+    let uploadYear = uploadPeriod?.split(" ")[1] ?? currYear;
+
     setIsLoadExport(true);
 
-    loadData({ url: `Salary/generatedata`, params: [{title: 'filter', value: `type:${type}|month:1|year:2025`}] }).then((res) => {
+    loadData({ url: `Salary/generatedata`, params: [{title: 'filter', value: `type:${type}|month:${uploadMonth}|year:${uploadYear}`}] }).then((res) => {
       const todayDate = getCurrentDate();
       let filteredData = [];
 

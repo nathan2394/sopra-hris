@@ -25,9 +25,11 @@ export const arrow_left_g = '/icon/arrow_left_g.png';
 
 export const payroll = '/icon/payroll.png';
 export const reload = '/icon/reload.png';
+export const shift = '/icon/shift.png'
 export const employee = '/icon/employee.png';
 export const list = '/icon/list.png';
 
+export const shift_g = '/icon/shift_g.png'
 export const payroll_g = '/icon/payroll_g.png';
 export const employee_g = '/icon/employee_g.png';
 export const list_g = '/icon/list_g.png';

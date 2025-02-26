@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import IconImage from "../component/icon_img";
-import { arrow_g, calculator_g, employee_g, kehadiran_g, list_g, logout, menu, notif, payroll_g, sopra_full, sopra_logo, user } from "../config/icon";
+import { arrow_g, calculator_g, employee_g, kehadiran_g, list_g, logout, menu, notif, payroll_g, shift, shift_g, sopra_full, sopra_logo, user } from "../config/icon";
 import React, { useState } from "react";
 import Button from "../component/button";
 import { baseColor } from "../config/setting";
@@ -20,6 +20,11 @@ const Navbar = ({setAuth}) => {
         title: 'Data Karyawan',
         navRoute: '/employee',
         icon: employee_g
+    },
+    {
+        title: 'Grup Shift Karyawan',
+        navRoute: '/shift',
+        icon: shift_g,
     },
     {
         title: 'Kehadiran',
