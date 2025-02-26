@@ -33,6 +33,8 @@ export const years = [
 
 export const currYear = new Date().getFullYear();
 
+export const currentMonth = new Date().getMonth() + 1;
+
 export const exportToExcel = (dataTable, filename = 'data', template = 'default') => {
     let arrObj = dataTable;
     // if(template !== 'default'){

@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { HashRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import './App.css';
 import AuthPage from "./page/AuthPage";
 import MasterPayroll from "./page/MasterPayroll";
-import Navbar from "./layout/navbar";
-import Sidebar from "./layout/sidebar";
-import Footer from "./layout/footer";
 import ProtectedRoute from "./protectedRoute";
 import NotFound from "./page/NotFound";
 import EmployeeData from "./page/Employee/EmployeeData";
 import EmployeeForm from "./page/Employee/EmployeeForm";
 import Report from "./page/Report";
-import FullLoading from "./component/fullLoading";
 import ReportDetail from "./page/ReportDetail";
 import Layout from "./layout/layout";
 import PrivacyPolicy from "./page/PrivacyPolicy";
@@ -19,20 +15,13 @@ import EmployeeReport from "./page/Employee/EmployeeSalaryReport";
 import EmployeePaySlip from "./page/Employee/EmployeePaySlip";
 import AttendanceData from "./page/Attendance/AttendanceData";
 import Calculator from "./page/Calculator/calculator";
+import ShiftEmployee from "./page/Attendance/ShiftEmployee";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   // const [userData, setUserData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [contentFootet, setContentFootet] = useState(null);
-
-  // useEffect(() => {
-  //   const localData = localStorage.getItem('userdata');
-  //   //const isAuth = localStorage.getItem('statusAuth');
-
-  //   if(localData) setUserData(JSON.parse(localData));
-  //   //if(isAuth) setIsAuthenticated(isAuth === 'true' ? true : false);
-  // }, []);
 
   return (
     <Router>
@@ -67,6 +56,11 @@ const App = () => {
           <Route path="/attendance" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <AttendanceData setIsLoading={setIsLoading} />
+            </ProtectedRoute>
+          } />
+          <Route path="/shift" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ShiftEmployee setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
           <Route path="/report/detail" element={

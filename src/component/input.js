@@ -30,11 +30,11 @@ const Input = ({label, targetRef = null, isFocus = false, setName, type, placeho
                     <span class="inline-flex items-center px-3 text-sm border border-gray-300 rounded-l-lg">
                         <p className="text-xs">{sufix}</p>
                     </span>
-                    <input ref={inputRef} type={type} value={type === 'date' ? formatDate(value) || '' : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-r-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} />
+                    <input ref={inputRef} type={type} value={type === 'date' ? formatDate(value) || '' : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-r-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} />
                 </div>
             : 
                 <div className="flex">
-                    <input ref={inputRef} type={type} value={type === 'date' ? formatDate(value) || '' : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} />
+                    <input ref={inputRef} type={type} value={type === 'date' ? formatDate(value) || '' : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} />
                 </div>
             }
         </div>
