@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import TitlePage from "../../component/titlePage";
-import { calculator, calculator_w, employee, empty, payroll, reload } from "../../config/icon";
+import { calculator, calculator_w, employee, empty, payroll, reload, upload } from "../../config/icon";
 import Input from "../../component/input";
 import SearchableSelect from "../../component/select2";
 import { loadData, postData } from "../../config/api";
@@ -85,12 +85,28 @@ const Calculator = ({setIsLoading}) => {
         }
     }, [])
 
+    useEffect(()=> {
+        console.log(calulateResult, 'pop')
+    }, [calulateResult])
+
     const calculateSalary = () => {
         setIsLoading(true)
         postData({url: 'Salary/calculator', formData: formData})?.then((res) => {
             console.log(res)
             if(res?.data?.length > 0){
-                setCalulateResult(res?.data)
+                // setCalulateResult([...res?.data, {hks: formData?.hks, hka: formData?.hka, att: formData?.att, meal: formData?.meal}])
+                setCalulateResult(res?.data?.map((obj) => (
+                    {
+                        "name": obj["name"]?.includes('Makan') ? 
+                                    `${obj["name"]} (${formData?.meal} x ${formatText(obj["amountPerDay"])})` 
+                                : obj["name"]?.includes('Transport') ? 
+                                    `${obj["name"]} (${formData?.att} x ${formatText(obj["amountPerDay"])})` 
+                                : obj["name"],
+                        "type": obj["type"],
+                        "amount": obj["amount"],
+                        "amountPerDay": obj["amountPerDay"]
+                    }
+                )))
             }
             setIsLoading(false)
         })
@@ -140,7 +156,9 @@ const Calculator = ({setIsLoading}) => {
                         {calulateResult?.filter(obj => !obj?.name?.includes('Netto') && !obj?.type?.includes('Deduction'))?.map((val, idx) => (
                             <div className="flex flex-row items-start justify-between" key={idx}>
                                 <div className="flex flex-row justify-between w-full">
-                                    <p className="font-normal text-xs pb-2 w-[300px]">{val?.name}</p>
+                                    <p className="font-normal text-xs pb-2 w-[300px]">{
+                                        val?.name
+                                    }</p>
                                     <p className="font-normal text-xs pb-2 ">: Rp.</p>
                                     <p className={`font-normal text-xs pb-2 text-end w-[100px] ${val?.type === 'Deduction' ? `text-[#D22F27]` : `text-[#369D00]`}`}>{`${val?.type === 'Deduction' ? '- ' : val?.amount > 0 ? '+ ' : ''} ${formatText(val?.amount) || 0}`}</p>
                                 </div>
@@ -168,10 +186,12 @@ const Calculator = ({setIsLoading}) => {
                     ))}
                     </>
                     :
-                    <div className="flex flex-col items-center justify-center p-6 mt-11">
-                        <img className="w-[50%] mx-auto" alt="logo" src={empty} />
-                        <p className="font-bold text-sm">Opps, Nothing to See Here!</p>
-                    </div>
+                    <>
+                        <div className="flex flex-col items-center justify-center p-6 mt-11">
+                            <img className="w-[50%] mx-auto" alt="logo" src={empty} />
+                            <p className="font-bold text-sm">Opps, Nothing to See Here!</p>
+                        </div>
+                    </>
                 }
             </div>
         </div>
