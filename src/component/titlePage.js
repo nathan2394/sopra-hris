@@ -35,13 +35,6 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                             <p className="font-bold text-sm px-2">{`>`}</p>
                             <p className="font-bold text-sm underline">{subLabel}</p>
                         </div>
-                        <div className="flex flex-row">
-                            {subMenu?.map((data, idx) => (
-                                <div className="ml-2" key={idx}>
-                                    <Button bgcolor={subLabel === data?.title ? baseColor : '#33333340'} color={'white'} text={data?.title} handleAction={() => navigate(data?.navRoute)} />
-                                </div>
-                            ))}
-                        </div>
                     </>
                 } 
                 {(type === 'header' && isAction) &&                
@@ -83,6 +76,15 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                                 }
                             </>
                         }
+                    </div>
+                }
+                {subMenu?.length > 0 &&
+                    <div className="flex flex-row">
+                        {subMenu?.map((data, idx) => (
+                            <div className="ml-2" key={idx}>
+                                <Button bgcolor={subLabel === data?.title ? baseColor : '#33333340'} color={'white'} text={data?.title} handleAction={() => navigate(data?.navRoute)} />
+                            </div>
+                        ))}
                     </div>
                 }
             </div>
