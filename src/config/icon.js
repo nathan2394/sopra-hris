@@ -46,6 +46,8 @@ export const calculator = '/icon/calculator.png';
 export const calculator_g = '/icon/calculator_g.png';
 export const calculator_w = '/icon/calculator_w.png';
 
+export const setting = '/icon/setting.png';
+
 //logo
 export const sopra = '/logo/sopra.png';
 export const sopra_logo = '/logo/sopra_full_2.png';

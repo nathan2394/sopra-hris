@@ -98,8 +98,12 @@ const Calculator = ({setIsLoading}) => {
                 setCalulateResult(res?.data?.map((obj) => (
                     {
                         "name": obj["name"]?.includes('Makan') ? 
-                                    `${obj["name"]} (${formData?.meal} x ${formatText(obj["amountPerDay"])})` 
+                                    `${obj["name"]} (${formData?.att} x ${formatText(obj["amountPerDay"])})` 
                                 : obj["name"]?.includes('Transport') ? 
+                                    `${obj["name"]} (${formData?.att} x ${formatText(obj["amountPerDay"])})` 
+                                : obj["name"]?.includes('Khusus') ? 
+                                    `${obj["name"]} (${formData?.att} x ${formatText(obj["amountPerDay"])})` 
+                                : obj["name"]?.includes('Operational') ? 
                                     `${obj["name"]} (${formData?.att} x ${formatText(obj["amountPerDay"])})` 
                                 : obj["name"],
                         "type": obj["type"],

@@ -19,18 +19,11 @@ const StartEndDatePick = ({setList}) => {
         if(startDate && endDate){
             let start = new Date(startDate);
             let end = new Date(endDate); 
-    
-            let getDay = start.getDate();
-            let getMonth = start.getMonth() + 1;
-    
-            let differenceInTime = end - start; // Difference in milliseconds
-            let countDays = differenceInTime / (1000 * 60 * 60 * 24);
-    
             let daysArray = [];
     
             while (start <= end) {
                 daysArray.push({
-                    date: `${start.getDate()}/${start.getMonth() + 1}/${start.getFullYear()}`
+                    date: `${start.getFullYear()}/${start.getMonth() + 1}/${start.getDate()}`
                 });
                 start.setDate(start.getDate() + 1); // Move to the next day
             }

@@ -31,8 +31,8 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', b
     const labelHeader = Object?.keys(dataTable[0]);
 
     return (
-      <div className="w-full overflow-x-auto pt-4">
-        <table className="table-auto  text-xs rounded-lg overflow-hidden border border-[#595858]">
+      <div className="w-full overflow-x-auto pt-2">
+        <table className="w-full table-auto text-xs rounded-lg overflow-hidden border border-[#595858]">
           <thead className="text-[10px] text-white uppercase bg-[#333333c3]">
             <tr>
               {labelHeader?.filter(data => data !== 'id')?.map((val, idx) => (

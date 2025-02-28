@@ -119,7 +119,7 @@ const ShiftEmployee = ({setIsLoading}) => {
           name: val?.name
         })) ?? [];
         //exportToExcel(combineArr, `Template_Shift_${todayDate}`, 'default');
-        generateExcel(combineArr, listOptions, listDatePeriod?.length, listOptions?.length);
+        generateExcel(combineArr, listOptions, listDatePeriod?.length, listOptions?.length, `Template_Shift_${todayDate}`);
       });
     }
 

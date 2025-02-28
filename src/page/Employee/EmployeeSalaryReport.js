@@ -17,27 +17,21 @@ const EmployeeReport = ({setIsLoading}) => {
         setIsLoading(true);
         loadData({url: `Salary/EmployeeSalaryHistory/${getId}`}).then((res) => {
             if(res?.data?.length > 0){
-                const filteredData = res.data.map(obj => {
-                    const filteredObj = Object.fromEntries(
-                        Object.entries(obj).filter(([key]) => 
-                            !key.includes('ID') && 
-                            !key.includes('month') && 
-                            !key.includes('year') && 
-                            !key.includes('dateIn') &&  
-                            !key.includes('dateUp') &&  
-                            !key.includes('userIn') &&  
-                            !key.includes('userUp') &&  
-                            !key.includes('isDeleted')
-                        )
-                    );
-                
-                    return {
-                        id: obj?.salaryID,
-                        periode: getMonthName(obj?.month) + ` ${obj.year}`,
-                        ...filteredObj,
-                    };
-                });          
+                const sortData = res.data?.sort((a, b) => new Date(b?.year, b?.month - 1) - new Date(a?.year, a?.month - 1))
+                const filteredData = sortData.map((obj, idx) => ({
+                    no: idx+1,
+                    id: obj?.salaryID,
+                    periode: getMonthName(obj?.month) + ` ${obj.year}`,
+                    nik: obj?.nik,
+                    namaKaryawan: obj?.employeeName,
+                    pendapatan: obj?.thp,
+                    potongan: obj?.deductionTotal,
+                    gajiBersih: obj?.netto,
+                    account: obj?.accountNo,
+                    bank: 'BCA'
+                }))        
                 listData(filteredData);
+                localStorage?.setItem('listReport', JSON.stringify(filteredData));
                 setIsLoadData(false);
                 setIsLoading(false);
             }else{

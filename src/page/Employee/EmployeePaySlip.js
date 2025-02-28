@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { loadData } from "../../config/api";
-import { coverDate, formatText, getMonthName, getQueryParam } from "../../config/helper";
+import { coverDate, formatText, getMonthName, getQueryParam, months } from "../../config/helper";
 import TitlePage from "../../component/titlePage";
-import { employee } from "../../config/icon";
+import { arrow_left_g, arrow_right_g, d_arrow_left_g, d_arrow_right_g, employee } from "../../config/icon";
+import Button from "../../component/button";
+import { useNavigate } from "react-router-dom";
+import SearchableSelect from "../../component/select2";
 
-const EmployeePaySlip = () => {
+const EmployeePaySlip = ({}) => {
+    const navigate = useNavigate();
     const getId = getQueryParam("id");
+    const [changesId, setChangesID] = useState(getQueryParam("id") ?? 0);
     const employeeId = getQueryParam("employeeId");
     const [formData, setFormData] = useState({
         name: '',
@@ -47,53 +52,82 @@ const EmployeePaySlip = () => {
         otherDeductions: 0,
     });
 
+    const listData = JSON.parse(localStorage?.getItem('listReport'));
+    const listMonth = listData?.map((obj) => (
+        {
+            value: obj?.id,
+            label: obj?.periode
+        }
+    ));
+    const currentIndex = listData?.findIndex(obj => obj?.id === parseInt(getId))
+    const prevId = listData[currentIndex-1]?.id ?? 0;
+    const nextId = listData[currentIndex+1]?.id ?? 0;
+    const prevDataId = listData[0]?.id;
+    const lastDataId = listData[listData?.length-1]?.id;
+
+    useEffect(() => {
+        if(changesId !== getId){
+            fetchEmployeeSalary();
+        }
+    }, [changesId]);
+
     useEffect(()=> {
         if(getId){
-            loadData({url: `SalaryDetails/${getId}`}).then((res) => {
-                if(res?.data){
-                    setFormData({
-                        name: res?.data?.employeeName,
-                        nik: res?.data?.nik,
-                        groupName: res?.data?.groupName,
-                        depart: res?.data?.department,
-                        jobTitle: res?.data?.employeeJobTitle,
-                        basicSalary: res?.data?.basicSalary,
-                        paidSalary: res?.data?.paidSalary,
-                        uMakan: res?.data?.uMakan,
-                        uhMakan: res?.data?.uhMakan,
-                        uTransport: res?.data?.uTransport,
-                        uHransport: res?.data?.uhTransport,
-                        uJabatan: res?.data?.uJabatan,
-                        uFunctional: res?.data?.uFunctional,
-                        utKhusus: res?.data?.utKhusus,
-                        utOperational: res?.data?.utOperational,
-                        uLembur: res?.data?.uLembur,
-                        uMasaKerja: res?.data?.uMasaKerja,
-                        bpjs: res?.data?.bpjs,
-                        thp: res?.data?.thp,
-                        netto: res?.data?.netto,
-                        employeeType: res?.data?.employeeType,
-                        startWorkingDate: res?.data?.startWorkingDate,
-                        month: res?.data?.month,
-                        year: res?.data?.year,
-                        division: res?.data?.division,
-                        hks: res?.data?.hks,
-                        hka: res?.data?.hka,
-                        att: res?.data?.att,
-                        meal: res?.data?.meal,
-                        absent: res?.data?.absent,
-                        ovt: res?.data?.ovt,
-                        late: res?.data?.late,
-                        rapel: res?.data?.rapel,
-                        deductionTotal: res?.data?.deductionTotal,
-                        allowanceTotal: res?.data?.allowanceTotal,
-                        otherAllowances: res?.data?.otherAllowances,
-                        otherDeductions: res?.data?.otherDeductions,
-                    })
-                }
-            })
+            fetchEmployeeSalary();
         }
     }, []);
+
+    const handleAfterExecute = useCallback((targetId) => {
+        if (targetId) {
+            navigate(`/salaryreport?employeeId=${employeeId}&id=${targetId}`);
+        }
+    }, [navigate, employeeId, changesId]); 
+
+    const fetchEmployeeSalary = () => {
+        loadData({url: `SalaryDetails/${getId}`}).then((res) => {
+            if(res?.data){
+                setFormData({
+                    name: res?.data?.employeeName,
+                    nik: res?.data?.nik,
+                    groupName: res?.data?.groupName,
+                    depart: res?.data?.department,
+                    jobTitle: res?.data?.employeeJobTitle,
+                    basicSalary: res?.data?.basicSalary,
+                    paidSalary: res?.data?.paidSalary,
+                    uMakan: res?.data?.uMakan,
+                    uhMakan: res?.data?.uhMakan,
+                    uTransport: res?.data?.uTransport,
+                    uHransport: res?.data?.uhTransport,
+                    uJabatan: res?.data?.uJabatan,
+                    uFunctional: res?.data?.uFunctional,
+                    utKhusus: res?.data?.utKhusus,
+                    utOperational: res?.data?.utOperational,
+                    uLembur: res?.data?.uLembur,
+                    uMasaKerja: res?.data?.uMasaKerja,
+                    bpjs: res?.data?.bpjs,
+                    thp: res?.data?.thp,
+                    netto: res?.data?.netto,
+                    employeeType: res?.data?.employeeType,
+                    startWorkingDate: res?.data?.startWorkingDate,
+                    month: res?.data?.month,
+                    year: res?.data?.year,
+                    division: res?.data?.division,
+                    hks: res?.data?.hks,
+                    hka: res?.data?.hka,
+                    att: res?.data?.att,
+                    meal: res?.data?.meal,
+                    absent: res?.data?.absent,
+                    ovt: res?.data?.ovt,
+                    late: res?.data?.late,
+                    rapel: res?.data?.rapel,
+                    deductionTotal: res?.data?.deductionTotal,
+                    allowanceTotal: res?.data?.allowanceTotal,
+                    otherAllowances: res?.data?.otherAllowances,
+                    otherDeductions: res?.data?.otherDeductions,
+                })
+            }
+        })
+    }
 
     const TitleContent = ({text}) => {
         return (
@@ -182,9 +216,10 @@ const EmployeePaySlip = () => {
     }
 
     return (
+        formData?.name &&
         <>
             <TitlePage label={'Data Personal'} label2={'Data Gaji Bulanan'} subLabel={'Detil Gaji'} source={employee} type={'detail'} setNavigateBack={`/employee/detail?id=${employeeId}`} setNavigateBack2={`/employee/salaryreport?id=${employeeId}`} />
-            <div className="border bg-white p-6 rounded-lg">
+            <div className="border bg-white p-6 rounded-lg mb-16">
 
                 <div className="flex flex-row justify-between">
                     <div className="mb-2">
@@ -323,6 +358,34 @@ const EmployeePaySlip = () => {
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className="fixed bottom-0 left-0 w-full bg-white px-10 pb-2" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
+                <div className="flex flex-row items-center justify-between mt-2">
+                        <SearchableSelect setWidth="20%" placeHolder="Plih Bulan" value={changesId} setValue={setChangesID} options={listMonth} handleAfterExecute={handleAfterExecute} />
+                        <div className="flex flex-row items-center justify-end w-full">
+                            <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_left_g} handleAction={() => {
+                                navigate(`/salaryreport?employeeId=${employeeId}&id=${prevDataId}`);
+                                setChangesID(prevDataId);
+                            }} />
+                            <div className="mx-2" />
+                            <Button setWidth="auto" bgcolor={'white'} icon={arrow_left_g} handleAction={prevId > 0 ? () => {
+                                navigate(`/salaryreport?employeeId=${employeeId}&id=${prevId}`);
+                                setChangesID(prevId);
+                            } : null} />
+                            <div className="mx-[6px]" />
+                            <Button setWidth="80px" bgcolor={'white'} position="center" text={`${currentIndex+1}/${listData?.length}`} />
+                            <div className="mx-[6px]" />
+                            <Button setWidth="auto" bgcolor={'white'} icon={arrow_right_g} handleAction={nextId > 0 ? () => {
+                                navigate(`/salaryreport?employeeId=${employeeId}&id=${nextId}`)
+                                setChangesID(nextId);
+                            } : null} />
+                            <div className="mx-2" />
+                            <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_right_g} handleAction={() => {
+                                navigate(`/salaryreport?employeeId=${employeeId}&id=${lastDataId}`);
+                                setChangesID(lastDataId);
+                            }} />
+                        </div>
                 </div>
             </div>
         </>

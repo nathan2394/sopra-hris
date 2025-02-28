@@ -33,18 +33,7 @@ export const isValidDate = (dateString) => {
 
 export const exportToExcel = (dataTable, filename = 'data', template = 'default') => {
     let arrObj = dataTable;
-    // if(template !== 'default'){
-    //     arrObj = dataTable?.map((val) => (
-    //         {
-    //             "Acc. No.": val?.accountNo,
-    //             "Trans. Amount" : Math.round(val?.netto),
-    //             "emp.Number": val?.nik,
-    //             "emp.Name": val?.name,
-    //             "Dept": val?.divisionName,
-    //             "Trans. Date": coverDate(val?.transDate)
-    //         }
-    //     ))
-    // }
+
     // Convert JSON data to a worksheet
     const worksheet = XLSX.utils.json_to_sheet(arrObj);
 
@@ -68,7 +57,7 @@ export const exportToExcel = (dataTable, filename = 'data', template = 'default'
     saveAs(data, `${filename}.xlsx`);
 }
 
-export const generateExcel = (mainList, optionList, countColumn, countList) => {
+export const generateExcel = (mainList, optionList, countColumn, countList, filename = 'data') => {
     const arr1 = mainList;
     const arr2 = optionList;
     
@@ -104,7 +93,7 @@ export const generateExcel = (mainList, optionList, countColumn, countList) => {
 
         // Step 6: Export the Updated Excel File
         return workbook.outputAsync().then(data => {
-            saveAs(new Blob([data]), "data.xlsx");
+            saveAs(new Blob([data]), `${filename}.xlsx`);
         });
     });
 };
@@ -173,10 +162,22 @@ export const formatText = (value) => {
         // If it's a string and can be parsed as a number, treat it as a string
         return value;
     } else {
-        const date = new Date(value);
-        if (!isNaN(date.getTime())) {
+        // const date = new Date(value);
+        // if (!isNaN(date.getTime())) {
+        //     return coverDate(value);
+        // }
+        const datePatterns = [
+            /^\d{2}\/\d{2}\/\d{4}$/, // dd/mm/yyyy or mm/dd/yyyy
+            /^\d{4}-\d{2}-\d{2}$/,    // yyyy-mm-dd (ISO format)
+            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/
+        ];
+    
+        // Check if dateString matches any of the patterns
+        const isValidFormat = datePatterns.some(pattern => pattern.test(value));
+        if (isValidFormat){
             return coverDate(value);
         }
+        
         return value;
     }
 };
