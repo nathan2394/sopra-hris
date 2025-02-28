@@ -1,4 +1,6 @@
 import * as XLSX from "xlsx";
+// import XlsxPopulate from "xlsx-populate";
+import XlsxPopulate from "xlsx-populate/browser/xlsx-populate";
 import { saveAs } from "file-saver";
 
 export const months = [
@@ -24,20 +26,14 @@ export const currYear = new Date().getFullYear();
 
 export const currentMonth = new Date().getMonth() + 1;
 
+export const isValidDate = (dateString) => {
+    const date = new Date(dateString);
+    return !isNaN(date.getTime()); // Check if the date is valid
+}
+
 export const exportToExcel = (dataTable, filename = 'data', template = 'default') => {
     let arrObj = dataTable;
-    // if(template !== 'default'){
-    //     arrObj = dataTable?.map((val) => (
-    //         {
-    //             "Acc. No.": val?.accountNo,
-    //             "Trans. Amount" : Math.round(val?.netto),
-    //             "emp.Number": val?.nik,
-    //             "emp.Name": val?.name,
-    //             "Dept": val?.divisionName,
-    //             "Trans. Date": coverDate(val?.transDate)
-    //         }
-    //     ))
-    // }
+
     // Convert JSON data to a worksheet
     const worksheet = XLSX.utils.json_to_sheet(arrObj);
 
@@ -60,6 +56,47 @@ export const exportToExcel = (dataTable, filename = 'data', template = 'default'
     const data = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(data, `${filename}.xlsx`);
 }
+
+export const generateExcel = (mainList, optionList, countColumn, countList, filename = 'data') => {
+    const arr1 = mainList;
+    const arr2 = optionList;
+    
+    // Step 1: Convert Data to Worksheets
+    const ws1 = XLSX.utils.json_to_sheet(arr1);
+    const ws2 = XLSX.utils.json_to_sheet(arr2);
+
+    // Step 2: Create Workbook and Append Sheets
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws1, "Sheet1");
+    XLSX.utils.book_append_sheet(wb, ws2, "Sheet2");
+
+    // Step 3: Write Workbook to Buffer
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+
+    XlsxPopulate.fromDataAsync(wbout).then(workbook => {
+        const sheet1 = workbook.sheet("Sheet1");
+        const sheet2 = workbook.sheet("Sheet2");
+
+        // Define Dropdown List Source (Absolute Range)
+        const dropdownRange = `Sheet2!$A$2:$A$${countList}`; // Absolute reference to column A in Sheet2
+
+        arr1.forEach((_, rowIndex) => {
+            for (let index = 0; index < countColumn; index++) {
+                const colLetter = String.fromCharCode(68 + index); // 'D' = 68 (ASCII)
+                sheet1.cell(`${colLetter}${rowIndex + 2}`).dataValidation({
+                    type: "list",
+                    showDropDown: true,
+                    formula1: dropdownRange // Set dropdown list source
+                });
+            }
+        });
+
+        // Step 6: Export the Updated Excel File
+        return workbook.outputAsync().then(data => {
+            saveAs(new Blob([data]), `${filename}.xlsx`);
+        });
+    });
+};
 
 export const getCurrentDate = () => {
     const today = new Date();
@@ -125,10 +162,22 @@ export const formatText = (value) => {
         // If it's a string and can be parsed as a number, treat it as a string
         return value;
     } else {
-        const date = new Date(value);
-        if (!isNaN(date.getTime())) {
+        // const date = new Date(value);
+        // if (!isNaN(date.getTime())) {
+        //     return coverDate(value);
+        // }
+        const datePatterns = [
+            /^\d{2}\/\d{2}\/\d{4}$/, // dd/mm/yyyy or mm/dd/yyyy
+            /^\d{4}-\d{2}-\d{2}$/,    // yyyy-mm-dd (ISO format)
+            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/
+        ];
+    
+        // Check if dateString matches any of the patterns
+        const isValidFormat = datePatterns.some(pattern => pattern.test(value));
+        if (isValidFormat){
             return coverDate(value);
         }
+        
         return value;
     }
 };

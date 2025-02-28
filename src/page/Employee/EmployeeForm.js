@@ -153,6 +153,20 @@ const EmployeeForm = ({setIsLoading}) => {
                         employeeJobTitleID: employeeRes?.data?.jobTitleID,
                     });
 
+                    loadData({url: `GroupDetails/${employeeRes?.data?.groupID}`})?.then((res) => {
+                        console.log(res?.data);
+                        const employeeDeyails = allowanceDeductionRes?.data;
+                        console.log(employeeDeyails)
+                        if(res?.data){
+                            let gradeDetails = !employeeDeyails?.find(obj => obj?.allowanceDeductionID === res?.data?.allowanceDeductionID) ? res?.data : {}
+                            
+                            setAllowanceDeduction([...allowanceDeductionRes?.data, gradeDetails])
+                        }else{
+                            if (allowanceDeductionRes?.data?.length > 0) {
+                                setAllowanceDeduction(allowanceDeductionRes?.data);
+                            }
+                        }
+                    })
                 }
                 
                 // Set master payroll
@@ -161,9 +175,9 @@ const EmployeeForm = ({setIsLoading}) => {
                 }
                 
                 // Set allowance and deduction
-                if (allowanceDeductionRes?.data?.length > 0) {
-                    setAllowanceDeduction(allowanceDeductionRes?.data);
-                }
+                // if (allowanceDeductionRes?.data?.length > 0) {
+                //     setAllowanceDeduction(allowanceDeductionRes?.data);
+                // }
 
                 setIsLoading(false);
             });

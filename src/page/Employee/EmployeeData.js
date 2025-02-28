@@ -480,7 +480,7 @@ const EmployeeData = ({setIsLoading}) => {
             }} handleExport={(e) => exportFile('default', e)} handleFilter={() => openModalFilter()} />
             <div>
                 {isFilter &&                
-                    <div className="mt-4 flex flex-row items-center justify-between">
+                    <div className="mt-2 flex flex-row items-center justify-between">
                         <div className="flex flex-row items-center">
                             <IconImage size="small" source={filter} />
                             <p className="font-bold text-sm px-2">Filter By:</p>
@@ -534,6 +534,9 @@ const EmployeeData = ({setIsLoading}) => {
                     </div>
                 }
 
+                <div className="pt-2">
+                    <p className="text-xs font-semibold">Total Output: {listData?.length}</p>
+                </div>
                 {!isLoadData ? 
                     <Table dataTable={listData} isAction={true} beforeNavigate={beforeNavigate} detailPath={'/employee/detail?id='}  />
                     :

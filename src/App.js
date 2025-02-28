@@ -16,6 +16,7 @@ import EmployeePaySlip from "./page/Employee/EmployeePaySlip";
 import AttendanceData from "./page/Attendance/AttendanceData";
 import Calculator from "./page/Calculator/calculator";
 import ShiftEmployee from "./page/Attendance/ShiftEmployee";
+import Unattendance from "./page/Attendance/Unattendance";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -56,6 +57,11 @@ const App = () => {
           <Route path="/attendance" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <AttendanceData setIsLoading={setIsLoading} />
+            </ProtectedRoute>
+          } />
+          <Route path="/unattendance" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Unattendance setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
           <Route path="/shift" element={

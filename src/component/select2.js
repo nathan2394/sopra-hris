@@ -27,9 +27,6 @@ const SearchableSelect = ({
     if (setValue) {
       setValue(selectedOption?.value);
     }
-    if (handleAfterExecute) {
-      handleAfterExecute(selectedOption?.value);
-    }
   }, [selectedOption]);
 
   // Custom dropdown indicator logic
@@ -65,16 +62,15 @@ const SearchableSelect = ({
       <Select
         options={options}
         value={selectedOption}
-        onChange={
-          handleAction
-            ? (value) => {
-                setSelectedOption(value);
-                handleAction(name, value?.value);
-              }
-            : (value) => {
-                setSelectedOption(value);
-              }
-        }
+        onChange={(value) => {
+          setSelectedOption(value);
+          if (handleAction) {
+              handleAction(name, value?.value);
+          }
+          if (handleAfterExecute) {
+              handleAfterExecute(value?.value);
+          }
+      }}
         isSearchable
         placeholder={placeHolder}
         noOptionsMessage={() => "No options found"}

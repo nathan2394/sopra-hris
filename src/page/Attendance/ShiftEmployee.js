@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
 import { deleteData, loadData, postFormData } from "../../config/api";
-import { coverDate, exportToExcel, getCurrentDate } from "../../config/helper";
+import { coverDate, exportToExcel, generateExcel, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
 import Button from "../../component/button";
@@ -78,17 +78,18 @@ const ShiftEmployee = ({setIsLoading}) => {
 
     const handleUpload = (formData) => {
       setIsLoading(true);
-      postFormData({ url: `EmployeeShifts`, formData: formData })?.then((res) => {
+      postFormData({ url: `EmployeeShifts/upload`, formData: formData })?.then((res) => {
         if(res?.data?.length > 0){
           const filteredData = res.data.map(obj => {
             const filteredObj = Object.fromEntries(
-              Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year') && !key.includes('basicSalary') && !key.startsWith('uh'))
+              Object.entries(obj).filter(([key]) => !key.includes('ID') && !key.includes('month') && !key.includes('year') && !key.includes('dateIn') && !key.includes('dateUp') && !key.includes('userIn') && !key.includes('userIn') && !key.includes('isDeleted'))
             );
         
             return {
                 ...filteredObj,
             };
           }); 
+          setIsLoading(false);
           setIsLoadData(false);
           setDataUploadTable(filteredData);
         }
@@ -112,13 +113,19 @@ const ShiftEmployee = ({setIsLoading}) => {
           [val?.date]: ''
         }));
         let combineArr = [...arrObj, ...arrObj2];
-        exportToExcel(combineArr, `Template_Shift_${todayDate}`, 'default')
+
+        let listOptions = res?.shifts?.map((val) => ({
+          code: val?.code,
+          name: val?.name
+        })) ?? [];
+        //exportToExcel(combineArr, `Template_Shift_${todayDate}`, 'default');
+        generateExcel(combineArr, listOptions, listDatePeriod?.length, listOptions?.length, `Template_Shift_${todayDate}`);
       });
     }
 
     return (
         <>
-            <TitlePage label={'Grup Shift Karyawan'} source={shift} type="detail" subMenu={subMenu} isAction={true}/>
+            <TitlePage label={'Grup Shift Karyawan'} source={shift} subMenu={subMenu} isAction={true}/>
             <div className="flex flex-row items-center">
               <StartEndDatePick setList={setListDatePeriod} />
               <SearchableSelect placeHolder = 'Select Export Type' setWidth="185px" value={exportType} setValue={setExportType} options={exportTypes}  />
