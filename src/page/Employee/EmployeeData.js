@@ -7,7 +7,7 @@ import Input from "../../component/input";
 import Button from "../../component/button";
 import { baseColor } from "../../config/setting";
 import TitlePage from "../../component/titlePage";
-import { employee, filter, reload } from "../../config/icon";
+import { employee, filter, filter_w, reload } from "../../config/icon";
 import IconImage from "../../component/icon_img";
 import Table from "../../component/table";
 import LoadingIndicator from "../../component/loading_indicator";
@@ -29,7 +29,7 @@ const EmployeeData = ({setIsLoading}) => {
     const [listDiv, setListDiv] = useState([]);
 
     const [checkedValue, setCheckValue] = useState(localFilter?.checkedValue ?? {});
-    const [selectedValues, setSelectedValues] = useState({});
+    const [selectedValues, setSelectedValues] = useState(localFilter?.checkedValue ?? {});
 
     const [searchForm, setSearchForm] = useState({
         name    : localFilter?.name ?? '',
@@ -227,10 +227,10 @@ const EmployeeData = ({setIsLoading}) => {
     }
 
     const handleChange = (event) => {
-        setSearchInput({
-          ...searchForm,
+        setSearchInput((prev) => ({
+          ...prev,
           [event.target.name]: event.target.value,
-        });
+        }));
     };
 
     const handleKeyDown = (event) => {
@@ -426,9 +426,12 @@ const EmployeeData = ({setIsLoading}) => {
                 <div className="relative bg-white rounded-lg shadow-sm">
                     {/* <!-- Modal header --> */}
                     <div className="flex items-center justify-between p-4 border-b rounded-t border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900 ">
-                            Filter
-                        </h3>
+                        <div className="flex flex-row items-center">
+                            <IconImage source={filter} size="small"/>
+                            <h3 className="text-base font-semibold text-gray-900 pl-2">
+                                Pilih Filter
+                            </h3>
+                        </div>
                         <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-toggle="crud-modal" onClick={() => setModalFilterOpen(false)}>
                             <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
@@ -443,7 +446,7 @@ const EmployeeData = ({setIsLoading}) => {
                                     <div key={index}>
                                         <div className="flex flex-row py-2 px-4 cursor-pointer">
                                             <input type="checkbox" id={`check${value?.target}${val?.id}`} value={val?.id} checked={arrFilter[value?.target]?.some((v) => v?.id === val?.id) || false} onChange={() => handleCheckbox(val, value?.target)} />
-                                            <label for={`check${value?.target}${val?.id}`} className="text-xs pl-2">{val?.value}</label>
+                                            <label htmlFor={`check${value?.target}${val?.id}`} className="text-xs pl-2 cursor-pointer">{val?.value}</label>
                                         </div>
                                     </div>
                                 ))}
@@ -451,26 +454,16 @@ const EmployeeData = ({setIsLoading}) => {
                         ))}
                     </div>
 
-                    <div className="p-4 flex flex-row items-center">
+                    <div className="p-4 flex flex-row items-center w-full">
                         <Button setWidth={'auto'} bgcolor={'white'} handleAction={() => {
                             setSelectedValues({});
                         }} icon={reload} />
                         <div className="mx-1" />
-                        <Button text={'Submit Filter'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={() => submitFilter()} />
+                        <Button text={'Terapkan Filter'} setWidth={'auto'} icon={filter_w} bgcolor={baseColor} color={'white'} handleAction={() => submitFilter()} />
                     </div>
                  </div>
             </Modal>
         )
-    }
-
-    const handleDetele = (id) => {
-        console.log('trigger');
-        setIsAlert(true);
-        // deleteData({ url: 'Employees', id: id }).then(() => {
-
-        // }).catch((e) => {
-        //     alert(e);
-        // })
     }
 
     return (
@@ -516,7 +509,7 @@ const EmployeeData = ({setIsLoading}) => {
                             </div>
                         </div>
                         <div>
-                            <Button text="Reset Filter" bgcolor={baseColor} color={'white'} setWidth="auto" handleAction={() => {
+                            <Button text="Reset Filter" bgcolor={baseColor} color={'white'} setWidth="auto" setPadding="5px" handleAction={() => {
                                 setSearchForm({
                                     name    : '',
                                     nik     : '',
@@ -534,7 +527,7 @@ const EmployeeData = ({setIsLoading}) => {
                     </div>
                 }
 
-                <div className="pt-2">
+                <div className="pt-4 pb-2">
                     <p className="text-xs font-semibold">Total Output: {listData?.length}</p>
                 </div>
                 {!isLoadData ? 
@@ -545,7 +538,6 @@ const EmployeeData = ({setIsLoading}) => {
                     </div>
                 }
             </div>
-            {/* <AlertPopUp isOpen={isAlert} /> */}
             {renderModal()}
             {renderFilter()}
         </>

@@ -104,7 +104,7 @@ const SearchableSelect = ({
             overflowY: "auto", // Enable scrolling if too many options
           }),
         }}
-        components={{ DropdownIndicator }} // Set custom dropdown indicator
+        components={{ DropdownIndicator, IndicatorSeparator: useSearchIcon ? () => null : components.IndicatorSeparator }} // Set custom dropdown indicator
       />
     </div>
   );

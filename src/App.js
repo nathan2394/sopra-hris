@@ -17,6 +17,8 @@ import AttendanceData from "./page/Attendance/AttendanceData";
 import Calculator from "./page/Calculator/calculator";
 import ShiftEmployee from "./page/Attendance/ShiftEmployee";
 import Unattendance from "./page/Attendance/Unattendance";
+import AttendanceDetail from "./page/Attendance/AttendanceDetail";
+import Overtime from "./page/Attendance/Overtime";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -59,9 +61,19 @@ const App = () => {
               <AttendanceData setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
+          <Route path="/attendance/detail" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <AttendanceDetail setIsLoading={setIsLoading} />
+            </ProtectedRoute>
+          } />
           <Route path="/unattendance" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <Unattendance setIsLoading={setIsLoading} />
+            </ProtectedRoute>
+          } />
+          <Route path="/overtime" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Overtime setIsLoading={setIsLoading} />
             </ProtectedRoute>
           } />
           <Route path="/shift" element={
