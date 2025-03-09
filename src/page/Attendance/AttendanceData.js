@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
-import { deleteData, loadData } from "../../config/api";
+// import { deleteData, loadData } from "../../config/api";
+import { useAPI } from "../../config/fetchApi";
 import { coverDate, exportToExcel, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
@@ -15,6 +16,7 @@ import CollapseMenu from "../../component/collapse_menu";
 import AlertPopUp from "../../component/popupAlert";
 
 const AttendanceData = ({setIsLoading}) => {
+    const { deleteData, loadData } = useAPI();
     const navigate = useNavigate();
 
     const [isSubmit, setIsSubmit] = useState(false);
@@ -416,7 +418,7 @@ const AttendanceData = ({setIsLoading}) => {
                                     <div key={index}>
                                         <div className="flex flex-row py-2 px-4 cursor-pointer">
                                             <input type="checkbox" id={`check${value?.target}${val?.id}`} value={val?.id} checked={arrFilter[value?.target]?.some((v) => v?.id === val?.id) || false} onChange={() => handleCheckbox(val, value?.target)} />
-                                            <label for={`check${value?.target}${val?.id}`} className="text-xs pl-2">{val?.value}</label>
+                                            <label htmlFor={`check${value?.target}${val?.id}`} className="text-xs pl-2">{val?.value}</label>
                                         </div>
                                     </div>
                                 ))}
@@ -512,7 +514,7 @@ const AttendanceData = ({setIsLoading}) => {
                 }
 
                 {!isLoadData ? 
-                    <Table dataTable={isSubmit ? listData : []} isAction={true} detailPath={'/employee/detail?id='}  />
+                    <Table dataTable={isSubmit ? listData : []} isAction={true} detailPath={'/attendance/detail?id='}  />
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />

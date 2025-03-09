@@ -1,23 +1,25 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
-import { deleteData, loadData } from "../../config/api";
+// import { deleteData, loadData } from "../../config/api";
 import { coverDate, exportToExcel, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
 import Button from "../../component/button";
 import { baseColor } from "../../config/setting";
 import TitlePage from "../../component/titlePage";
-import { employee, filter, kehadiran, list, reload } from "../../config/icon";
+import { add_g, employee, filter, kehadiran, list, reload } from "../../config/icon";
 import IconImage from "../../component/icon_img";
 import Table from "../../component/table";
 import LoadingIndicator from "../../component/loading_indicator";
 import CollapseMenu from "../../component/collapse_menu";
 import AlertPopUp from "../../component/popupAlert";
 import SearchableSelect from "../../component/select2";
+import InputContent from "../../component/sections/inputContent";
+import { useAPI } from "../../config/fetchApi";
 
 const Unattendance = ({setIsLoading}) => {
     const navigate = useNavigate();
-
+    const { deleteData, loadData } = useAPI();
     const [isSubmit, setIsSubmit] = useState(false);
     const [listData, setListData] = useState([]);
     const [listEmployee, setListEmployee] = useState([]);
@@ -69,6 +71,9 @@ const Unattendance = ({setIsLoading}) => {
         employeeJobTitleName: '',
         employeeJobTitleID: '',
     });
+    const [showForm, setShowForm] = useState(false);
+    const [isAdd, setIsAdd] = useState(false);
+    const [isEdit, setIsEdit] = useState(false);
 
     useEffect(() => {
         loadData({url: 'Employees'}).then((res) => {
@@ -83,45 +88,127 @@ const Unattendance = ({setIsLoading}) => {
         {
             name: 'Sample Employee',
             nik: '123456789012',
-            sisaCuti: '12 hari',
             pengajuan: '03/01/2025',
-            mulai: '03/01/2025',
-            sampai: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
             Durasi: '1 hari',
-            alasanKetidakharidan : '-',
+            Tipe: 'S',
             Status: 'Pending',
         },
         {
             name: 'Sample Employee',
             nik: '123456789012',
-            sisaCuti: '12 hari',
             pengajuan: '03/01/2025',
-            mulai: '03/01/2025',
-            sampai: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
             Durasi: '1 hari',
-            alasanKetidakharidan : '-',
+            Tipe: 'S',
             Status: 'Pending',
         },
         {
             name: 'Sample Employee',
             nik: '123456789012',
-            sisaCuti: '12 hari',
             pengajuan: '03/01/2025',
-            mulai: '03/01/2025',
-            sampai: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
             Durasi: '1 hari',
-            alasanKetidakharidan : '-',
+            Tipe: 'S',
             Status: 'Pending',
         },
         {
             name: 'Sample Employee',
             nik: '123456789012',
-            sisaCuti: '12 hari',
             pengajuan: '03/01/2025',
-            mulai: '03/01/2025',
-            sampai: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
             Durasi: '1 hari',
-            alasanKetidakharidan : '-',
+            Tipe: 'S',
+            Status: 'Pending',
+        },
+        {
+            name: 'Sample Employee',
+            nik: '123456789012',
+            pengajuan: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
+            Durasi: '1 hari',
+            Tipe: 'S',
+            Status: 'Pending',
+        },
+        {
+            name: 'Sample Employee',
+            nik: '123456789012',
+            pengajuan: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
+            Durasi: '1 hari',
+            Tipe: 'S',
+            Status: 'Pending',
+        },
+        {
+            name: 'Sample Employee',
+            nik: '123456789012',
+            pengajuan: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
+            Durasi: '1 hari',
+            Tipe: 'S',
+            Status: 'Pending',
+        },
+        {
+            name: 'Sample Employee',
+            nik: '123456789012',
+            pengajuan: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
+            Durasi: '1 hari',
+            Tipe: 'S',
+            Status: 'Pending',
+        },
+        {
+            name: 'Sample Employee',
+            nik: '123456789012',
+            pengajuan: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
+            Durasi: '1 hari',
+            Tipe: 'S',
+            Status: 'Pending',
+        },
+        {
+            name: 'Sample Employee',
+            nik: '123456789012',
+            pengajuan: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
+            Durasi: '1 hari',
+            Tipe: 'S',
+            Status: 'Pending',
+        },
+        {
+            name: 'Sample Employee',
+            nik: '123456789012',
+            pengajuan: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
+            Durasi: '1 hari',
+            Tipe: 'S',
+            Status: 'Pending',
+        },
+        {
+            name: 'Sample Employee',
+            nik: '123456789012',
+            pengajuan: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
+            Durasi: '1 hari',
+            Tipe: 'S',
+            Status: 'Pending',
+        },
+        {
+            name: 'Sample Employee',
+            nik: '123456789012',
+            pengajuan: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
+            Durasi: '1 hari',
+            Tipe: 'S',
+            Status: 'Pending',
+        },
+        {
+            name: 'Sample Employee',
+            nik: '123456789012',
+            pengajuan: '03/01/2025',
+            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
+            Durasi: '1 hari',
+            Tipe: 'S',
             Status: 'Pending',
         },
     ];
@@ -144,68 +231,74 @@ const Unattendance = ({setIsLoading}) => {
           });
     }
 
-    const renderFormModal = () => {
-        return (
-            <Modal isOpen={isModalOpen} onClose={closeModal} setWidth='60%'>
-                <div className="relative bg-white rounded-lg shadow-sm p-4">
-                    <div className="flex items-center justify-between">
-                        <p className="font-bold text-sm">{'Data Ketidakhadiran'}</p>
-                        <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-toggle="crud-modal" onClick={() => setModalOpen(false)}>
-                            <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                            <span className="sr-only">Close modal</span>
-                        </button>
-                    </div>
-                    <div className="bg-[#ddd] my-3 h-[1.5px]" />
-                    <div className="flex flex-row flex-wrap w-full pt-2">
-                        <SearchableSelect handleAction={handleChangeSelect} name={`payrollType`} setPosition={'bottom'} label={'Karyawan'} placeHolder={'Pilih Karyawan'} setWidth="48%" options={listEmployee} value={null} />
-                        <div className="mx-2" />
-                        <SearchableSelect handleAction={handleChangeSelect} name={`payrollType`} setPosition={'bottom'} label={'Tipe Ketidakhadiran'} placeHolder={'Tipe Ketidakhadiran'} setWidth="48%" options={listType} value={null} />
+    const handleAdd = () => {
+        setShowForm(false);
+    }
 
-                        <Input textAlign={'left'} handleAction={handleChange} label={'Start Date'} setName={'hks'} setWidth="48%" value={null} type={'date'} />
-                        <div className="mx-2" />
-                        <Input textAlign={'left'} handleAction={handleChange} label={'End Date'} setName={'hka'} setWidth="48%" value={null} type={'date'} />
-
-                        <Input textAlign={'left'} handleAction={handleChange} label={'Sisa Cuti'} setName={'hks'} setWidth="48%" value={null} />
-                        <div className="mx-2" />
-                        <Input textAlign={'left'} handleAction={handleChange} label={'Durasi Hari'} setName={'hka'} setWidth="48%" value={null} />
-
-                        <Input handleAction={handleChange} label={'Alasan'} setName={''} placeholder={'isi alasan'} content="textarea" />
-                        <SearchableSelect handleAction={handleChangeSelect} name={`payrollType`} setPosition={'bottom'} label={'Status'} placeHolder={'Pilih Status'} setWidth="48%" options={[{label: 'Approve', value: 'Approve'}, {label: 'Reject', value: 'Reject'}]} value={null} />
-                        
-                    </div>
-                    <div className="bg-[#ddd] my-3 h-[1.5px]" />
-                    <div className="flex flex-row justify-between w-full">
-                        <div className="flex flex-row py-2 items-center cursor-pointer">
-                            <input type="checkbox"  />
-                            <label className="text-xs pl-2">{'Data Sudah Benar'}</label>
-                        </div>
-                        <div className="flex flex-row">
-                            <Button text="Close" setWidth={'full'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => closeModal()} />
-                            <div className="mx-1" />
-                            <Button text="Submit" setWidth={'full'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => closeModal()} />
-                        </div>
-                    </div>
-                </div>
-            </Modal>
-        )
+    const handleClick = (data) => {
+        console.log(data);
+        setShowForm(true);
+        setIsAdd(false);
+        setIsEdit(true);
     }
 
     return (
         <>
-            <TitlePage label={'Data Ketidakhadiran'} source={list} isAction={true} handleAdd={() => {setModalOpen(true)}}/>
+            <TitlePage label={'Data Ketidakhadiran'} source={list} isAction={true} handleAdd={() => {
+                setShowForm(true);
+                setIsAdd(true);
+                setIsEdit(false);
+            }}/>
             <div>
-
                 {!isLoadData ? 
-                    <Table dataTable={sampleData}  />
+                    <div className="flex flex-row justify-between">
+                        <Table dataTable={sampleData} setWidth={'85%'} actionClick={handleClick} />
+                        <div className="mx-2" />
+                        <InputContent showForm={showForm}>
+                            <div className="flex flex-row flex-wrap w-full">
+                                <SearchableSelect handleAction={handleChangeSelect} name={`payrollType`} useSearchIcon={true} setPosition={'bottom'} label={'Cari Karyawan'} placeHolder={'Cari Karyawan'} setWidth="48%" options={[]} value={null} isDisabled={isEdit} />
+                                <div className="mx-2" />
+                                <Input textAlign={'left'} handleAction={handleChange} label={'Sisa Cuti'} setName={'hks'} setWidth="48%" value={0} readOnly={true}/>
+                                <Input textAlign={'left'} handleAction={handleChange} label={'Mulai Tanggal'} setName={'hks'} setWidth="48%" value={null} type={'date'} />
+                                <div className="mx-2" />
+                                <Input textAlign={'left'} handleAction={handleChange} label={'Sampai Tanggal'} setName={'hka'} setWidth="48%" value={null} type={'date'} />
+                                <Input textAlign={'left'} handleAction={handleChange} label={'Durasi Hari'} setName={'hka'} setWidth="48%" value={0} readOnly={true}/>
+                                <div className="mx-2" />
+                                <SearchableSelect handleAction={handleChangeSelect} name={`payrollType`} setPosition={'bottom'} label={'Tipe Ketidakhadiran'} placeHolder={'Tipe Ketidakhadiran'} setWidth="48%" options={[]} value={null} />
+                                <Input handleAction={handleChange} label={'Alasan'} setName={''} placeholder={'isi alasan'} content="textarea" />
+                            </div>
+                            <div className="w-full">
+                                <div className="flex flex-row items-center justify-between">
+                                    <p className="text-xs">Lampiran</p>
+                                    <IconImage size="small" source={add_g} />
+                                </div>
+                                <div className="h-[100px] flex items-center justify-center">
+                                    <p className="text-center text-xs text-gray-400">Tidak ada Lampiran</p>
+                                </div>
+                            </div>
+                            <div className="bg-[#ddd] mb-3 w-full h-[1.5px]" />
+                            <div className="flex flex-row justify-between w-full">
+                                {isAdd &&
+                                    <>
+                                        <Button text="Close" setWidth={'100%'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => console.log('0')} />
+                                        <div className="mx-1" />
+                                        <Button text="Submit" setWidth={'100%'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => {
+                                            handleAdd();
+                                        }} />
+                                    </>
+                                }
+                                {isEdit &&
+                                    <Button text="Edit" setWidth={'100%'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => console.log('0')} />
+                                }
+                            </div>
+                        </InputContent>
+                    </div>
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />
                     </div>
                 }
             </div>
-            {renderFormModal()}
         </>
     );
 }

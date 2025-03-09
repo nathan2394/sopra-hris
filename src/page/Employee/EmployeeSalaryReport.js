@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { loadData } from "../../config/api";
+// import { loadData } from "../../config/api";
 import { exportToExcel, getCurrentDate, getMonthName, getQueryParam } from "../../config/helper";
 import TitlePage from "../../component/titlePage";
 import Table from "../../component/table";
 import LoadingIndicator from "../../component/loading_indicator";
 import { list } from "../../config/icon";
+import { useAPI } from "../../config/fetchApi";
 
 
 const EmployeeReport = ({setIsLoading}) => {
     const getId = getQueryParam("id");
+    const { loadData } = useAPI();
     const [data, listData] = useState([]);
     const [isLoadData, setIsLoadData] = useState(true);
     const [isLoadExport, setIsLoadExport] = useState(false);

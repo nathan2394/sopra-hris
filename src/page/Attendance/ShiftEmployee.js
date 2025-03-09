@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
-import { deleteData, loadData, postFormData } from "../../config/api";
+// import { deleteData, loadData, postFormData } from "../../config/api";
 import { coverDate, exportToExcel, generateExcel, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
@@ -15,10 +15,11 @@ import CollapseMenu from "../../component/collapse_menu";
 import AlertPopUp from "../../component/popupAlert";
 import SearchableSelect from "../../component/select2";
 import StartEndDatePick from "../../component/startEndDatePick";
+import { useAPI } from "../../config/fetchApi";
 
 const ShiftEmployee = ({setIsLoading}) => {
     const navigate = useNavigate();
-
+    const { deleteData, loadData, postFormData } = useAPI();
     const fileInputRef = useRef(null);
     const [isUpload, setIsUpload] = useState(false);
     const [fileUpload, setFileUpload] = useState(null);

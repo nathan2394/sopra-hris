@@ -1,47 +1,69 @@
 import { Link, useNavigate } from "react-router-dom";
 import IconImage from "../component/icon_img";
 import { arrow_g, calculator_g, employee_g, kehadiran_g, list_g, logout, menu, notif, payroll_g, setting, shift, shift_g, sopra_full, sopra_logo, user } from "../config/icon";
-import React, { useState } from "react";
+import React, { useContext, useReducer, useRef, useState } from "react";
 import Button from "../component/button";
 import { baseColor } from "../config/setting";
+import { AuthContext } from "../context/authContext";
 
 const Navbar = ({setAuth}) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [openSideBar, setOpenSideBar] = useState(false);
   const userData = JSON.parse(localStorage.getItem('userdata'));
+  const listContentMenu = JSON.parse(localStorage.getItem('listContentMenu'));
+  const { logout } = useContext(AuthContext);
+  const sidebarRef = useRef(null);
+  const overlayRef = useRef(null);
 
   const handleNavigation = (target) => {
-    //const bg_overlay = document?.getElementById("bg_overlay");
     toggleSidebar();
     localStorage?.removeItem('calc');
     localStorage?.removeItem('filterEmpl');
     setTimeout(() => {
-      setOpenSideBar(false);
       navigate(target);
     }, 100);
   }
 
   const toggleSidebar = () => {
-    const sidebar = document.getElementById("sidebar");
-    const bg_overlay = document?.getElementById("bg_overlay");
-    if (sidebar) {
-      const isOpen = sidebar.classList.contains("translate-x-0");
+    if (sidebarRef.current && overlayRef.current) {
+      const isOpen = sidebarRef.current.classList.contains("translate-x-0");
+
       if (isOpen) {
-        sidebar.classList.remove("translate-x-0");
-        sidebar.classList.add("-translate-x-full");
-        bg_overlay.classList.add("opacity-100");
-        bg_overlay.classList.add("invisible");
+        sidebarRef.current.classList.remove("translate-x-0");
+        sidebarRef.current.classList.add("-translate-x-full");
+        overlayRef.current.classList.add("opacity-0", "invisible");
       } else {
-        sidebar.classList.remove("-translate-x-full");
-        sidebar.classList.add("translate-x-0");
-        bg_overlay.classList.remove("opacity-0");
-        bg_overlay.classList.remove("invisible");
+        sidebarRef.current.classList.remove("-translate-x-full");
+        sidebarRef.current.classList.add("translate-x-0");
+        overlayRef.current.classList.remove("opacity-0", "invisible");
       }
     }
-  }
+  };
 
   const Sidebar = () => {
+    let b1 = [
+      { id: 1, module: 1, label: 'bank' },
+      { id: 2, module: 1, label: 'pool' }
+    ];
+    
+    let arr = listContentMenu?.parent.reduce((acc, item) => {
+      let existingGroup = acc.find(obj => obj.groupName === item.group);
+    
+      if (existingGroup) {
+        existingGroup.list.push({ title: item.name, navRoute: item.route });
+      } else {
+        acc.push({ 
+          groupName: item.group, 
+          list: [{ title: item.name, navRoute: item.route }] 
+        });
+      }
+    
+      return acc;
+    }, []);
+    
+    // console.log(arr);
+    // const listMenu = arr;
+
     const listMenu = [
       {
         groupName: 'Payroll',
@@ -92,6 +114,11 @@ const Navbar = ({setAuth}) => {
             icon: list_g,
           },
           {
+            title: 'Lembur',
+            navRoute: '/overtime',
+            icon: list_g,
+          },
+          {
             title: 'Kehadiran',
             navRoute: '/attendance',
             icon: kehadiran_g,
@@ -111,7 +138,7 @@ const Navbar = ({setAuth}) => {
     ];
 
     return(
-      <div id="sidebar" className="fixed bg-white w-[360px] top-[67.8px] max-h-screen overflow-y-auto shadow-lg transition-transform duration-300 ease-in-out -translate-x-full" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
+      <div ref={sidebarRef} className="fixed bg-white w-[360px] top-[67.8px] max-h-screen overflow-y-auto shadow-lg transition-transform duration-300 ease-in-out -translate-x-full" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
         {listMenu?.map((obj, index) => (
           <div className="flex flex-col border-b-[26px] border-[#dddddd76]" key={index}>
             <p className="text-sm font-bold px-10 pt-3 pb-2">{obj?.groupName}</p>
@@ -152,7 +179,7 @@ const Navbar = ({setAuth}) => {
                       <div className="bg-slate-600 w-[36px] h-[35px] rounded-s-md"></div>
                       <div className="ml-2">
                         <p className="text-xs">{userData?.email ? (userData?.email?.length > 15 ? `${userData?.email?.slice(0, 15)}...` : userData?.email) : 'User'}</p>
-                        <p className="text-[9px]">SOPRA</p>
+                        <p className="text-[9px]">{userData?.roleName ?? 'SOPRA'}</p>
                       </div>
                     </div>
                     <div className="flex flex-row items-center">
@@ -165,11 +192,7 @@ const Navbar = ({setAuth}) => {
                   {open && 
                     <div className={`absolute top-10 bg-[#ffffff] rounded-lg w-[200px]`} style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
                       <div className="cursor-pointer p-1 hover:bg-[#ddd]" style={{transition: '.1s'}} onClick={() => { 
-                        setAuth(false);
-                        localStorage.removeItem('statusAuth');
-                        localStorage.removeItem('userToken');
-                        localStorage.removeItem('userdata');
-                        navigate('/login');
+                        logout();  // Call logout from context
                       }}>
                         <p className="text-xs">Log Out</p>
                       </div>
@@ -177,12 +200,11 @@ const Navbar = ({setAuth}) => {
                   }
                 </div>
               </div>
-
             </div>
             <Sidebar />
           </div>
         </nav>
-        <div id="bg_overlay" className={`bg-[#0000003e] opacity-0 invisible hid mx-auto w-full h-full fixed overflow-hidden mt-[65px]`} style={{zIndex: 995 }} onClick={() => toggleSidebar()} />
+        <div ref={overlayRef} className={`bg-[#0000003e] opacity-0 invisible hid mx-auto w-full h-full fixed overflow-hidden mt-[65px]`} style={{zIndex: 995 }} onClick={() => toggleSidebar()} />
       </div>
   );
 };

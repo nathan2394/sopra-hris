@@ -3,12 +3,14 @@ import TitlePage from "../../component/titlePage";
 import { calculator, calculator_w, employee, empty, payroll, reload, upload } from "../../config/icon";
 import Input from "../../component/input";
 import SearchableSelect from "../../component/select2";
-import { loadData, postData } from "../../config/api";
+// import { loadData, postData } from "../../config/api";
 import Button from "../../component/button";
 import { baseColor } from "../../config/setting";
 import { formatText } from "../../config/helper";
+import { useAPI } from "../../config/fetchApi";
 
 const Calculator = ({setIsLoading}) => {
+    const { loadData, postData } = useAPI();
     const calcLocaldata = JSON.parse(localStorage.getItem('calc')) ?? {};
 
     const [formData, setFormData] = useState({
