@@ -62,6 +62,8 @@ const AuthPage = () => {
 
                             <Button text={"Send OTP"} position={"center"} showBorder={true} bgcolor={baseColor} color={"white"} handleAction={() => navigate("/")} />
 
+                            <div className="my-2" />
+
                             <Button text={"Sign In with Google"} position={"center"} bgcolor={"white"} color={"black"} icon={google} handleAction={() => googleLogin()} />
 
                             <Link to={"/privacypolicy"}>

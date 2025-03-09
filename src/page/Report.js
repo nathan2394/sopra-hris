@@ -13,8 +13,10 @@ import LoadingIndicator from "../component/loading_indicator";
 import IconImage from "../component/icon_img";
 import { currentMonth, currYear, exportToExcel, getCurrentDate, months, years } from "../config/helper";
 import SearchableSelect from "../component/select2";
+import { useNavigate } from "react-router-dom";
 
 const Report = ({setIsLoading}) => {
+    const navigate = useNavigate();
     const { loadData } = useAPI();
     const [data, listData] = useState([]);
     const [isLoadData, setIsLoadData] = useState(true);
@@ -98,18 +100,30 @@ const Report = ({setIsLoading}) => {
         });
     }
 
+    const beforeNavigate = (targetId, index) => {
+        localStorage?.setItem('empolyeeList', JSON.stringify( data?.map((obj, idx) => (
+            {
+                id: obj?.id,
+                name: obj?.employeeName,
+                nik: obj?.nik,
+                index: idx
+            }
+        ))));
+        localStorage?.setItem('emplIndx', index)
+        navigate(`/report/detail?id=${targetId}`)
+    }
 
     return (
         <>
             <TitlePage label={'Report Salary'} source={list} isAction={true} handleExport={(e) => exportFile('default', e)} />
-            <div className="flex flex-row items-center">
+            <div className="flex flex-row items-center pb-2">
                 <SearchableSelect placeHolder = 'Periode' setPosition="bottom" setWidth="160px" options={months} value={currMonth} setValue={setCurrMonth}  />
                 <div className="mx-1" />
                 <SearchableSelect placeHolder = 'Year' setPosition="bottom" setWidth="100px" options={years} value={currYear} setValue={setCurrentYear}  />
             </div>
             <div>
                 {!isLoadData ? 
-                    <Table dataTable={data} isAction={true} detailPath={'/report/detail?id='} />
+                    <Table dataTable={data} isAction={true} beforeNavigate={beforeNavigate} detailPath={'/report/detail?id='} />
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />
