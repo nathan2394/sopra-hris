@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
-import { deleteData, loadData } from "../../config/api";
+// import { deleteData, loadData } from "../../config/api";
 import { coverDate, exportToExcel, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
@@ -15,10 +15,11 @@ import CollapseMenu from "../../component/collapse_menu";
 import AlertPopUp from "../../component/popupAlert";
 import SearchableSelect from "../../component/select2";
 import InputContent from "../../component/sections/inputContent";
+import { useAPI } from "../../config/fetchApi";
 
 const Overtime = ({setIsLoading}) => {
     const navigate = useNavigate();
-
+    const { deleteData, loadData } = useAPI;
     const [isSubmit, setIsSubmit] = useState(false);
     const [listData, setListData] = useState([]);
     const [listEmployee, setListEmployee] = useState([]);

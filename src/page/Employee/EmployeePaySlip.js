@@ -1,14 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { loadData } from "../../config/api";
+// import { loadData } from "../../config/api";
 import { coverDate, formatText, getMonthName, getQueryParam, months } from "../../config/helper";
 import TitlePage from "../../component/titlePage";
 import { arrow_left_g, arrow_right_g, d_arrow_left_g, d_arrow_right_g, employee } from "../../config/icon";
 import Button from "../../component/button";
 import { useNavigate } from "react-router-dom";
 import SearchableSelect from "../../component/select2";
+import { useAPI } from "../../config/fetchApi";
 
 const EmployeePaySlip = ({}) => {
     const navigate = useNavigate();
+    const { loadData } = useAPI();
     const getId = getQueryParam("id");
     const [changesId, setChangesID] = useState(getQueryParam("id") ?? 0);
     const employeeId = getQueryParam("employeeId");

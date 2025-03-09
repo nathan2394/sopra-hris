@@ -1,14 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
 import IconImage from "../component/icon_img";
 import { arrow_g, calculator_g, employee_g, kehadiran_g, list_g, logout, menu, notif, payroll_g, setting, shift, shift_g, sopra_full, sopra_logo, user } from "../config/icon";
-import React, { useReducer, useRef, useState } from "react";
+import React, { useContext, useReducer, useRef, useState } from "react";
 import Button from "../component/button";
 import { baseColor } from "../config/setting";
+import { AuthContext } from "../context/authContext";
 
 const Navbar = ({setAuth}) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const userData = JSON.parse(localStorage.getItem('userdata'));
+  const listContentMenu = JSON.parse(localStorage.getItem('listContentMenu'));
+  const { logout } = useContext(AuthContext);
   const sidebarRef = useRef(null);
   const overlayRef = useRef(null);
 
@@ -38,6 +41,29 @@ const Navbar = ({setAuth}) => {
   };
 
   const Sidebar = () => {
+    let b1 = [
+      { id: 1, module: 1, label: 'bank' },
+      { id: 2, module: 1, label: 'pool' }
+    ];
+    
+    let arr = listContentMenu?.parent.reduce((acc, item) => {
+      let existingGroup = acc.find(obj => obj.groupName === item.group);
+    
+      if (existingGroup) {
+        existingGroup.list.push({ title: item.name, navRoute: item.route });
+      } else {
+        acc.push({ 
+          groupName: item.group, 
+          list: [{ title: item.name, navRoute: item.route }] 
+        });
+      }
+    
+      return acc;
+    }, []);
+    
+    // console.log(arr);
+    // const listMenu = arr;
+
     const listMenu = [
       {
         groupName: 'Payroll',
@@ -153,7 +179,7 @@ const Navbar = ({setAuth}) => {
                       <div className="bg-slate-600 w-[36px] h-[35px] rounded-s-md"></div>
                       <div className="ml-2">
                         <p className="text-xs">{userData?.email ? (userData?.email?.length > 15 ? `${userData?.email?.slice(0, 15)}...` : userData?.email) : 'User'}</p>
-                        <p className="text-[9px]">SOPRA</p>
+                        <p className="text-[9px]">{userData?.roleName ?? 'SOPRA'}</p>
                       </div>
                     </div>
                     <div className="flex flex-row items-center">
@@ -166,11 +192,7 @@ const Navbar = ({setAuth}) => {
                   {open && 
                     <div className={`absolute top-10 bg-[#ffffff] rounded-lg w-[200px]`} style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
                       <div className="cursor-pointer p-1 hover:bg-[#ddd]" style={{transition: '.1s'}} onClick={() => { 
-                        setAuth(false);
-                        localStorage.removeItem('statusAuth');
-                        localStorage.removeItem('userToken');
-                        localStorage.removeItem('userdata');
-                        navigate('/login');
+                        logout();  // Call logout from context
                       }}>
                         <p className="text-xs">Log Out</p>
                       </div>

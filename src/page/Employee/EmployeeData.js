@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
-import { deleteData, loadData } from "../../config/api";
+// import { deleteData, loadData } from "../../config/api";
 import { coverDate, exportToExcel, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
@@ -13,9 +13,11 @@ import Table from "../../component/table";
 import LoadingIndicator from "../../component/loading_indicator";
 import CollapseMenu from "../../component/collapse_menu";
 import AlertPopUp from "../../component/popupAlert";
+import { useAPI } from "../../config/fetchApi";
 
 const EmployeeData = ({setIsLoading}) => {
     const navigate = useNavigate();
+    const { loadData } = useAPI();
     const localFilter = JSON.parse(localStorage?.getItem('filterEmpl'));
     //console.log(localFilter?.checkedValue, JSON.stringify(localFilter?.checkedValue));
 

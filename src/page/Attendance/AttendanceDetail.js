@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
-import { deleteData, loadData } from "../../config/api";
+// import { deleteData, loadData } from "../../config/api";
+import { useAPI } from "../../config/fetchApi";
 import { coverDate, exportToExcel, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
@@ -16,6 +17,7 @@ import AlertPopUp from "../../component/popupAlert";
 import SearchableSelect from "../../component/select2";
 
 const AttendanceDetail = ({setIsLoading}) => {
+    const { deleteData, loadData } = useAPI();
     const navigate = useNavigate();
 
     const [isSubmit, setIsSubmit] = useState(false);

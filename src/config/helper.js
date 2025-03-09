@@ -2,6 +2,12 @@ import * as XLSX from "xlsx";
 // import XlsxPopulate from "xlsx-populate";
 import XlsxPopulate from "xlsx-populate/browser/xlsx-populate";
 import { saveAs } from "file-saver";
+import { useContext } from "react";
+import { AuthContext } from "../context/authContext";
+
+export const useAuth = () => {
+    return useContext(AuthContext);
+};
 
 export const months = [
     {label: "January", value: 1}, 

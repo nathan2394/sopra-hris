@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { employee, filter, list, search } from "../config/icon";
 import TitlePage from "../component/titlePage";
-import { loadData } from "../config/api";
+// import { loadData } from "../config/api";
+import { useAPI } from "../config/fetchApi";
 import Table from "../component/table";
 import Button from "../component/button";
 import Modal from "../component/modal";
@@ -14,6 +15,7 @@ import { currentMonth, currYear, exportToExcel, getCurrentDate, months, years } 
 import SearchableSelect from "../component/select2";
 
 const Report = ({setIsLoading}) => {
+    const { loadData } = useAPI();
     const [data, listData] = useState([]);
     const [isLoadData, setIsLoadData] = useState(true);
     const [isLoadExport, setIsLoadExport] = useState(false);

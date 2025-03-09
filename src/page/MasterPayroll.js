@@ -5,7 +5,8 @@ import Table from "../component/table";
 import { coverDate, currentMonth, currYear, exportToExcel, formatText, getCurrentDate, getMonthName } from "../config/helper";
 import { arrow_g, close, download, empty, excel, payroll, reload, save, upload } from "../config/icon";
 import IconImage from "../component/icon_img";
-import { loadData, postData, postFormData } from "../config/api";
+// import { loadData, postData, postFormData } from "../config/api";
+import { useAPI } from "../config/fetchApi";
 import LoadingIndicator from "../component/loading_indicator";
 import { baseColor } from "../config/setting";
 import TitlePage from "../component/titlePage";
@@ -13,6 +14,7 @@ import SearchableSelect from "../component/select2";
 
 const MasterPayroll = ({setIsLoading}) => {
   const fileInputRef = useRef(null);
+  const { loadData, postData, postFormData } = useAPI();
   const [fileUpload, setFileUpload] = useState(null);
   const [isUpload, setIsUpload] = useState(false);
 

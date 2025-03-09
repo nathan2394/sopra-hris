@@ -2,16 +2,18 @@ import React, { useCallback, useEffect, useState } from "react";
 import TitlePage from "../../component/titlePage";
 import Input from "../../component/input";
 import { arrow_left_g, arrow_right_g, calculator_w, d_arrow_left_g, d_arrow_right_g, employee, empty } from "../../config/icon";
-import { loadData, postData, updateData } from "../../config/api";
+// import { loadData, postData, updateData } from "../../config/api";
 import { currYear, formatText, getQueryParam } from "../../config/helper";
 import { baseColor } from "../../config/setting";
 import { useNavigate } from "react-router-dom";
 import SearchableSelect from "../../component/select2";
 import Button from "../../component/button";
+import { useAPI } from "../../config/fetchApi";
 // import MyDatePicker from "../../component/date_picker";
 
 const EmployeeForm = ({setIsLoading}) => {
     const navigate = useNavigate();
+    const { loadData, postData, updateData } = useAPI();
     const getId = getQueryParam("id");
     const [isAdd] = useState(getQueryParam("action") === 'add' ? true : false);
 

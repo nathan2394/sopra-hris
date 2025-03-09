@@ -2,11 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import TitlePage from "../component/titlePage";
 import Input from "../component/input";
 import { employee, empty, payroll } from "../config/icon";
-import { loadData } from "../config/api";
+// import { loadData } from "../config/api";
+import { useAPI } from "../config/fetchApi";
 import { coverDate, formatText, getMonthName, getQueryParam } from "../config/helper";
 import { baseColor } from "../config/setting";
 
 const ReportDetail = () => {
+    const { loadData } = useAPI();
     const [formData, setFormData] = useState({
         name: '',
         nik: '',
