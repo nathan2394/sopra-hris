@@ -5,9 +5,11 @@ import { baseColor } from "../config/setting";
 import { edit_g, employee, empty, sort_asc, sort_desc } from "../config/icon";
 import IconImage from "./icon_img";
 
-const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', beforeNavigate = null, actionDelete, actionEdit, actionClick, styleHeader = 'default', setWidth = '100%' }) => {
+const Table = React.memo(({ dataTable = [], rowSettings, isAction = false, detailPath = '', beforeNavigate = null, actionDelete, actionEdit, actionClick, styleHeader = 'default', setWidth = '100%' }) => {
   const [listTable, setListTable] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+
+  console.log(rowSettings?.[0]?.alignment)
 
   useEffect(() => {
     setListTable(dataTable);
@@ -33,7 +35,7 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', b
         <table className="w-full table-auto text-xs rounded-lg overflow-hidden border border-[#939292]">
           <thead className="text-[10px] text-white uppercase bg-[#333333c3]">           
             <tr>
-              {headers?.filter(data => data !== 'id')?.map((val, idx) => (
+              {headers?.map((val, idx) => { if((rowSettings && rowSettings[idx]?.display === 'show')) return (
                 <th
                   scope="col"
                   key={idx}
@@ -51,7 +53,7 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', b
                     </div>
                   </div>
                 </th>
-              ))}
+              )})}
               {(isAction && (actionDelete || actionEdit)) &&
                 <th
                   scope="col"
@@ -73,12 +75,13 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', b
                 onClick={actionClick ? () => actionClick(row) : null}
               >
                 {Object.entries(row)?.map(([key, val], idx) => {
-                  if (key === "id") return null; // Skip rendering if key is "id"
+                  if ((rowSettings && rowSettings[idx]?.display !== 'show') || key === 'id') return null; // Skip rendering if key is "id"
 
                   return (
                     <th
                       scope="row"
                       key={idx}
+                      style={rowSettings ? {textAlign: rowSettings[idx]?.alignment} : {}}
                       className={`p-[8px] font-normal border border-[#d2cfcf] text-black whitespace-nowrap ${
                         checkType(val) === "number" ? "text-right" : "text-left"
                       } ${

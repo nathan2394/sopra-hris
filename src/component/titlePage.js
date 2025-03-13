@@ -59,7 +59,7 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                         {handleAdd && 
                             <>
                                 <div className="bg-[#33333328] h-[30px] w-[1px] mx-4" />
-                                <Button text={'+ Add Data'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={handleAdd} />
+                                <Button text={'+ Tambah Data'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={handleAdd} />
                             </>
                         }
                         {label === 'Kehadiran' &&
@@ -69,10 +69,10 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                                 <div className="mx-1" />
                                 <SearchableSelect placeHolder = 'Year' setWidth="100px" options={years} value={2025}  />
                                 {handleSubmit !== null &&
-                                    <>
+                                <>
                                     <div className="mx-1" />
                                     <Button text={'Submit'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={handleSubmit} />
-                                    </>
+                                </>
                                 }
                             </>
                         }

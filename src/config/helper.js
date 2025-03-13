@@ -113,12 +113,12 @@ export const getCurrentDate = () => {
     return `${day}-${month}-${year}`;
 };
 
-export const coverDate = (val, displayYear = 'default') => {
+export const coverDate = (val, display = 'default') => {
     if(val){
         const inputDate = val;
         const date = new Date(inputDate);
     
-        if(displayYear !== 'default'){
+        if(display !== 'default'){
             let day = date.getDate();
             let month = date.getMonth() + 1; // Months are zero based
             let year = date.getFullYear().toString(); // Get last two digits of year
@@ -128,11 +128,15 @@ export const coverDate = (val, displayYear = 'default') => {
             month = month < 10 ? '0' + month : month;
           
             // Return formatted date
+            if(display === 'input'){
+                return `${year}/${month}/${day}`;
+            }
+
             return `${month}/${day}/${year}`;
         }else{            
             const day = date.getDate().toString().padStart(2, "0");;
             const month = date.toLocaleString("en-GB", { month: "short" });
-            const year = displayYear !== 'default' ? date.getFullYear().toString().slice(-2) : date.getFullYear().toString();
+            const year = display !== 'default' ? date.getFullYear().toString().slice(-2) : date.getFullYear().toString();
             
             const formattedDate = `${day}-${month}-${year}`;
         

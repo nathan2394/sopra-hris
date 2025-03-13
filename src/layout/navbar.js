@@ -41,11 +41,6 @@ const Navbar = ({setAuth}) => {
   };
 
   const Sidebar = () => {
-    let b1 = [
-      { id: 1, module: 1, label: 'bank' },
-      { id: 2, module: 1, label: 'pool' }
-    ];
-    
     let arr = listContentMenu?.parent.reduce((acc, item) => {
       let existingGroup = acc.find(obj => obj.groupName === item.group);
     
@@ -88,16 +83,16 @@ const Navbar = ({setAuth}) => {
             navRoute: '/employee',
             icon: employee_g
           },
-          {
-            title: 'Jabatan',
-            navRoute: '/#',
-            icon: employee_g
-          },
-          {
-            title: 'Grade Karyawan',
-            navRoute: '/#',
-            icon: employee_g
-          }
+          // {
+          //   title: 'Jabatan',
+          //   navRoute: '/#',
+          //   icon: employee_g
+          // },
+          // {
+          //   title: 'Grade Karyawan',
+          //   navRoute: '/#',
+          //   icon: employee_g
+          // },
         ]
       },
       {
@@ -109,7 +104,7 @@ const Navbar = ({setAuth}) => {
             icon: shift_g,
           },
           {
-            title: 'Ketidakhadiran',
+            title: 'Cuti & Ijin',
             navRoute: '/unattendance',
             icon: list_g,
           },
@@ -138,20 +133,22 @@ const Navbar = ({setAuth}) => {
     ];
 
     return(
-      <div ref={sidebarRef} className="fixed bg-white w-[360px] top-[67.8px] max-h-screen overflow-y-auto shadow-lg transition-transform duration-300 ease-in-out -translate-x-full" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
-        {listMenu?.map((obj, index) => (
-          <div className="flex flex-col border-b-[26px] border-[#dddddd76]" key={index}>
-            <p className="text-sm font-bold px-10 pt-3 pb-2">{obj?.groupName}</p>
-            {obj?.list?.map((data, idx) => (
-              <div key={idx} onClick={() => { handleNavigation(data?.navRoute); }}>
-                <div className={`bg-white hover:bg-[#379d0067] py-3 px-10 border-b border-[#dddddd55] flex flex-row items-center cursor-pointer`}>
-                  <IconImage size="small" source={data?.icon} />
-                  <p className="ml-3 text-sm">{data?.title}</p>
+      <div ref={sidebarRef} className="fixed bg-[#F5F5F5] w-[340px] top-0 bottom-0 mt-[67.8px] shadow-lg transition-transform duration-300 ease-in-out -translate-x-full flex flex-col" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
+        <div className="flex-grow overflow-y-auto">
+          {listMenu?.map((obj, index) => (
+            <div className="flex flex-col bg-white border-b-[26px] border-[#F5F5F5]" key={index}>
+              <p className="text-sm font-bold px-10 pt-3 pb-2">{obj?.groupName}</p>
+              {obj?.list?.map((data, idx) => (
+                <div key={idx} onClick={() => { handleNavigation(data?.navRoute); }}>
+                  <div className={`hover:bg-[#379d0067] py-3 px-10 border-b border-[#dddddd55] flex flex-row items-center cursor-pointer`}>
+                    <IconImage size="small" source={data?.icon} />
+                    <p className="ml-3 text-sm">{data?.title}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ))}
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     )
   }

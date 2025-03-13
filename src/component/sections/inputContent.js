@@ -11,7 +11,7 @@ const InputContent = ({children, showForm}) => {
 
     return (
         <div className="bg-white rounded-lg pt-2 w-[45%] min-h-[550px]" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
-            <div className="flex flex-col items-center justify-center py-2 px-3 h-full">
+            <div className={`flex flex-col ${showForm ? 'justify-between' : 'items-center justify-center'} py-2 px-3 h-full`}>
                 {showForm ? children :
                     <div className="flex flex-col items-center justify-center">
                       <img className="w-[50%] mx-auto" alt="logo" src={empty} />
