@@ -87,14 +87,9 @@ const Calculator = ({setIsLoading}) => {
         }
     }, [])
 
-    useEffect(()=> {
-        console.log(calulateResult, 'pop')
-    }, [calulateResult])
-
     const calculateSalary = () => {
         setIsLoading(true)
         postData({url: 'Salary/calculator', formData: formData})?.then((res) => {
-            console.log(res)
             if(res?.data?.length > 0){
                 // setCalulateResult([...res?.data, {hks: formData?.hks, hka: formData?.hka, att: formData?.att, meal: formData?.meal}])
                 setCalulateResult(res?.data?.map((obj) => (
@@ -195,7 +190,7 @@ const Calculator = ({setIsLoading}) => {
                     <>
                         <div className="flex flex-col items-center justify-center p-6 mt-11">
                             <img className="w-[50%] mx-auto" alt="logo" src={empty} />
-                            <p className="font-bold text-sm">Opps, Nothing to See Here!</p>
+                            <p className="font-bold text-sm">Ups, Tidak Ada Data!</p>
                         </div>
                     </>
                 }

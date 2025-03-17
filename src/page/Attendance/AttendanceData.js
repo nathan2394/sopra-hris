@@ -14,10 +14,13 @@ import Table from "../../component/table";
 import LoadingIndicator from "../../component/loading_indicator";
 import CollapseMenu from "../../component/collapse_menu";
 import AlertPopUp from "../../component/popupAlert";
+import DataTable from "../../component/dataTable";
 
 const AttendanceData = ({setIsLoading}) => {
     const { deleteData, loadData } = useAPI();
     const navigate = useNavigate();
+
+    const localSetPeriod = JSON.parse(localStorage?.getItem('setPeriod'));
 
     const [isSubmit, setIsSubmit] = useState(false);
     const [listData, setListData] = useState([]);
@@ -31,6 +34,9 @@ const AttendanceData = ({setIsLoading}) => {
 
     const [checkedValue, setCheckValue] = useState({});
     const [selectedValues, setSelectedValues] = useState({});
+
+    const [startDate, setStartDate] = useState(localSetPeriod?.startDate ?? new Date());
+    const [endDate, setEndDate] = useState(localSetPeriod?.endDate ?? new Date());
 
     const [searchForm, setSearchForm] = useState({
         name    : '',
@@ -96,9 +102,11 @@ const AttendanceData = ({setIsLoading}) => {
                     value: data?.name
                 }
             )));
-        })
+        });
 
-        fetchEmployeeData();
+        if(JSON?.stringify(localSetPeriod) !== '{}'){
+            fetchAttendanceData();
+        }
     }, []);
 
     useEffect(() => {
@@ -119,51 +127,40 @@ const AttendanceData = ({setIsLoading}) => {
     }, [isModalFilterOpen, selectedValues]);
     
 
-    const fetchEmployeeData = () => {
+    const fetchAttendanceData = () => {
         setIsLoadData(true);
         setIsLoading(true);
 
         const params = [
             {
                 title: 'filter',
-                value: `${searchForm?.name ? 'name:' + searchForm?.name +'|' : ''} ${searchForm?.nik ? 'nik:' + searchForm?.nik +'|' : ''} ${searchForm?.ktp ? 'ktp:' + searchForm?.ktp +'|' : ''} ${searchForm?.group ? 'group:' + searchForm?.group +'|' : ''} ${searchForm?.department ? 'department:' + searchForm?.department +'|' : ''} ${searchForm?.division ? 'division:' + searchForm?.division +'|' : ''} ${searchForm?.type ? 'employeeType:' + searchForm?.type +'|' : ''}`
+                value: `limit:10 | ${searchForm?.name ? 'name:' + searchForm?.name +'|' : ''} ${searchForm?.nik ? 'nik:' + searchForm?.nik +'|' : ''} ${searchForm?.ktp ? 'ktp:' + searchForm?.ktp +'|' : ''} ${searchForm?.group ? 'group:' + searchForm?.group +'|' : ''} ${searchForm?.department ? 'department:' + searchForm?.department +'|' : ''} ${searchForm?.division ? 'division:' + searchForm?.division +'|' : ''} ${searchForm?.type ? 'employeeType:' + searchForm?.type +'|' : ''}`
             }
         ];
 
-        loadData({url: 'Employees', params: params}).then((res) => {
+        loadData({url: `Attendances/${coverDate(startDate, 'input')}|${coverDate(endDate, 'input')}`, params: params}).then((res) => {
             if(res?.data?.length > 0){
-                const filteredData = res.data.map((obj) => (
-                    {
-                        'id' : obj?.employeeID,
-                        'nik': obj?.nik,
-                        'employeeName': obj?.employeeName,
-                        'department': obj?.departmentName,
-                        'division' : obj?.divisionName,
-                        'grade':  `${obj?.groupType}` + `${obj?.groupName ? ` - ${obj?.groupName}` : ''}`,
-                        'employeeType': obj?.employeeTypeName,
-                        'jobTitle': obj?.employeeJobTitleName,
-                        'function': obj?.functionName,
-                        'placeOfBirth': obj?.placeOfBirth,
-                        'dateOfBirth': obj?.dateOfBirth,
-                        'gender': obj?.gender,
-                        'email': obj?.email,
-                        'phoneNumber': obj?.phoneNumber,
-                        'ktp': obj?.ktp,
-                        'startWorkDate': obj?.startWorkingDate,
-                        'startJointDate': obj?.startJointDate,
-                        'religion': obj?.religion,
-                        'bpjstk': obj?.bpjstk,
-                        'bpjskes': obj?.bpjskes,
-                        'taxStatus': obj?.taxStatus,
-                        'tkStatus': obj?.tkStatus,
-                        'accountNo': obj?.accountNo,
-                        'bank': obj?.bank
-                    }
-                ))
+                const filteredData = res?.data?.map((obj, idx) => {
+                    const filteredObj = Object.fromEntries(
+                        Object.entries(obj).filter(([key]) => 
+                            !key.includes('dateIn') &&  
+                            !key.includes('dateUp') &&  
+                            !key.includes('userIn') &&  
+                            !key.includes('userUp') &&  
+                            !key.includes('isDeleted')
+                        )
+                    );
+                
+                    return {
+                        id: idx+1,
+                        ...filteredObj,
+                    };
+                });
 
                 setListData(filteredData);
                 setIsLoadData(false);
                 setIsLoading(false);
+                localStorage?.setItem('setPeriod', JSON.stringify({startDate: startDate, endDate: endDate}));
             }else{
                 setListData([]);
                 setIsLoadData(false);
@@ -175,7 +172,7 @@ const AttendanceData = ({setIsLoading}) => {
     useEffect(() => {
         if(!isLoadData){
             // console.log('trigger', searchForm?.group, searchForm?.department, searchForm?.division)
-            fetchEmployeeData();
+            fetchAttendanceData();
         }
     }, [searchForm?.group, searchForm?.department, searchForm?.division, searchForm?.name, searchForm?.nik, searchForm?.ktp, searchForm?.type])
 
@@ -196,7 +193,7 @@ const AttendanceData = ({setIsLoading}) => {
     }, [checkedValue])
 
     const submitSearch = () => {
-        // fetchEmployeeData();
+        // fetchAttendanceData();
         
         let arr = [];
         if(searchInput?.name) arr?.push(`name: ${searchInput?.name}`);
@@ -260,54 +257,6 @@ const AttendanceData = ({setIsLoading}) => {
           return newValues;
         });
     };
-
-    const exportFile = (type, event) => {
-        if (event) {
-          event.preventDefault();
-        }
-    
-        if(type === ''){
-          alert('Please Select Export Type');
-          return;
-        }
-
-        loadData({url: 'Employees'}).then((res) => {
-            const todayDate = getCurrentDate();
-            let filteredData = [];
-            if(res?.data?.length > 0){
-                filteredData = res.data.map((obj) => (
-                    {
-                        'employeeID' : obj?.employeeID,
-                        'nik': obj?.nik,
-                        'employeeName': obj?.employeeName,
-                        'departmentName': obj?.departmentName,
-                        'divisionName' : obj?.divisionName,
-                        'grade': `${obj?.groupType}` + `${obj?.groupName ? ` - ${obj?.groupName}` : ''}`,
-                        'employeeType': obj?.employeeTypeName,
-                        'jobTitle': obj?.employeeJobTitleName,
-                        'functionName': obj?.functionName,
-                        'placeOfBirth': obj?.placeOfBirth,
-                        'dateOfBirth': coverDate(obj?.dateOfBirth),
-                        'gender': obj?.gender,
-                        'email': obj?.email,
-                        'phoneNumber': obj?.phoneNumber,
-                        'ktp': obj?.ktp,
-                        'startWorkingDate': coverDate(obj?.startWorkingDate),
-                        'startJointDate': coverDate(obj?.startJointDate),
-                        'religion': obj?.religion,
-                        'bpjstk': obj?.bpjstk,
-                        'bpjskes': obj?.bpjskes,
-                        'taxStatus': obj?.taxStatus,
-                        'tkStatus': obj?.tkStatus,
-                        'accountNo': obj?.accountNo,
-                        'bank': obj?.bank
-                    }
-                ))
-
-                exportToExcel(filteredData, `Data_Employee_${todayDate}`, `${type === 'bank' ? 'bank' : 'default'}`)
-            }
-        })
-    }
 
     const renderModal = () => (
         <Modal isOpen={isModalOpen} onClose={closeModal}>
@@ -440,86 +389,35 @@ const AttendanceData = ({setIsLoading}) => {
 
     const handleSubmitPeriod = () => {
         setIsSubmit(true);
+        fetchAttendanceData();
     }
 
-    const handleDetele = (id) => {
-        console.log('trigger');
-        setIsAlert(true);
-        // deleteData({ url: 'Employees', id: id }).then(() => {
-
-        // }).catch((e) => {
-        //     alert(e);
-        // })
+    const handleClick = (data) => {
+        navigate(`/attendance/detail?employeeId=${data?.employeeID}`);
     }
+
+    const setColumns = [
+        { field: "employeeName", header: "Nama Karyawan", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline"> {row?.employeeName} </Link> },
+        { field: "nik", header: "NIK", alignment: "left"},
+        { field: "groupType", header: "Grade", alignment: "center" },
+        { field: "employeeTypeName", header: "Tipe Karyawan", alignment: "left" },
+        { field: "departmentName", header: "Departemen", alignment: 'left' },
+        { field: "divisionName", header: "Divisi", alignment: 'left' },
+        { field: "groupShiftName", header: "Grup Shift", alignment: 'left' },
+        { field: "hks", header: "HKS", alignment: 'center' },
+        { field: "hka", header: "HKA", alignment: 'center' },
+        { field: "att", header: "ATT", alignment: 'center' },
+        { field: "late", header: "LATE", alignment: 'center' },
+        { field: "ovt", header: "OVT", alignment: 'center' },
+        { field: "absent", header: "ABSEN", alignment: 'center' }
+    ]
 
     return (
         <>
-            <TitlePage label={'Kehadiran'} source={kehadiran} handleSubmit={handleSubmitPeriod} isAction={true} handleSearch={() => {
-                openModal();
-            }} handleFilter={() => openModalFilter()} />
+            <TitlePage label={'Kehadiran'} source={kehadiran} handleSubmit={handleSubmitPeriod} startDateVal={startDate} setStartDateVal={setStartDate} endDateVal={endDate} setEndDateVal={setEndDate} isAction={true} />
+            {/* handleSearch={() => {openModal(); }} handleFilter={() => openModalFilter()} /> */}
             <div>
-                {isFilter &&                
-                    <div className="mt-4 flex flex-row items-center justify-between">
-                        <div className="flex flex-row items-center">
-                            <IconImage size="small" source={filter} />
-                            <p className="font-bold text-sm px-2">Filter By:</p>
-                            <div className="flex flex-wrap gap-1">
-                                {listFilter?.map((val, idx) => (
-                                    <div className="flex flex-row pl-2 text-xs" key={idx}>
-                                        <span className="px-2 py-1 bg-white border border-gray-200 rounded-full flex items-center text-xs" style={{fontSize: '12px'}}>
-                                        {val}
-                                            <button
-                                                onClick={() => removeFilters(val)}
-                                                className={`ml-2 text-[${baseColor}] font-bold text-xs`}
-                                            >
-                                                ✕
-                                            </button>
-                                        </span>
-                                    </div>
-                                ))}
-                                <div className="flex flex-wrap gap-1">
-                                    {Object.entries(checkedValue).map(([label, values]) =>
-                                        values.map((item) => (
-                                            <span key={`${label}-${item.id}`} className="px-2 py-1 bg-white border border-gray-200 rounded-full flex items-center text-xs" style={{fontSize: '12px'}}>
-                                            {label}: {item.value}
-                                                <button
-                                                    onClick={() => removeFilter(label, item.id)}
-                                                    className={`ml-2 text-[${baseColor}] font-bold`}
-                                                >
-                                                    ✕
-                                                </button>
-                                            </span>
-                                        ))
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <Button text="Reset Filter" bgcolor={baseColor} color={'white'} setWidth="auto" handleAction={() => {
-                                setSearchForm({
-                                    name    : '',
-                                    nik     : '',
-                                    ktp     : '',
-                                    group   : 0,
-                                    department : 0,
-                                    division : 0,
-                                    type: 0
-                                });
-                                setSelectedValues({});
-                                setCheckValue({});
-                                setListFilter([]);
-                            }} />
-                        </div>
-                    </div>
-                }
-
-                {!isLoadData ? 
-                    <Table dataTable={isSubmit ? listData : []} isAction={true} detailPath={'/attendance/detail?id='}  />
-                    :
-                    <div className="mt-20">
-                        <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />
-                    </div>
-                }
+                <DataTable dataTable={listData} columns={setColumns} isAction={true} actionClick={handleClick}  />
             </div>
             {/* <AlertPopUp isOpen={isAlert} /> */}
             {renderModal()}

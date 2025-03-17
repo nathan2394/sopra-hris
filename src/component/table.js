@@ -5,7 +5,7 @@ import { baseColor } from "../config/setting";
 import { edit_g, employee, empty, sort_asc, sort_desc } from "../config/icon";
 import IconImage from "./icon_img";
 
-const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', beforeNavigate = null, actionDelete, actionEdit, actionClick, styleHeader = 'default', setWidth = '100%' }) => {
+const Table = React.memo(({ dataTable = [], rowSettings, isAction = false, detailPath = '', beforeNavigate = null, actionDelete, actionEdit, actionClick, styleHeader = 'default', setWidth = '100%' }) => {
   const [listTable, setListTable] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
@@ -33,7 +33,7 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', b
         <table className="w-full table-auto text-xs rounded-lg overflow-hidden border border-[#939292]">
           <thead className="text-[10px] text-white uppercase bg-[#333333c3]">           
             <tr>
-              {headers?.filter(data => data !== 'id')?.map((val, idx) => (
+              {headers?.filter(obj => obj !== 'id')?.map((val, idx) => (
                 <th
                   scope="col"
                   key={idx}
@@ -73,12 +73,13 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', b
                 onClick={actionClick ? () => actionClick(row) : null}
               >
                 {Object.entries(row)?.map(([key, val], idx) => {
-                  if (key === "id") return null; // Skip rendering if key is "id"
+                  if (key === 'id') return null; // Skip rendering if key is "id"
 
                   return (
                     <th
                       scope="row"
                       key={idx}
+                      style={rowSettings ? {textAlign: rowSettings[idx]?.alignment} : {}}
                       className={`p-[8px] font-normal border border-[#d2cfcf] text-black whitespace-nowrap ${
                         checkType(val) === "number" ? "text-right" : "text-left"
                       } ${
@@ -196,7 +197,7 @@ const Table = React.memo(({ dataTable = [], isAction = false, detailPath = '', b
         <div className="flex flex-col items-center justify-center p-6">
           <div className="flex flex-col items-center justify-center p-6">
             <img className="w-[28%] mx-auto" alt="logo" src={empty} />
-            <p className="font-bold text-sm">Opps, Nothing to See Here!</p>
+            <p className="font-bold text-sm">Ups, Tidak Ada Data!</p>
           </div>
         </div>
       </div>
