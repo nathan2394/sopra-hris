@@ -164,9 +164,7 @@ const EmployeeForm = ({setIsLoading}) => {
                     });
 
                     loadData({url: `GroupDetails/${employeeRes?.data?.groupID}`})?.then((res) => {
-                        console.log(res?.data);
                         const employeeDeyails = allowanceDeductionRes?.data;
-                        console.log(employeeDeyails)
                         if(res?.data){
                             let gradeDetails = !employeeDeyails?.find(obj => obj?.allowanceDeductionID === res?.data?.allowanceDeductionID) ? res?.data : {}
                             

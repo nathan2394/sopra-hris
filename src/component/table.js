@@ -9,8 +9,6 @@ const Table = React.memo(({ dataTable = [], rowSettings, isAction = false, detai
   const [listTable, setListTable] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
-  console.log(rowSettings?.[0]?.alignment)
-
   useEffect(() => {
     setListTable(dataTable);
   }, [dataTable]);

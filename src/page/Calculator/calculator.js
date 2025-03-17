@@ -87,14 +87,9 @@ const Calculator = ({setIsLoading}) => {
         }
     }, [])
 
-    useEffect(()=> {
-        console.log(calulateResult, 'pop')
-    }, [calulateResult])
-
     const calculateSalary = () => {
         setIsLoading(true)
         postData({url: 'Salary/calculator', formData: formData})?.then((res) => {
-            console.log(res)
             if(res?.data?.length > 0){
                 // setCalulateResult([...res?.data, {hks: formData?.hks, hka: formData?.hka, att: formData?.att, meal: formData?.meal}])
                 setCalulateResult(res?.data?.map((obj) => (
