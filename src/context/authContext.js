@@ -5,15 +5,16 @@ export const AuthContext = createContext(null); // Make sure this is not empty
 
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(true);
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem("userToken");
         const user = localStorage.getItem("userdata");
         if (token) {
-            setIsAuthenticated(true);
             setUserData(user ? JSON.parse(user) : null);
+        }else{
+            setIsAuthenticated(false);
         }
     }, []);
 

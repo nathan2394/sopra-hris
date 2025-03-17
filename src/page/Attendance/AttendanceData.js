@@ -36,7 +36,7 @@ const AttendanceData = ({setIsLoading}) => {
     const [selectedValues, setSelectedValues] = useState({});
 
     const [startDate, setStartDate] = useState(localSetPeriod?.startDate ?? new Date());
-    const [endDate, setEndDate] = useState(localSetPeriod?.startDate ?? new Date());
+    const [endDate, setEndDate] = useState(localSetPeriod?.endDate ?? new Date());
 
     const [searchForm, setSearchForm] = useState({
         name    : '',
@@ -160,6 +160,7 @@ const AttendanceData = ({setIsLoading}) => {
                 setListData(filteredData);
                 setIsLoadData(false);
                 setIsLoading(false);
+                localStorage?.setItem('setPeriod', JSON.stringify({startDate: startDate, endDate: endDate}));
             }else{
                 setListData([]);
                 setIsLoadData(false);
@@ -387,10 +388,8 @@ const AttendanceData = ({setIsLoading}) => {
     }
 
     const handleSubmitPeriod = () => {
-        console.log(coverDate(startDate, 'input'), coverDate(endDate, 'input'), 'sumbit')
         setIsSubmit(true);
         fetchAttendanceData();
-        localStorage?.setItem('setPeriod', JSON.stringify({startDate: startDate, endDate: endDate}));
     }
 
     const handleClick = (data) => {
