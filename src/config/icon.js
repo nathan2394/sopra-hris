@@ -61,6 +61,7 @@ export const empty = '/logo/empty.png';
 
 export const calendar = '/icon/calendar.svg';
 export const calendar_g = '/icon/calendar_g.png';
+export const clock_g = '/icon/clock_g.png';
 
 //gif
 export const gif_loader = '/gif/loading.gif';

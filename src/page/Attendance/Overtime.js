@@ -29,9 +29,10 @@ const Overtime = ({setIsLoading}) => {
     const [isLoadData, setIsLoadData] = useState(false);
 
     const setColumns = [
-        { field: "nik", header: "NIK", alignment: "left"},
-        { field: "employeeName", header: "Nama", alignment: "left" },
-        { field: "dateRange", header: "Tanggal Lembur", alignment: "center", render: (_, row) => `${coverDate(row.startDate)} - ${coverDate(row.endDate)}` },
+        { field: "voucherNo", header: "No. SPL", alignment: "left"},
+        { field: "employeeName", header: "Nama", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline"> {row?.employeeName} </Link> },
+        { field: "tanggal", header: "Tanggal Lembur", alignment: "center", render: (_, row) => `${coverDate(row.startDate)}` },
+        { field: "dateRange", header: "Jam Lembur", alignment: "center", render: (_, row) => `${coverDate(row.startDate, 'time')} - ${coverDate(row.endDate, 'time')}` },
         { field: "duration", header: "Durasi", alignment: "left", render: (value) => `${value ? value : 0} Jam` },
         { field: "reasonName", header: "Keterangan", alignment: 'left' },
         { field: "status", header: "Status", alignment: 'center', render: (_, row) => row?.isApproved1 || row?.isApproved2 ? <p className="font-normal text-[#369D00]"> Approved </p> : <p> Pending </p> }
@@ -138,17 +139,17 @@ const Overtime = ({setIsLoading}) => {
                         <InputContent showForm={showForm}>
                             <div>
                                 <div className="flex flex-row flex-wrap w-full">
-                                    <SearchableSelect handleAction={handleChangeSelect} name={`employeeID`} useSearchIcon={true} setPosition={'bottom'} label={'Cari Karyawan'} placeHolder={'Cari Karyawan'} setWidth="48%" options={listEmployee} value={formData?.employeeID} isDisabled={isEdit} />
-                                    <div className="mx-2" />
+                                    <SearchableSelect handleAction={handleChangeSelect} name={`employeeID`} useSearchIcon={true} setPosition={'bottom'} label={'Cari Karyawan'} placeHolder={'Cari Karyawan'} options={listEmployee} value={formData?.employeeID} isDisabled={isEdit} />
                                     <Input textAlign={'left'} handleAction={handleChange} label={'Mulai Tanggal'} setName={'startDate'} setWidth="48%" value={formData?.startDate} type={'date'} />
+                                    <div className="mx-2" />
                                     <Input textAlign={'left'} handleAction={handleChange} label={'Sampai Tanggal'} setName={'endDate'} setWidth="48%" value={formData?.endDate} type={'date'} />
-                                    <div className="mx-2" />
                                     <Input textAlign={'left'} handleAction={handleChange} label={'Lerbur Dari'} setWidth="48%" setName={'startDate'} value={formData?.startDate} type={'time'} />
-                                    <Input textAlign={'left'} handleAction={handleChange} label={'Lerbur Sampai'} setWidth="48%" setName={'endDate'} value={formData?.endDate} type={'time'} />
                                     <div className="mx-2" />
+                                    <Input textAlign={'left'} handleAction={handleChange} label={'Lerbur Sampai'} setWidth="48%" setName={'endDate'} value={formData?.endDate} type={'time'} />
                                     <Input textAlign={'left'} handleAction={handleChange} label={'Durasi Jam'} setWidth="48%" value={0} readOnly={true} />
+                                    <div className="mx-2" />
                                     <SearchableSelect handleAction={handleChangeSelect} name={`unattendanceTypeID`} setPosition={'bottom'} label={'Keterangan Lembur'} placeHolder={'Keterangan Lembur'} setWidth="48%" options={listType} value={formData?.unattendanceTypeID} />
-                                    <Input handleAction={handleChange} label={'Notes'} setName={''} placeholder={'isi alasan'} content="textarea" />
+                                    <Input handleAction={handleChange} label={'Notes'} setName={''} placeholder={'isi alasan'} content="textarea" value={formData?.description} />
                                 </div>
                             </div>
                             <div>

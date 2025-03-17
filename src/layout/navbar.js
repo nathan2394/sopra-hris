@@ -19,6 +19,7 @@ const Navbar = ({setAuth}) => {
     toggleSidebar();
     localStorage?.removeItem('calc');
     localStorage?.removeItem('filterEmpl');
+    localStorage?.removeItem('setPeriod');
     setTimeout(() => {
       navigate(target);
     }, 100);

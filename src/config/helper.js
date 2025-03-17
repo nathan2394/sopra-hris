@@ -118,6 +118,10 @@ export const coverDate = (val, display = 'default') => {
         const inputDate = val;
         const date = new Date(inputDate);
     
+        if(display === 'time'){
+            return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+        }
+
         if(display !== 'default'){
             let day = date.getDate();
             let month = date.getMonth() + 1; // Months are zero based
@@ -129,7 +133,7 @@ export const coverDate = (val, display = 'default') => {
           
             // Return formatted date
             if(display === 'input'){
-                return `${year}/${month}/${day}`;
+                return `${year}-${month}-${day}`;
             }
 
             return `${month}/${day}/${year}`;
@@ -143,7 +147,7 @@ export const coverDate = (val, display = 'default') => {
             return formattedDate;
         }
     }
-    return val;
+    return '-';
 }
 
 export const getMonthName = (monthNumber) => {

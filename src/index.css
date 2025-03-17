@@ -88,3 +88,57 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.react-datepicker__header {
+  background-color: #369D00 !important; /* Blue background */
+  color: white !important; /* White text */
+}
+
+/* Change month text color */
+.react-datepicker__current-month {
+  color: white !important;
+}
+
+/* Change day names (Sun, Mon, etc.) color */
+.react-datepicker-wrapper{
+  width: 100%;
+}
+
+.react-datepicker__day-name {
+  color: white !important;
+}
+
+.react-datepicker-time__header{
+  color: white !important;
+}
+
+.react-datepicker__day--selected {
+  background-color: #328d01 !important;
+}
+
+.react-datepicker__day--in-range {
+  background-color: #328d01 !important; 
+}
+
+.react-datepicker__day--today{
+  background-color: none !important;
+}
+
+.react-datepicker-popper[data-placement^=bottom] .react-datepicker__triangle{
+  fill: #369D00 !important;
+  color: #369D00 !important;
+}
+
+/* Adjust the height of time picker items */
+.react-datepicker__time-list-item {
+  height: 28px !important; /* Change the height */
+  line-height: 18px !important; /* Adjust line height for centering */
+  font-size: 12px; /* Adjust font size if needed */
+}
+
+/* Highlight the selected time */
+.react-datepicker__time-list-item--selected {
+  background-color: #369D00 !important;
+  color: white !important; 
+  border-radius: 5px;
+}

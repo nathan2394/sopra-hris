@@ -195,7 +195,7 @@ const Calculator = ({setIsLoading}) => {
                     <>
                         <div className="flex flex-col items-center justify-center p-6 mt-11">
                             <img className="w-[50%] mx-auto" alt="logo" src={empty} />
-                            <p className="font-bold text-sm">Opps, Nothing to See Here!</p>
+                            <p className="font-bold text-sm">Ups, Tidak Ada Data!</p>
                         </div>
                     </>
                 }

@@ -85,6 +85,9 @@ const EmployeeForm = ({setIsLoading}) => {
         employeeTypeID: '',
         employeeJobTitleName: '',
         employeeJobTitleID: '',
+        absentID: '',
+        shiftID: 0,
+        groupShiftID: 0,
     });
 
     const [masterPayroll, setMasterPayroll] = useState([]);
@@ -96,6 +99,8 @@ const EmployeeForm = ({setIsLoading}) => {
     const [listDepart, setListDepart] = useState([]);
     const [listDiv, setListDiv] = useState([]);
     const [listJobTitle, setListJobTitle] = useState([]);
+    const [listShift, setListShift] = useState([]);
+    const [listGroupShift, setListGroupShift] = useState([]);
 
     const [isEdit, setIsEdit] = useState(false);
     const [isReadOnly, setIsReadOnly] = useState(true);
@@ -153,6 +158,9 @@ const EmployeeForm = ({setIsLoading}) => {
                         employeeTypeID: employeeRes?.data?.employeeTypeID,
                         employeeJobTitleName: employeeRes?.data?.employeeJobTitleName || '-',
                         employeeJobTitleID: employeeRes?.data?.jobTitleID,
+                        absentID: employeeRes?.data?.absentID,
+                        shiftID: employeeRes?.data?.shiftID,
+                        groupShiftID: employeeRes?.data?.groupShiftID,
                     });
 
                     loadData({url: `GroupDetails/${employeeRes?.data?.groupID}`})?.then((res) => {
@@ -194,7 +202,9 @@ const EmployeeForm = ({setIsLoading}) => {
             loadData({url: 'Functions'}),
             loadData({url: 'EmployeeType'}),
             loadData({url: 'EmployeeJobTitles'}),
-        ]).then(([departmentsRes, groupsRes, divisionsRes, functionsRes, employeeTypesRes, employeeJobTitlesRes]) => {
+            loadData({url: 'Shifts'}),
+            loadData({url: 'GroupShifts'}),
+        ]).then(([departmentsRes, groupsRes, divisionsRes, functionsRes, employeeTypesRes, employeeJobTitlesRes, shiftsRes, shiftsGroupRes]) => {
             // Set departments list
             setListDepart(departmentsRes?.data?.map((data) => ({
                 value: data?.departmentID,
@@ -229,6 +239,17 @@ const EmployeeForm = ({setIsLoading}) => {
                 value: data?.employeeJobTitleID,
                 label: data?.name
             })));
+
+            setListShift(shiftsRes?.data?.map((data) => ({
+                value: data?.shiftID,
+                label: data?.name
+            })));
+
+            setListGroupShift(shiftsGroupRes?.data?.map((data) => ({
+                value: data?.groupShiftID,
+                label: data?.name
+            })));
+            
             
             // Now fetch employee data if getId exists
             if (getId) {
@@ -415,6 +436,13 @@ const EmployeeForm = ({setIsLoading}) => {
                                 <div className="mx-2" />
                                 <Input handleAction={handleChange} setName={`basicSalary`} readOnly={isAdd ? false : isReadOnly} label={'Basic Salary'} type={'text'} value={formatText(formData?.basicSalary)} />
                             </div>
+                            <div className="flex flex-row w-full">
+                                <Input handleAction={handleChange} setName={`absentID`} readOnly={isAdd ? false : isReadOnly} label={'PIN'} type={'text'} value={formatText(formData?.absentID)} />
+                                <div className="mx-2" />
+                                <SearchableSelect handleAction={handleChangeSelect}  name={`shiftID`} label={'Shift'} placeHolder={'Select Type'} options={listShift} value={formData?.shiftID} isDisabled={isAdd ? false : isReadOnly} />
+                                <div className="mx-2" />
+                                <SearchableSelect handleAction={handleChangeSelect}  name={`groupShiftID`} label={'Group Shift'} placeHolder={'Select Type'} options={listGroupShift} value={formData?.groupShiftID} isDisabled={isAdd ? false : isReadOnly} />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -436,7 +464,7 @@ const EmployeeForm = ({setIsLoading}) => {
                                 :
                                 <div className="flex flex-col items-center justify-center p-6">
                                     <img className="w-[22%] mx-auto" alt="logo" src={empty} />
-                                    <p className="font-bold text-xs">Opps, Nothing to See Here!</p>
+                                    <p className="font-bold text-xs">Ups, Tidak Ada Data!</p>
                                 </div>
                             }
                         </div>

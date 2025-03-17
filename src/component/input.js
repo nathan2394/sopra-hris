@@ -30,16 +30,16 @@ const Input = ({label, targetRef = null, content = 'input', isFocus = false, set
                     <span class="inline-flex items-center px-3 text-sm border border-gray-300 rounded-l-lg">
                         <p className="text-xs">{sufix}</p>
                     </span>
-                    <input ref={inputRef} type={type} value={(type === 'date' || type === 'time') ? formatDate(value, type) || '' : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-r-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} />
+                    <input ref={inputRef} type={type} value={(type === 'date' || type === 'time') ? formatDate(value, type) || '' : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-r-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-[12px] px-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} />
                 </div>
             : 
                 content === 'input' ?
                 <div className="flex">
-                    <input ref={inputRef} type={type} value={(type === 'date' || type === 'time') ? formatDate(value, type) || '' : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} />
+                    <input ref={inputRef} type={type} value={(type === 'date' || type === 'time') ? formatDate(value, type) || '' : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-[12px] px-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} />
                 </div>
                 :
                 <div className="flex">
-                    <textarea ref={inputRef} rows="4" className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick}>{value}</textarea>
+                    <textarea ref={inputRef} rows="4" className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-[12px] px-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick}>{value}</textarea>
                 </div>
             }
         </div>
