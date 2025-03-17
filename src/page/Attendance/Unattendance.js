@@ -29,8 +29,8 @@ const Unattendance = ({setIsLoading}) => {
     const [isLoadData, setIsLoadData] = useState(false);
 
     const setColumns = [
-        { field: "nik", header: "NIK", alignment: "left"},
-        { field: "employeeName", header: "Nama", alignment: "left" },
+        { field: "voucherNo", header: "No. SKT", alignment: "left"},
+        { field: "employeeName", header: "Nama", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline"> {row?.employeeName} </Link> },
         { field: "dateRange", header: "Tanggal Tidak Hadir", alignment: "center", render: (_, row) => `${coverDate(row.startDate)} - ${coverDate(row.endDate)}` },
         { field: "duration", header: "Durasi", alignment: "left", render: (value) => `${value ? value : 0} Hari` },
         { field: "unattendanceTypeName", header: "Tipe", alignment: 'left' },

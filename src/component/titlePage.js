@@ -5,21 +5,23 @@ import Button from "./button";
 import IconImage from "./icon_img";
 import { Link, useNavigate } from 'react-router-dom';
 import SearchableSelect from "./select2";
+import MyDatePicker from "./date_picker";
+import Input from "./input";
 
-const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = 'header', setNavigateBack, setNavigateBack2, isAction = false, handleSearch = false, handleFilter = false, handleExport = false, handleAdd = false, handleSubmit = null }) => { 
+const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = 'header', setNavigateBack, setNavigateBack2, isAction = false, handleSearch = false, handleFilter = false, handleExport = false, handleAdd = false, handleSubmit = null, startDateVal, setStartDateVal, endDateVal, setEndDateVal }) => { 
     const navigate = useNavigate();
 
     return (
         <>
             <div className={`flex flex-row justify-between items-center ${!isAction ? 'pt-4 pb-2' : 'pt-2'}`}>
                 {type === 'header' ? 
-                    <div className="flex flex-row items-center">
+                    <div className="flex flex-row items-center w-full">
                         <IconImage size="small" source={source} />
                         <p className="font-bold text-sm pl-2">{label}</p>
                     </div>
                 :
                     <>
-                        <div className="flex flex-row items-center">
+                        <div className="flex flex-row items-center w-full">
                             <Link to={setNavigateBack}>
                                 <div className="flex flex-row items-center">
                                     <IconImage size="small" source={source} />
@@ -38,7 +40,7 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                     </>
                 } 
                 {(type === 'header' && isAction) &&                
-                    <div className="flex flex-row items-center">
+                    <div className="flex flex-row items-center w-full justify-end">
                         {handleSearch && 
                             <>
                                 <Button setWidth="auto" bgcolor={'white'} icon={search} handleAction={handleSearch} />
@@ -65,13 +67,13 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                         {label === 'Kehadiran' &&
                             <>
                                 <div className="bg-[#33333328] h-[30px] w-[1px] mx-4" />
-                                <SearchableSelect placeHolder = 'Periode' setWidth="160px" options={months} value={1}  />
+                                <MyDatePicker isRange={true} setWidth="220px" startDateVal={startDateVal} setStartDateVal={setStartDateVal} endDateVal={endDateVal} setEndDateVal={setEndDateVal} />
                                 <div className="mx-1" />
-                                <SearchableSelect placeHolder = 'Year' setWidth="100px" options={years} value={2025}  />
+
                                 {handleSubmit !== null &&
                                 <>
                                     <div className="mx-1" />
-                                    <Button text={'Submit'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={handleSubmit} />
+                                    <Button text={'Terapkan'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={handleSubmit} />
                                 </>
                                 }
                             </>
@@ -79,7 +81,7 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                     </div>
                 }
                 {subMenu?.length > 0 &&
-                    <div className="flex flex-row">
+                    <div className="flex flex-row w-full justify-end">
                         {subMenu?.map((data, idx) => (
                             <div className="ml-2" key={idx}>
                                 <Button bgcolor={subLabel === data?.title ? baseColor : '#33333340'} color={'white'} text={data?.title} handleAction={() => navigate(data?.navRoute)} />

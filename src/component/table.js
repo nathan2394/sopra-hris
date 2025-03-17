@@ -35,7 +35,7 @@ const Table = React.memo(({ dataTable = [], rowSettings, isAction = false, detai
         <table className="w-full table-auto text-xs rounded-lg overflow-hidden border border-[#939292]">
           <thead className="text-[10px] text-white uppercase bg-[#333333c3]">           
             <tr>
-              {headers?.map((val, idx) => { if((rowSettings && rowSettings[idx]?.display === 'show')) return (
+              {headers?.filter(obj => obj !== 'id')?.map((val, idx) => (
                 <th
                   scope="col"
                   key={idx}
@@ -53,7 +53,7 @@ const Table = React.memo(({ dataTable = [], rowSettings, isAction = false, detai
                     </div>
                   </div>
                 </th>
-              )})}
+              ))}
               {(isAction && (actionDelete || actionEdit)) &&
                 <th
                   scope="col"
@@ -75,7 +75,7 @@ const Table = React.memo(({ dataTable = [], rowSettings, isAction = false, detai
                 onClick={actionClick ? () => actionClick(row) : null}
               >
                 {Object.entries(row)?.map(([key, val], idx) => {
-                  if ((rowSettings && rowSettings[idx]?.display !== 'show') || key === 'id') return null; // Skip rendering if key is "id"
+                  if (key === 'id') return null; // Skip rendering if key is "id"
 
                   return (
                     <th
@@ -199,7 +199,7 @@ const Table = React.memo(({ dataTable = [], rowSettings, isAction = false, detai
         <div className="flex flex-col items-center justify-center p-6">
           <div className="flex flex-col items-center justify-center p-6">
             <img className="w-[28%] mx-auto" alt="logo" src={empty} />
-            <p className="font-bold text-sm">Opps, Nothing to See Here!</p>
+            <p className="font-bold text-sm">Ups, Tidak Ada Data!</p>
           </div>
         </div>
       </div>
