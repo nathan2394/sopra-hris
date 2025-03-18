@@ -15,7 +15,7 @@ const InputContent = ({children, showForm, buttonHeader = false, showContent = '
                 <div className="w-full flex flex-row items-center mb-2">
                     <Button text="Shift" bgcolor={showContent === 'Shift' ? baseColor : '#9d9d9d'} color={'white'} handleAction={setShowContent ? () => setShowContent('Shift') : null} />
                     <div className="mx-1" />
-                    <Button text="Cuti & Ijin" bgcolor={showContent === 'Unnatendance' ? baseColor : '#9d9d9d'} color={'white'} handleAction={setShowContent ? () => setShowContent('Unnatendance') : null} />
+                    <Button text="Ketidakhadiran" bgcolor={showContent === 'Unnatendance' ? baseColor : '#9d9d9d'} color={'white'} handleAction={setShowContent ? () => setShowContent('Unnatendance') : null} />
                     <div className="mx-1" />
                     <Button text="Lembur" bgcolor={showContent === 'Overtime' ? baseColor : '#9d9d9d'} color={'white'} handleAction={setShowContent ? () => setShowContent('Overtime') : null} />
                 </div>

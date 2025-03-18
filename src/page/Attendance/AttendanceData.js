@@ -397,7 +397,7 @@ const AttendanceData = ({setIsLoading}) => {
     }
 
     const setColumns = [
-        { field: "employeeName", header: "Nama Karyawan", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline"> {row?.employeeName} </Link> },
+        { field: "employeeName", header: "Nama Karyawan", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline" onClick={(e) => e.stopPropagation()}> {row?.employeeName} </Link> },
         { field: "nik", header: "NIK", alignment: "left"},
         { field: "groupType", header: "Grade", alignment: "center" },
         { field: "employeeTypeName", header: "Tipe Karyawan", alignment: "left" },

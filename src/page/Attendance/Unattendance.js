@@ -17,6 +17,7 @@ import SearchableSelect from "../../component/select2";
 import InputContent from "../../component/sections/inputContent";
 import { useAPI } from "../../config/fetchApi";
 import DataTable from "../../component/dataTable";
+import MyDatePicker from "../../component/date_picker";
 
 const Unattendance = ({setIsLoading}) => {
     const navigate = useNavigate();
@@ -272,9 +273,11 @@ const Unattendance = ({setIsLoading}) => {
                                     <SearchableSelect handleAction={handleChangeSelect} name={`employeeID`} useSearchIcon={true} setPosition={'bottom'} label={'Cari Karyawan'} placeHolder={'Cari Karyawan'} setWidth="48%" options={listEmployee} value={formData?.employeeID} isDisabled={isEdit} />
                                     <div className="mx-2" />
                                     <Input textAlign={'left'} handleAction={handleChange} label={'Sisa Cuti'} setWidth="48%" value={0} readOnly={true}/>
-                                    <Input textAlign={'left'} handleAction={handleChange} label={'Mulai Tanggal'} setName={'startDate'} setWidth="48%" value={formData?.startDate} type={'date'} />
+                                    {/* <Input textAlign={'left'} handleAction={handleChange} label={'Mulai Tanggal'} setName={'startDate'} setWidth="48%" value={formData?.startDate} type={'date'} /> */}
+                                    <MyDatePicker handleAction={handleChange} label={'Mulai Tanggal'} setName={'startDate'} setWidth="48%" value={formData?.startDate} />
                                     <div className="mx-2" />
-                                    <Input textAlign={'left'} handleAction={handleChange} label={'Sampai Tanggal'} setName={'endDate'} setWidth="48%" value={formData?.endDate} type={'date'} />
+                                    <MyDatePicker handleAction={handleChange} label={'Sampai Tanggal'} setName={'endDate'} setWidth="48%" value={formData?.endDate} />
+                                    {/* <Input textAlign={'left'} handleAction={handleChange} label={'Sampai Tanggal'} setName={'endDate'} setWidth="48%" value={formData?.endDate} type={'date'} /> */}
                                     <Input textAlign={'left'} handleAction={handleChange} label={'Durasi Hari'} setWidth="48%" value={0} readOnly={true} />
                                     <div className="mx-2" />
                                     <SearchableSelect handleAction={handleChangeSelect} name={`unattendanceTypeID`} setPosition={'bottom'} label={'Tipe Cuti / Izin'} placeHolder={'Tipe Cuti / Izin'} setWidth="48%" options={listType} value={formData?.unattendanceTypeID} />

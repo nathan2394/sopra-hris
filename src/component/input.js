@@ -27,7 +27,7 @@ const Input = ({label, targetRef = null, content = 'input', isFocus = false, set
             {label && <label className="block mb-2 text-xs font-medium text-gray-900">{label}</label> }
             {sufix ? 
                 <div className="flex">
-                    <span class="inline-flex items-center px-3 text-sm border border-gray-300 rounded-l-lg">
+                    <span className="inline-flex items-center px-3 text-sm border border-gray-300 rounded-l-lg">
                         <p className="text-xs">{sufix}</p>
                     </span>
                     <input ref={inputRef} type={type} value={(type === 'date' || type === 'time') ? formatDate(value, type) || '' : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-r-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-[12px] px-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} />
@@ -39,7 +39,7 @@ const Input = ({label, targetRef = null, content = 'input', isFocus = false, set
                 </div>
                 :
                 <div className="flex">
-                    <textarea ref={inputRef} rows="4" className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-[12px] px-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick}>{value}</textarea>
+                    <textarea ref={inputRef} rows="4" className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-[12px] px-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} value={value} />
                 </div>
             }
         </div>

@@ -77,7 +77,7 @@ const MyDatePicker = ({label, placeholder = 'Pilih tanggal', setWidth = '100%', 
             endDate={isRange ? endDate : date}
             selectsRange={isRange}
         />
-        <span class={`inline-flex items-center px-2 text-sm border-l border-gray-300 rounded-r-lg ${readOnly ? 'pointer-events-none bg-[#f4f2f2cc]' : 'bg-white'}`}>
+        <span className={`inline-flex items-center px-2 text-sm border-l border-gray-300 rounded-r-lg ${readOnly ? 'pointer-events-none bg-[#f4f2f2cc]' : 'bg-white'}`}>
           <IconImage size="normal" source={isTimeOnly ? clock_g : calendar_g} />
         </span>
       </div>
