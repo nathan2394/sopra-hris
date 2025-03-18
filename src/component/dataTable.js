@@ -31,9 +31,7 @@ const DataTable = ({ dataTable = [], columns, isAction = false, detailPath, befo
                     key={col.field}
                     className={`p-[8px] font-normal border-x border-[#d2cfcf] text-[${col?.color || "black"}] whitespace-nowrap text-${col.alignment || "left"}`}
                     >
-                        {/* <Link to={detailPath ? detailPath : null}> */}
-                            {col.render ? col.render(row[col.field], row) : row[col.field]}
-                        {/* </Link> */}
+                        {col.render ? col.render(row[col.field], row) : row[col.field]}
                     </td>
                 ))}
                 </tr>
@@ -56,18 +54,3 @@ const DataTable = ({ dataTable = [], columns, isAction = false, detailPath, befo
 };
 
 export default DataTable;
-
-// Example usage
-// const columns = [
-//   { field: "name", header: "Name", alignment: "left", color: "text-blue-500" },
-//   { field: "age", header: "Age", alignment: "center", color: "text-red-500", render: (value) => `${value} years old` },
-//   { field: "email", header: "Email", alignment: "right", color: "text-green-500", render: (value) => <a href={`mailto:${value}`} className="underline">{value}</a> },
-//   { field: "dateRange", header: "Date Range", alignment: "center", color: "text-purple-500", render: (_, row) => `${row.startDate} - ${row.endDate}` },
-// ];
-
-// const data = [
-//   { name: "John Doe", age: 28, email: "john@example.com", startDate: "2024-01-01", endDate: "2024-12-31" },
-//   { name: "Jane Smith", age: 34, email: "jane@example.com", startDate: "2023-06-15", endDate: "2024-06-14" },
-// ];
-
-// <DataTable data={data} columns={columns} />

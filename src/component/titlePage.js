@@ -10,6 +10,7 @@ import Input from "./input";
 
 const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = 'header', setNavigateBack, setNavigateBack2, isAction = false, handleSearch = false, handleFilter = false, handleExport = false, handleAdd = false, handleSubmit = null, startDateVal, setStartDateVal, endDateVal, setEndDateVal }) => { 
     const navigate = useNavigate();
+    const breadcrumb = JSON.parse(localStorage?.getItem('breadcrumb')) || null;
 
     return (
         <>
@@ -22,12 +23,20 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                 :
                     <>
                         <div className="flex flex-row items-center w-full">
-                            <Link to={setNavigateBack}>
+                            {breadcrumb &&
+                                <Link to={breadcrumb?.navRoute}>
+                                    <div className="flex flex-row items-center">
+                                        <IconImage size="small" source={breadcrumb?.icon} />
+                                        <p className="font-bold text-sm pl-2">{breadcrumb?.label}</p>
+                                    </div>
+                                </Link>
+                            }
+                            {/* <Link to={setNavigateBack}>
                                 <div className="flex flex-row items-center">
                                     <IconImage size="small" source={source} />
                                     <p className="font-bold text-sm pl-2">{label}</p>
                                 </div>
-                            </Link>
+                            </Link> */}
                             {label2 && <>
                                 <p className="font-bold text-sm px-2">{`>`}</p>
                                 <Link to={setNavigateBack2}>

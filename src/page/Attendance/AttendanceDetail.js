@@ -36,6 +36,7 @@ const AttendanceDetail = ({setIsLoading}) => {
     const [listData, setListData] = useState([]);
     const [listEmployee, setListEmployee] = useState([]);
     const [listType, setListType] = useState([]);
+    const [listUnattendanceType, setUnattendanceType] = useState([]);
     const [isLoadData, setIsLoadData] = useState(false);
     const [attendanceLog, setAttendanceLog] = useState([]);
 
@@ -43,7 +44,8 @@ const AttendanceDetail = ({setIsLoading}) => {
         attendanceID: 0,
         employeeID: 0,
         clockIn: "",
-        description: ""
+        description: "",
+        unattendanceTypeID: 0
     });
 
     const [formShift, setFormShift] = useState({
@@ -58,7 +60,8 @@ const AttendanceDetail = ({setIsLoading}) => {
         clockOut: null,
         clockInWeekend: null,
         clockOutWeekend: null,
-        shiftName: ''
+        shiftName: '',
+        unattendanceTypeID: '',
     })
 
     useEffect(() => {
@@ -80,7 +83,13 @@ const AttendanceDetail = ({setIsLoading}) => {
                 };
             }).sort((a, b) => new Date(b.transDate) - new Date(a.transDate)); // Sort by transdace descending
             setListData(filteredData);
-            
+        })
+
+        loadData({url: 'UnattendanceTypes'}).then((res) => {
+            setUnattendanceType(res?.data?.map((obj) => ({
+                value: obj?.code,
+                label: obj?.name
+            })))
         })
 
     }, []);
@@ -135,11 +144,13 @@ const AttendanceDetail = ({setIsLoading}) => {
     const handleClick = (data) => {
         setShowContent('Shift');
         const attendanceData = listData?.find((obj) => obj?.id === data?.id);
+        console.log(attendanceData, attendanceData?.unattendance);
         setFormShift({
             date: attendanceData?.transDate,
             clockIn: attendanceData?.actualStartTime,
             clockOut: attendanceData?.actualEndTime,
-            shiftName: attendanceData?.shiftName
+            shiftName: attendanceData?.shiftName,
+            unattendanceTypeID: attendanceData?.unattendance
         })
         setRowActive(attendanceData?.id);
         setShowForm(true);
@@ -231,8 +242,8 @@ const AttendanceDetail = ({setIsLoading}) => {
                                             {attendanceLog?.length > 0 ? 
                                                 <div className="flex flex-col w-full">
                                                     {attendanceLog?.map((obj, idx) => (
-                                                        <div className={`flex flex-row justify-center items-center ${idx%2 === 0 ? 'bg-[#ebebeb]' : 'bg-white'} text-xs p-1`}>
-                                                            <div className="w-[120px] text-center">{formatText(obj?.clockIn)}</div>
+                                                        <div className={`flex flex-row justify-center items-center ${idx%2 === 0 ? 'bg-[#ebebeb]' : 'bg-white border-b border-[#ebebeb]'} text-xs p-1`}>
+                                                            <div className="w-[120px] text-center p-1">{formatText(obj?.clockIn)}</div>
                                                             <div className="w-[120px] text-center">{coverDate(obj?.clockIn, 'time')}</div>
                                                             <div className="w-[150px] text-left">{obj?.description || 'Sistem'}</div>
                                                         </div>
@@ -267,12 +278,9 @@ const AttendanceDetail = ({setIsLoading}) => {
                             {showContent === 'Unnatendance' && <>
                                 <div>
                                     <div className="flex flex-row flex-wrap w-full">
-                                        <Input textAlign={'left'} handleAction={handleChange} label={'Mulai Tanggal'} setName={'startDate'} setWidth="48%" value={formData?.startDate} type={'date'} />
+                                        <MyDatePicker label={'Tanggal'} placeholder="Pilih Tanggal" setWidth="48%" value={formShift?.date} readOnly={true} />
                                         <div className="mx-2" />
-                                        <Input textAlign={'left'} handleAction={handleChange} label={'Sampai Tanggal'} setName={'endDate'} setWidth="48%" value={formData?.endDate} type={'date'} />
-                                        <Input textAlign={'left'} handleAction={handleChange} label={'Durasi Hari'} setWidth="48%" value={0} readOnly={true} />
-                                        <div className="mx-2" />
-                                        <SearchableSelect handleAction={handleChangeSelect} name={`unattendanceTypeID`} setPosition={'bottom'} label={'Tipe Cuti / Izin'} placeHolder={'Tipe Cuti / Izin'} setWidth="48%" options={listType} value={formData?.unattendanceTypeID} />
+                                        <SearchableSelect handleAction={handleChangeSelect} name={`unattendanceTypeID`} setPosition={'bottom'} label={'Tipe Ketidakhadiran'} placeHolder={'Tipe Ketidakhadiran'} setWidth="48%" options={listUnattendanceType} value={formShift?.unattendanceTypeID} />
                                         <Input handleAction={handleChange} label={'Alasan'} setName={''} placeholder={'isi alasan'} content="textarea" />
                                     </div>
                                     <div className="w-full">
