@@ -17,6 +17,7 @@ import SearchableSelect from "../../component/select2";
 import InputContent from "../../component/sections/inputContent";
 import { useAPI } from "../../config/fetchApi";
 import DataTable from "../../component/dataTable";
+import FormOvertime from "../../component/sections/formOvertime";
 
 const Overtime = ({setIsLoading}) => {
     const navigate = useNavigate();
@@ -134,42 +135,9 @@ const Overtime = ({setIsLoading}) => {
                 {!isLoadData ? 
                     <div className="flex flex-row justify-between">
                         {/* <Table dataTable={listData} rowSettings={rowSettings} setWidth={'85%'} actionClick={handleClick} /> */}
-                        <DataTable dataTable={listData} columns={setColumns} setWidth={'85%'} actionClick={handleClick} rowActive={rowActive} />
+                        <DataTable dataTable={listData} columns={setColumns} setWidth={'95%'} actionClick={handleClick} rowActive={rowActive} />
                         <div className="mx-2" />
-                        <InputContent showForm={showForm}>
-                            <div>
-                                <div className="flex flex-row flex-wrap w-full">
-                                    <SearchableSelect handleAction={handleChangeSelect} name={`employeeID`} useSearchIcon={true} setPosition={'bottom'} label={'Cari Karyawan'} placeHolder={'Cari Karyawan'} options={listEmployee} value={formData?.employeeID} isDisabled={isEdit} />
-                                    <Input textAlign={'left'} handleAction={handleChange} label={'Mulai Tanggal'} setName={'startDate'} setWidth="48%" value={formData?.startDate} type={'date'} />
-                                    <div className="mx-2" />
-                                    <Input textAlign={'left'} handleAction={handleChange} label={'Sampai Tanggal'} setName={'endDate'} setWidth="48%" value={formData?.endDate} type={'date'} />
-                                    <Input textAlign={'left'} handleAction={handleChange} label={'Lerbur Dari'} setWidth="48%" setName={'startDate'} value={formData?.startDate} type={'time'} />
-                                    <div className="mx-2" />
-                                    <Input textAlign={'left'} handleAction={handleChange} label={'Lerbur Sampai'} setWidth="48%" setName={'endDate'} value={formData?.endDate} type={'time'} />
-                                    <Input textAlign={'left'} handleAction={handleChange} label={'Durasi Jam'} setWidth="48%" value={0} readOnly={true} />
-                                    <div className="mx-2" />
-                                    <SearchableSelect handleAction={handleChangeSelect} name={`unattendanceTypeID`} setPosition={'bottom'} label={'Keterangan Lembur'} placeHolder={'Keterangan Lembur'} setWidth="48%" options={listType} value={formData?.unattendanceTypeID} />
-                                    <Input handleAction={handleChange} label={'Notes'} setName={''} placeholder={'isi alasan'} content="textarea" value={formData?.description} />
-                                </div>
-                            </div>
-                            <div>
-                                <div className="bg-[#ddd] mb-3 w-full h-[1.5px]" />
-                                <div className="flex flex-row justify-between w-full">
-                                    {isAdd &&
-                                        <>
-                                            <Button text="Close" setWidth={'100%'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => console.log('0')} />
-                                            <div className="mx-1" />
-                                            <Button text="Submit" setWidth={'100%'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => {
-                                                handleAdd();
-                                            }} />
-                                        </>
-                                    }
-                                    {isEdit &&
-                                        <Button text="Edit" setWidth={'100%'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => console.log('0')} />
-                                    }
-                                </div>
-                            </div>
-                        </InputContent>
+                        <FormOvertime showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee}/>
                     </div>
                     :
                     <div className="mt-20">

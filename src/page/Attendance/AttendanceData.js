@@ -18,6 +18,7 @@ import DataTable from "../../component/dataTable";
 
 const AttendanceData = ({setIsLoading}) => {
     const { deleteData, loadData } = useAPI();
+    const currentDate = new Date();
     const navigate = useNavigate();
 
     const localSetPeriod = JSON.parse(localStorage?.getItem('setPeriod'));
@@ -35,8 +36,8 @@ const AttendanceData = ({setIsLoading}) => {
     const [checkedValue, setCheckValue] = useState({});
     const [selectedValues, setSelectedValues] = useState({});
 
-    const [startDate, setStartDate] = useState(localSetPeriod?.startDate ?? new Date());
-    const [endDate, setEndDate] = useState(localSetPeriod?.endDate ?? new Date());
+    const [endDate, setEndDate] = useState(localSetPeriod?.endDate || coverDate(currentDate, 'input'));
+    const [startDate, setStartDate] = useState(localSetPeriod?.startDate || coverDate(currentDate.setDate(currentDate.getDate() - 30), 'input'));
 
     const [searchForm, setSearchForm] = useState({
         name    : '',

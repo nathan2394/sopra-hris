@@ -4,7 +4,7 @@ import IconImage from "./icon_img";
 import { calendar, calendar_g, clock_g } from "../config/icon";
 import DatePicker from "react-datepicker";
 
-const MyDatePicker = ({label, placeholder = 'Pilih tanggal', setWidth = '100%', value, setValue, startDateVal, setStartDateVal, endDateVal, setEndDateVal, isRange = false, isTimeOnly = false, readOnly = false}) => {
+const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', value, setValue, startDateVal, setStartDateVal, endDateVal, setEndDateVal, isRange = false, isTimeOnly = false, readOnly = false, handleAction}) => {
   
   const parseDate = (val) => {
     if (!val) return null;
@@ -58,26 +58,29 @@ const MyDatePicker = ({label, placeholder = 'Pilih tanggal', setWidth = '100%', 
   };
 
   return (
-    <div className={`${label ? "mb-5" : ""} ${readOnly ? 'pointer-events-none' : ''}`} style={{width: setWidth}}>
+    <div className={`${label ? "mb-5" : ""}`} style={{width: setWidth}}>
       {label && <label className="block mb-2 text-xs font-medium text-gray-900">{label}</label> }
-      <div className="relative border border-gray-300 text-gray-900 rounded-lg flex w-full"  onClick={openDatePicker}>
+      <div className={`relative border border-gray-300 text-gray-900 rounded-lg flex w-full py-[3.5px] ${readOnly ? 'pointer-events-none bg-[#f4f2f2cc]' : 'bg-white'}`}  onClick={openDatePicker}>
         <DatePicker
             selected={isRange ? startDate : date}
-            onChange={isRange ? onChange : (date) => setDate(date)}
+            onChange={isRange ? onChange : handleAction ? (date) => {
+              handleAction(name, date);
+              setDate(date);
+            } : null}
             timeFormat="HH:mm"
             showTimeSelect={isTimeOnly} // Enable time selection if needed
             showTimeSelectOnly={isTimeOnly} // Show only time if true
-            dateFormat={isTimeOnly ? "HH:mm" : "dd-MM-yyyy"}
+            dateFormat={isTimeOnly ? "HH:mm" : "yyyy-MM-dd"}
             placeholderText={placeholder}
-            className={`w-full px-4 py-2 rounded-l-lg text-[12px] focus:outline-none ${readOnly ? 'pointer-events-none bg-[#f4f2f2cc]' : ''}`}
-            calendarClassName="border border-gray-300 rounded-lg shadow-lg"
+            className={`w-full p-2 rounded-l-lg text-[12px] focus:outline-none ${readOnly ? 'pointer-events-none bg-[#f4f2f2cc]' : ''}`}
+            calendarClassName="border border-gray-300 rounded-lg shadow-lg z-10"
             popperClassName="z-50"
             ref={datePickerRef}
             startDate={isRange ? startDate : date}
             endDate={isRange ? endDate : date}
             selectsRange={isRange}
         />
-        <span className={`inline-flex items-center px-2 text-sm border-l border-gray-300 rounded-r-lg ${readOnly ? 'pointer-events-none bg-[#f4f2f2cc]' : 'bg-white'}`}>
+        <span className={`inline-flex items-center pl-2 pr-2 text-sm border-l border-gray-300 rounded-r-lg ${readOnly ? 'pointer-events-none bg-[#f4f2f2cc]' : 'bg-white'}`}>
           <IconImage size="normal" source={isTimeOnly ? clock_g : calendar_g} />
         </span>
       </div>

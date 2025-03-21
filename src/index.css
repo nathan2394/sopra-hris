@@ -142,3 +142,8 @@ input[type="number"]::-webkit-outer-spin-button {
   color: white !important; 
   border-radius: 5px;
 }
+
+.react-datepicker {
+  z-index: 9999 !important;
+}
+

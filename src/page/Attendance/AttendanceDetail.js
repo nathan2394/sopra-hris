@@ -18,6 +18,9 @@ import SearchableSelect from "../../component/select2";
 import DataTable from "../../component/dataTable";
 import InputContent from "../../component/sections/inputContent";
 import MyDatePicker from "../../component/date_picker";
+import FormShift from "../../component/sections/formShift";
+import FormUnattendance from "../../component/sections/formUnattendance";
+import FormOvertime from "../../component/sections/formOvertime";
 
 const AttendanceDetail = ({setIsLoading}) => {
     const { deleteData, loadData } = useAPI();
@@ -37,6 +40,7 @@ const AttendanceDetail = ({setIsLoading}) => {
     const [listEmployee, setListEmployee] = useState([]);
     const [listType, setListType] = useState([]);
     const [listUnattendanceType, setUnattendanceType] = useState([]);
+    const [reasonType, setReasonType] = useState([]);
     const [isLoadData, setIsLoadData] = useState(false);
     const [attendanceLog, setAttendanceLog] = useState([]);
 
@@ -48,21 +52,29 @@ const AttendanceDetail = ({setIsLoading}) => {
         unattendanceTypeID: 0
     });
 
-    const [formShift, setFormShift] = useState({
+    const [attendanceData, setAttendanceData] = useState({
         date: '',
-        clockOut: '',
         shiftName: ''
     })
 
+    const [unattendanceDetail, setUnattendanceDetail] = useState({
+        employeeID: 0,
+        unattendanceTypeID: 0
+    })
+
+
     const [shiftDetail, setShiftDetail] = useState({
+        employeeID: getId,
         date: '',
         clockIn: null,
         clockOut: null,
         clockInWeekend: null,
         clockOutWeekend: null,
         shiftName: '',
-        unattendanceTypeID: '',
+        attendanceID: '',
     })
+
+    const [employeeName, setEmployeeName] = useState(null);
 
     useEffect(() => {
         loadData({url: `Attendances/DetailAttendance/${getId}/${localSetPeriod?.startDate}|${localSetPeriod?.endDate}`}).then((res) => {
@@ -92,19 +104,31 @@ const AttendanceDetail = ({setIsLoading}) => {
             })))
         })
 
+        loadData({url: 'Reasons'}).then((res) => {
+            setReasonType(res?.data?.map((obj) => ({
+                value: obj?.reasonID,
+                label: obj?.name
+            })))
+        })
+
+        loadData({url: `Employees/${getId}`})?.then((res) => {
+            setEmployeeName(res?.data?.employeeName || null)
+        })
+
     }, []);
 
     useEffect(() =>{
-        if(formShift?.date){
+        if(attendanceData?.date){
             fetchAttendanceLog();
         }
-    }, [formShift?.date, formShift?.shiftName])
+    }, [attendanceData?.date, attendanceData?.shiftName])
 
     const fetchAttendanceLog = useCallback(() => {
-        loadData({url: 'Shifts', params: [{title: 'filter', value: `name:${formShift?.shiftName}`}]})?.then((res) => {
+        loadData({url: 'Shifts', params: [{title: 'filter', value: `name:${attendanceData?.shiftName}`}]})?.then((res) => {
             if(res?.data?.length > 0){
                 const data = res?.data[0];
                 setShiftDetail({
+                    employeeID: getId,
                     clockIn: data?.startTime || null,
                     clockOut: data?.endTime || null,
                     clockInWeekend: data?.weekendStartTime ?? null,
@@ -114,7 +138,7 @@ const AttendanceDetail = ({setIsLoading}) => {
             }
         })
 
-        loadData({url: `Attendances/ListAttendance/${getId}/${coverDate(formShift?.date, 'input')}`})?.then((res) => {
+        loadData({url: `Attendances/ListAttendance/${getId}/${coverDate(attendanceData?.date, 'input')}`})?.then((res) => {
             setAttendanceLog(res?.data?.sort((a, b) => new Date(a.clockIn) - new Date(b.clockIn)));
         })
     })
@@ -131,7 +155,7 @@ const AttendanceDetail = ({setIsLoading}) => {
     };
 
     const handleChangeSelect = (target, value) => {
-        setFormShift({
+        setAttendanceData({
             ...formData,
             [target]: value,
           });
@@ -142,17 +166,14 @@ const AttendanceDetail = ({setIsLoading}) => {
     }
 
     const handleClick = (data) => {
-        setShowContent('Shift');
-        const attendanceData = listData?.find((obj) => obj?.id === data?.id);
-        console.log(attendanceData, attendanceData?.unattendance);
-        setFormShift({
-            date: attendanceData?.transDate,
-            clockIn: attendanceData?.actualStartTime,
-            clockOut: attendanceData?.actualEndTime,
-            shiftName: attendanceData?.shiftName,
-            unattendanceTypeID: attendanceData?.unattendance
-        })
-        setRowActive(attendanceData?.id);
+        const target = listData?.find((obj) => obj?.id === data?.id);
+        setShowContent(target?.unattendance ? 'Unattendance' : 'Shift');
+        setAttendanceData({
+            date: target?.transDate,
+            shiftName: target?.shiftName
+        });
+        setUnattendanceDetail({employeeID: getId, unattendanceTypeID: target?.unattendance })
+        setRowActive(data?.id);
         setShowForm(true);
         setIsAdd(false);
         setIsEdit(true);
@@ -215,136 +236,25 @@ const AttendanceDetail = ({setIsLoading}) => {
 
     return (
         <>
-            <TitlePage label={'Kehadiran'} subLabel="Nama Karyawan" source={kehadiran} type="detail" setNavigateBack={'/attendance'} isAction={true} />
+            <TitlePage label={'Kehadiran'} subLabel={employeeName || "Nama Karyawan"} source={kehadiran} type="detail" setNavigateBack={'/attendance'} isAction={true} />
             <div>
                 {!isLoadData ? 
                     <div className="flex flex-row justify-between">
                         {/* <Table dataTable={listData} rowSettings={rowSettings} setWidth={'85%'} actionClick={handleClick} /> */}
-                        <DataTable dataTable={listData} columns={setColumns} setWidth={'85%'} actionClick={handleClick} rowActive={rowActive} />
+                        <DataTable dataTable={listData} columns={setColumns} setWidth={'75%'} actionClick={handleClick} rowActive={rowActive} />
                         <div className="mx-2" />
-                        <InputContent showForm={showForm} buttonHeader={true} showContent={showContent} setShowContent={setShowContent}>
-                            {showContent === 'Shift' && <>
-                                <div>
-                                    <div className="flex flex-row flex-wrap w-full">
-                                        <MyDatePicker label={'Tanggal'} placeholder="Pilih Tanggal" setWidth="48%" value={formShift?.date} readOnly={true} />
-                                        <div className="mx-2" />
-                                        <Input textAlign={'left'} handleAction={handleChange} label={'Nama Shift'} setName={'endDate'} setWidth="48%" value={shiftDetail?.shiftName} type={'input'} />
-                                        {/* <Input textAlign={'left'} handleAction={handleChange} label={'Jam Masuk'} setWidth="48%" value={'08.00'} readOnly={true} type={'time'} /> */}
-                                        <MyDatePicker label={'Jam Masuk'} placeholder="Pilih Jam" setWidth="48%" value={shiftDetail?.clockIn} isTimeOnly={true} />
-                                        <div className="mx-2" />
-                                        <MyDatePicker label={'Jam Keluar'} placeholder="Pilih Jam" setWidth="48%" value={shiftDetail?.clockOut} isTimeOnly={true} />
-                                    </div>
-                                    <div className="w-full">
-                                        <div className="flex flex-row items-center justify-between">
-                                            <p className="text-xs">Scan Log</p>
-                                        </div>
-                                        <div className={`h-[180px] overflow-y-auto border border-[#ebebeb] rounded-md mt-2`}>
-                                            {attendanceLog?.length > 0 ? 
-                                                <div className="flex flex-col w-full">
-                                                    {attendanceLog?.map((obj, idx) => (
-                                                        <div className={`flex flex-row justify-center items-center ${idx%2 === 0 ? 'bg-[#ebebeb]' : 'bg-white border-b border-[#ebebeb]'} text-xs p-1`}>
-                                                            <div className="w-[120px] text-center p-1">{formatText(obj?.clockIn)}</div>
-                                                            <div className="w-[120px] text-center">{coverDate(obj?.clockIn, 'time')}</div>
-                                                            <div className="w-[150px] text-left">{obj?.description || 'Sistem'}</div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                                :
-                                                <div className="m-auto mt-16">
-                                                    <p className="text-center text-xs text-gray-400">Tidak ada Lampiran</p>
-                                                </div>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="bg-[#ddd] mb-3 w-full h-[1.5px]" />
-                                    <div className="flex flex-row justify-between w-full">
-                                        {isAdd &&
-                                            <>
-                                                <Button text="Close" setWidth={'100%'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => console.log('0')} />
-                                                <div className="mx-1" />
-                                                <Button text="Submit" setWidth={'100%'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => {
-                                                    handleAdd();
-                                                }} />
-                                            </>
-                                        }
-                                        {isEdit &&
-                                            <Button text="Edit" setWidth={'100%'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => console.log('0')} />
-                                        }
-                                    </div>
-                                </div>
-                            </>}
-                            {showContent === 'Unnatendance' && <>
-                                <div>
-                                    <div className="flex flex-row flex-wrap w-full">
-                                        <MyDatePicker label={'Tanggal'} placeholder="Pilih Tanggal" setWidth="48%" value={formShift?.date} readOnly={true} />
-                                        <div className="mx-2" />
-                                        <SearchableSelect handleAction={handleChangeSelect} name={`unattendanceTypeID`} setPosition={'bottom'} label={'Tipe Ketidakhadiran'} placeHolder={'Tipe Ketidakhadiran'} setWidth="48%" options={listUnattendanceType} value={formShift?.unattendanceTypeID} />
-                                        <Input handleAction={handleChange} label={'Alasan'} setName={''} placeholder={'isi alasan'} content="textarea" />
-                                    </div>
-                                    <div className="w-full">
-                                        <div className="flex flex-row items-center justify-between">
-                                            <p className="text-xs">Lampiran</p>
-                                            <IconImage size="small" source={add_g} />
-                                        </div>
-                                        <div className="h-[100px] flex items-center justify-center">
-                                            <p className="text-center text-xs text-gray-400">Tidak ada Lampiran</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="bg-[#ddd] mb-3 w-full h-[1.5px]" />
-                                    <div className="flex flex-row justify-between w-full">
-                                        {isAdd &&
-                                            <>
-                                                <Button text="Close" setWidth={'100%'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => console.log('0')} />
-                                                <div className="mx-1" />
-                                                <Button text="Submit" setWidth={'100%'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => {
-                                                    handleAdd();
-                                                }} />
-                                            </>
-                                        }
-                                        {isEdit &&
-                                            <Button text="Edit" setWidth={'100%'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => console.log('0')} />
-                                        }
-                                    </div>
-                                </div>
-                            </>}
-                            {showContent === 'Overtime' && <>
-                                <div>
-                                    <div className="flex flex-row flex-wrap w-full">
-                                        <Input textAlign={'left'} handleAction={handleChange} label={'Mulai Tanggal'} setName={'startDate'} setWidth="48%" value={formData?.startDate} type={'date'} />
-                                        <div className="mx-2" />
-                                        <Input textAlign={'left'} handleAction={handleChange} label={'Sampai Tanggal'} setName={'endDate'} setWidth="48%" value={formData?.endDate} type={'date'} />
-                                        <Input textAlign={'left'} handleAction={handleChange} label={'Lerbur Dari'} setWidth="48%" setName={'startDate'} value={formData?.startDate} type={'time'} />
-                                        <div className="mx-2" />
-                                        <Input textAlign={'left'} handleAction={handleChange} label={'Lerbur Sampai'} setWidth="48%" setName={'endDate'} value={formData?.endDate} type={'time'} />
-                                        <Input textAlign={'left'} handleAction={handleChange} label={'Durasi Jam'} setWidth="48%" value={0} readOnly={true} />
-                                        <div className="mx-2" />
-                                        <SearchableSelect handleAction={handleChangeSelect} name={`unattendanceTypeID`} setPosition={'bottom'} label={'Keterangan Lembur'} placeHolder={'Keterangan Lembur'} setWidth="48%" options={listType} value={formData?.unattendanceTypeID} />
-                                        <Input handleAction={handleChange} label={'Notes'} setName={''} placeholder={'isi alasan'} content="textarea" value={formData?.description} />
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="bg-[#ddd] mb-3 w-full h-[1.5px]" />
-                                    <div className="flex flex-row justify-between w-full">
-                                        {isAdd &&
-                                            <>
-                                                <Button text="Close" setWidth={'100%'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => console.log('0')} />
-                                                <div className="mx-1" />
-                                                <Button text="Submit" setWidth={'100%'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => {
-                                                    handleAdd();
-                                                }} />
-                                            </>
-                                        }
-                                        {isEdit &&
-                                            <Button text="Edit" setWidth={'100%'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => console.log('0')} />
-                                        }
-                                    </div>
-                                </div>
-                            </>}
-                        </InputContent>
+                        <div className="flex flex-col w-[40%]">
+                            <div className="w-full flex flex-row items-center mb-3">
+                                <Button text="Shift" bgcolor={showContent === 'Shift' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => setShowContent('Shift')} />
+                                <div className="mx-1" />
+                                <Button text="Ketidakhadiran" bgcolor={showContent === 'Unattendance' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => setShowContent('Unattendance')} />
+                                <div className="mx-1" />
+                                <Button text="Lembur" bgcolor={showContent === 'Overtime' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => setShowContent('Overtime')} />
+                            </div>
+                            {showContent === 'Shift' && <FormShift showForm={showForm} setWidth={'auto'} dataObj={shiftDetail} targetDate={attendanceData?.date} listLog={attendanceLog} /> }
+                            {showContent === 'Unattendance' && <FormUnattendance showForm={true} setWidth={'auto'} dataObj={unattendanceDetail} targetDate={attendanceData?.date} listType={listUnattendanceType} /> }
+                            {showContent === 'Overtime' && <FormOvertime showForm={true} setWidth={'auto'} targetDate={attendanceData?.date} listType={reasonType}/> }
+                        </div>
                     </div>
                     :
                     <div className="mt-20">

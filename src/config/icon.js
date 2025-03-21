@@ -18,6 +18,8 @@ export const notif = '/icon/notification.png';
 export const arrow_red = '/icon/arrow_down_red.png';
 export const arrow_g = '/icon/arrow_down_g.png';
 
+export const add = '/icon/plus.svg';
+
 export const add_g = '/icon/add_g.png';
 export const edit_g = '/icon/edit_g.png';
 
