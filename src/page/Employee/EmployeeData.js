@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
 // import { deleteData, loadData } from "../../config/api";
 import { coverDate, exportToExcel, getCurrentDate } from "../../config/helper";
@@ -14,12 +14,12 @@ import LoadingIndicator from "../../component/loading_indicator";
 import CollapseMenu from "../../component/collapse_menu";
 import AlertPopUp from "../../component/popupAlert";
 import { useAPI } from "../../config/fetchApi";
+import SearchableSelect from "../../component/select2";
 
 const EmployeeData = ({setIsLoading}) => {
     const navigate = useNavigate();
     const { loadData } = useAPI();
     const localFilter = JSON.parse(localStorage?.getItem('filterEmpl'));
-    //console.log(localFilter?.checkedValue, JSON.stringify(localFilter?.checkedValue));
 
     const [listData, setListData] = useState([]);
     const [isModalOpen, setModalOpen] = useState(false);
@@ -49,7 +49,11 @@ const EmployeeData = ({setIsLoading}) => {
         ktp     : '',
     })
 
-    const [isAlert, setIsAlert] = useState(false);
+    const [listSearch, setlistSearch] = useState({
+        listName: [],
+        listNIK: [],
+        listKTP: []
+    })
 
     const [isFilter, setIsFilter] = useState(false);
     const [listFilter, setListFilter] = useState(localFilter?.listFilter ?? []);
@@ -163,6 +167,12 @@ const EmployeeData = ({setIsLoading}) => {
                     }
                 ))
 
+                setlistSearch({
+                    listName: res.data.map((obj) => ({label: obj?.employeeName, value: obj?.employeeName})),
+                    listNIK: res.data.map((obj) => ({label: obj?.nik, value: obj?.nik})),
+                    listKTP: res.data.map((obj) => ({label: obj?.ktp, value: obj?.ktp}))
+                })
+
                 setListData(filteredData);
                 setIsLoadData(false);
                 setIsLoading(false);
@@ -176,7 +186,6 @@ const EmployeeData = ({setIsLoading}) => {
 
     useEffect(() => {
         if(!isLoadData){
-            // console.log('trigger', searchForm?.group, searchForm?.department, searchForm?.division)
             fetchEmployeeData();
             localStorage?.setItem('filterEmpl', JSON.stringify({
                 name    : searchForm?.name,
@@ -228,24 +237,37 @@ const EmployeeData = ({setIsLoading}) => {
         setModalOpen(false);
     }
 
-    const handleChange = (event) => {
-        setSearchInput((prev) => ({
-          ...prev,
-          [event.target.name]: event.target.value,
-        }));
-    };
+    // const handleChange = (event) => {
+    //     setSearchInput((prev) => ({
+    //       ...prev,
+    //       [event.target.name]: event.target.value,
+    //     }));
+    // };
 
-    const handleKeyDown = (event) => {
+    // const handleChange = useCallback((event) => {
+    //     setSearchInput((prev) => ({
+    //         ...prev,
+    //         [event.target.name]: event.target.value,
+    //       }));
+    // }, []);
+
+    const handleChangeSelect = (target, value) => {
+        setSearchInput((prev) => ({
+            ...prev,
+            [target]: value,
+          }));
+    }
+
+    const handleKeyDown = useCallback((event) => {
         if (event.key === "Enter") {
             submitSearch();
         }
-      };
+    }, []);
 
     const removeFilters = (target) => {
         if(target){
             const arrFilter = listFilter?.filter(val => !val?.includes(target))
             setListFilter(arrFilter);
-            //console.log(target?.toLowerCase()?.includes('name'))
             if(target?.toLowerCase()?.includes('name')) {
                 setSearchForm({...searchForm, name: ''}) 
                 setSearchInput({...searchInput, name: ''}) 
@@ -336,40 +358,6 @@ const EmployeeData = ({setIsLoading}) => {
         navigate(`/employee/detail?id=${targetId}`)
     }
 
-    const renderModal = () => (
-        <Modal isOpen={isModalOpen} onClose={closeModal}>
-            <div className="relative bg-white rounded-lg shadow-sm ">
-                {/* <!-- Modal header --> */}
-                <div className="flex items-center justify-between p-4 border-b rounded-t border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 ">
-                        Search Employee Data
-                    </h3>
-                    <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-toggle="crud-modal" onClick={() => setModalOpen(false)}>
-                        <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                        </svg>
-                        <span className="sr-only">Close modal</span>
-                    </button>
-                </div>
-                {/* <!-- Modal body --> */}
-                <div className="p-6">
-                    <div className="flex flex-col">
-                        <Input label={'Name'} isFocus={true} setName='name' value={searchInput.name} type={'text'} placeholder={"Search Employee Name..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
-                        <div className="mx-2" />
-                        <Input label={'NIK'} setName='nik' value={searchInput.nik} type={'text'} placeholder={"Search Employee NIK..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
-                        <div className="mx-2" />
-                        <Input label={'No. KTP'} setName='ktp' value={searchInput.ktp} type={'text'} placeholder={"Search Employee No. KTP..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
-                    </div>
-                    <div className="flex flex-row w-full">
-                        <Button text="Close" setWidth={'full'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => closeModal()} />
-                        <div className="mx-1" />
-                        <Button text="Submit" setWidth={'full'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => submitSearch()} />
-                    </div>
-                </div>
-            </div>
-        </Modal>
-    );
-
     const handleCheckbox = (item, label) => {
         setSelectedValues((prev) => {
             const newValues = { ...prev };
@@ -397,7 +385,7 @@ const EmployeeData = ({setIsLoading}) => {
         setModalFilterOpen(false);
     }
 
-    const renderFilter = () => {
+    const renderFilter = useMemo(() => {
         const listFilterData = [
             {
                 title: 'Grade',
@@ -466,7 +454,43 @@ const EmployeeData = ({setIsLoading}) => {
                  </div>
             </Modal>
         )
-    }
+    }, [isModalFilterOpen, selectedValues])
+
+    const renderModal = useMemo(() => {
+        return(
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
+            <div className="relative bg-white rounded-lg shadow-sm ">
+                {/* <!-- Modal header --> */}
+                <div className="flex items-center justify-between p-4 border-b rounded-t border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900 ">
+                        Cari Data Karyawan
+                    </h3>
+                    <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-toggle="crud-modal" onClick={() => setModalOpen(false)}>
+                        <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                        <span className="sr-only">Close modal</span>
+                    </button>
+                </div>
+                {/* <!-- Modal body --> */}
+                <div className="">
+                    <div className="flex flex-col px-6 pt-4 pb-2">
+                        {/* <Input label={'Name'} isFocus={true} setName='name' value={searchInput.name} type={'text'} placeholder={"Search Employee Name..."} handleKeyDown={handleKeyDown} handleAction={handleChange} /> */}
+                        <SearchableSelect handleAction={handleChangeSelect} label={'Name'} name={'name'} value={searchInput.name} options={listSearch?.listName} useSearchIcon={true} placeHolder={"Search Employee Name..."} setPosition="bottom" />
+                        <div className="mx-2" />
+                        {/* <Input label={'NIK'} setName='nik' value={searchInput.nik} type={'text'} placeholder={"Search Employee NIK..."} handleKeyDown={handleKeyDown} handleAction={handleChange} /> */}
+                        <SearchableSelect handleAction={handleChangeSelect} label={'NIK'} name={'nik'} value={searchInput.nik} options={listSearch?.listNIK} useSearchIcon={true} placeHolder={"Search Employee NIK..."} setPosition="bottom" />
+                        <div className="mx-2" />
+                        {/* <Input label={'No. KTP'} setName='ktp' value={searchInput.ktp} type={'text'} placeholder={"Search Employee No. KTP..."} handleKeyDown={handleKeyDown} handleAction={handleChange} /> */}
+                        <SearchableSelect handleAction={handleChangeSelect} label={'No. KTP'} name={'ktp'} value={searchInput.ktp} options={listSearch?.listKTP} useSearchIcon={true} placeHolder={"Search Employee No. KTP..."} setPosition="bottom" />
+                    </div>
+                    <div className="border-t px-6 py-3 rounded-t border-gray-200">
+                        <Button text="Cari Karyawan" showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => submitSearch()} />
+                    </div>
+                </div>
+            </div>
+        </Modal>
+    )}, [isModalOpen, searchInput, listSearch]);
 
     return (
         <>
@@ -540,8 +564,9 @@ const EmployeeData = ({setIsLoading}) => {
                     </div>
                 }
             </div>
-            {renderModal()}
-            {renderFilter()}
+            {renderModal}
+            {/* <SearchModal isOpen={isModalOpen} onClose={closeModal} searchInput={searchInput} handleChange={handleChange} handleKeyDown={handleKeyDown} submitSearch={submitSearch} /> */}
+            {renderFilter}
         </>
     );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { formatNum, formatText } from "../config/helper";
 
-const Input = ({label, targetRef = null, content = 'input', isFocus = false, setName, type, placeholder, sufix, setWidth = '100%', handleKeyDown, handleAction, value = '', textAlign = 'left', readOnly = false}) => {
+const Input = ({label, subLabel, targetRef = null, content = 'input', isFocus = false, setName, type, placeholder, sufix, setWidth = '100%', handleKeyDown, handleAction, value = '', textAlign = 'left', readOnly = false}) => {
     const inputRef = useRef(null);
 
     const formatDate = (dateString, target) => {
@@ -23,11 +23,11 @@ const Input = ({label, targetRef = null, content = 'input', isFocus = false, set
     }, [inputRef])
 
     return (
-        <div className="mb-5" style={{width: setWidth }}>
-            {label && <label className="block mb-2 text-xs font-medium text-gray-900">{label}</label> }
+        <div className={`${label ? 'mb-5' : '' }`} style={{width: setWidth }}>
+            {label && <label className="block mb-2 text-xs font-medium text-gray-900">{label} <span className="text-xs text-gray-400">{subLabel || ''}</span> </label> }
             {sufix ? 
                 <div className="flex">
-                    <span class="inline-flex items-center px-3 text-sm border border-gray-300 rounded-l-lg">
+                    <span className="inline-flex items-center px-3 text-sm border border-gray-300 rounded-l-lg">
                         <p className="text-xs">{sufix}</p>
                     </span>
                     <input ref={inputRef} type={type} value={(type === 'date' || type === 'time') ? formatDate(value, type) || '' : value} style={{textAlign: textAlign}} name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-r-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-[12px] px-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} />
@@ -39,7 +39,7 @@ const Input = ({label, targetRef = null, content = 'input', isFocus = false, set
                 </div>
                 :
                 <div className="flex">
-                    <textarea ref={inputRef} rows="4" className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-[12px] px-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick}>{value}</textarea>
+                    <textarea ref={inputRef} rows="6" className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-[12px] px-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} value={value} />
                 </div>
             }
         </div>

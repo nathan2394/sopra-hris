@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import IconImage from "../component/icon_img";
-import { arrow_g, calculator_g, employee_g, kehadiran_g, list_g, logout, menu, notif, payroll_g, setting, shift, shift_g, sopra_full, sopra_logo, user } from "../config/icon";
+import { arrow_g, calculator, calculator_g, employee, employee_g, kehadiran, kehadiran_g, list, list_g, logout, menu, notif, payroll, payroll_g, setting, shift, shift_g, sopra_full, sopra_logo, user } from "../config/icon";
 import React, { useContext, useReducer, useRef, useState } from "react";
 import Button from "../component/button";
 import { baseColor } from "../config/setting";
@@ -20,8 +20,15 @@ const Navbar = ({setAuth}) => {
     localStorage?.removeItem('calc');
     localStorage?.removeItem('filterEmpl');
     localStorage?.removeItem('setPeriod');
+    localStorage?.setItem('breadcrumb', JSON?.stringify(
+      {
+          label: target?.title,
+          navRoute: target?.navRoute,
+          icon: target?.icon_b
+      }
+    ))
     setTimeout(() => {
-      navigate(target);
+      navigate(target?.navRoute);
     }, 100);
   }
 
@@ -67,12 +74,14 @@ const Navbar = ({setAuth}) => {
           {
             title: 'Master Payroll',
             navRoute: '/',
-            icon: payroll_g
+            icon: payroll_g,
+            icon_b: payroll
           },
           {
             title: 'Kalkulator',
             navRoute: '/calculator',
-            icon: calculator_g
+            icon: calculator_g,
+            icon_b: calculator
           }
         ]
       },
@@ -82,7 +91,8 @@ const Navbar = ({setAuth}) => {
           {
             title: 'Data Karyawan',
             navRoute: '/employee',
-            icon: employee_g
+            icon: employee_g,
+            icon_b: employee
           },
           // {
           //   title: 'Jabatan',
@@ -103,21 +113,25 @@ const Navbar = ({setAuth}) => {
             title: 'Grup Shift Karyawan',
             navRoute: '/shift',
             icon: shift_g,
+            icon_b: shift
           },
           {
             title: 'Cuti & Ijin',
             navRoute: '/unattendance',
             icon: list_g,
+            icon_b: list
           },
           {
             title: 'Lembur',
             navRoute: '/overtime',
             icon: list_g,
+            icon_b: list
           },
           {
             title: 'Kehadiran',
             navRoute: '/attendance',
             icon: kehadiran_g,
+            icon_b: kehadiran
           }
         ]
       },
@@ -127,7 +141,8 @@ const Navbar = ({setAuth}) => {
           {
             title: 'Report Salary',
             navRoute: '/report',
-            icon: list_g
+            icon: list_g,
+            icon_b: list
           },
         ]
       },
@@ -140,7 +155,7 @@ const Navbar = ({setAuth}) => {
             <div className="flex flex-col bg-white border-b-[26px] border-[#F5F5F5]" key={index}>
               <p className="text-sm font-bold px-10 pt-3 pb-2">{obj?.groupName}</p>
               {obj?.list?.map((data, idx) => (
-                <div key={idx} onClick={() => { handleNavigation(data?.navRoute); }}>
+                <div key={idx} onClick={() => { handleNavigation(data); }}>
                   <div className={`hover:bg-[#379d0067] py-3 px-10 border-b border-[#dddddd55] flex flex-row items-center cursor-pointer`}>
                     <IconImage size="small" source={data?.icon} />
                     <p className="ml-3 text-sm">{data?.title}</p>

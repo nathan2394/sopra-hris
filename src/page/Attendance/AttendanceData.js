@@ -18,6 +18,7 @@ import DataTable from "../../component/dataTable";
 
 const AttendanceData = ({setIsLoading}) => {
     const { deleteData, loadData } = useAPI();
+    const currentDate = new Date();
     const navigate = useNavigate();
 
     const localSetPeriod = JSON.parse(localStorage?.getItem('setPeriod'));
@@ -35,8 +36,8 @@ const AttendanceData = ({setIsLoading}) => {
     const [checkedValue, setCheckValue] = useState({});
     const [selectedValues, setSelectedValues] = useState({});
 
-    const [startDate, setStartDate] = useState(localSetPeriod?.startDate ?? new Date());
-    const [endDate, setEndDate] = useState(localSetPeriod?.endDate ?? new Date());
+    const [endDate, setEndDate] = useState(localSetPeriod?.endDate || coverDate(currentDate, 'input'));
+    const [startDate, setStartDate] = useState(localSetPeriod?.startDate || coverDate(currentDate.setDate(currentDate.getDate() - 30), 'input'));
 
     const [searchForm, setSearchForm] = useState({
         name    : '',
@@ -393,11 +394,20 @@ const AttendanceData = ({setIsLoading}) => {
     }
 
     const handleClick = (data) => {
+        localStorage?.setItem('empolyeeList', JSON.stringify( listData?.map((obj, idx) => (
+            {
+                id: obj?.id,
+                name: obj?.employeeName,
+                nik: obj?.nik,
+                ktp: obj?.ktp,
+                index: idx
+            }
+        ))));
         navigate(`/attendance/detail?employeeId=${data?.employeeID}`);
     }
 
     const setColumns = [
-        { field: "employeeName", header: "Nama Karyawan", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline"> {row?.employeeName} </Link> },
+        { field: "employeeName", header: "Nama Karyawan", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline" onClick={(e) => e.stopPropagation()}> {row?.employeeName} </Link> },
         { field: "nik", header: "NIK", alignment: "left"},
         { field: "groupType", header: "Grade", alignment: "center" },
         { field: "employeeTypeName", header: "Tipe Karyawan", alignment: "left" },
@@ -409,7 +419,7 @@ const AttendanceData = ({setIsLoading}) => {
         { field: "att", header: "ATT", alignment: 'center' },
         { field: "late", header: "LATE", alignment: 'center' },
         { field: "ovt", header: "OVT", alignment: 'center' },
-        { field: "absent", header: "ABSEN", alignment: 'center' }
+        { field: "absent", header: "ABSENT", alignment: 'center' }
     ]
 
     return (
