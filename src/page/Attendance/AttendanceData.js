@@ -394,6 +394,15 @@ const AttendanceData = ({setIsLoading}) => {
     }
 
     const handleClick = (data) => {
+        localStorage?.setItem('empolyeeList', JSON.stringify( listData?.map((obj, idx) => (
+            {
+                id: obj?.id,
+                name: obj?.employeeName,
+                nik: obj?.nik,
+                ktp: obj?.ktp,
+                index: idx
+            }
+        ))));
         navigate(`/attendance/detail?employeeId=${data?.employeeID}`);
     }
 
@@ -410,7 +419,7 @@ const AttendanceData = ({setIsLoading}) => {
         { field: "att", header: "ATT", alignment: 'center' },
         { field: "late", header: "LATE", alignment: 'center' },
         { field: "ovt", header: "OVT", alignment: 'center' },
-        { field: "absent", header: "ABSEN", alignment: 'center' }
+        { field: "absent", header: "ABSENT", alignment: 'center' }
     ]
 
     return (

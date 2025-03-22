@@ -10,7 +10,7 @@ const InputContent = ({children, showForm, setWidth = '100%', isAdd, setIsAdd, i
 
     return (
         <div className="flex flex-col" style={{width: setWidth}}>
-            <div className="bg-white rounded-lg pt-2 min-h-[550px]" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
+            <div className="bg-white rounded-lg pt-2 min-h-[500px]" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
                 <div className={`flex flex-col ${showForm ? 'justify-between' : 'items-center justify-center'} py-2 px-3 h-full`}>
                     <div>
                         {showForm ? children :

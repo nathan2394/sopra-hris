@@ -117,80 +117,10 @@ const Table = React.memo(({ dataTable = [], rowSettings, isAction = false, detai
     )
   }
 
-  const AttendanceTable = ({headers = []}) => {
-    const firstItem = dataTable[0] || {};
-    return (
-      <table className="w-full table-auto text-xs rounded-lg overflow-hidden border border-[#939292]" border="1" cellPadding="5" style={{ borderCollapse: "collapse" }}>
-          <thead className="text-white capitalize bg-[#333333c3]">
-                <tr>
-                    {actionEdit && <th className={`border border-[#939292] p-3`} rowSpan={2} />}
-                    {headers?.map((key, index) => {
-                        if (typeof firstItem[key] === 'object') {
-                            return (
-                                <th className={`border border-[#939292] p-3`} key={index} colSpan={Object.keys(firstItem[key]).length}>
-                                    {formatHeader(key)}
-                                </th>
-                            );
-                        } else {
-                            return <th className={`border border-[#939292] p-3 ${index === 0 ? "first:rounded-tl-lg" : ""} ${index === headers.length - 1 ? "last:rounded-tr-lg" : ""}`} key={index} rowSpan={2}>{formatHeader(key)}</th>;
-                        }
-                    })}
-                </tr>
-                <tr>
-                    {headers?.map((key) => {
-                        if (typeof firstItem[key] === 'object') {
-                            return Object.keys(firstItem[key]).map((subKey, subIndex) => (
-                                <th className={`border border-[#939292] bg-[#959494]`} key={subIndex}>{subKey}</th>
-                            ));
-                        }
-                        return null;
-                    })}
-                </tr>
-          </thead>
-          <tbody>
-            {listTable.map((data, dataIndex) => (
-              <tr key={dataIndex} className={`${dataIndex % 2 !== 0 ? "bg-[rgb(255,255,255)]" : "bg-[#ebebeb]" } cursor-pointer`}>
-                {actionEdit && 
-                  <td className={`p-[8px] flex items-center justify-center`} onClick={actionEdit}>
-                    <IconImage size="small" source={edit_g} />
-                  </td>
-                }
-                {headers.map((key, index) => {
-                    if (typeof data[key] === 'object') {
-                        return Object.keys(data[key]).map((subKey, subIndex) => (
-                            <td 
-                              key={`${index}-${subIndex}`}
-                              className={`p-[8px] font-normal border-x border-[#d2cfcf] text-black whitespace-nowrap text-center`}
-                            >
-                              {data[key][subKey]}
-                            </td>
-                        ));
-                    } else {
-                      return (
-                        <td 
-                          key={index}
-                          className={`p-[8px] font-normal border-x border-[#d2cfcf] text-black whitespace-nowrap text-center`}
-                        >
-                          {data[key]}
-                        </td>
-                      )
-                    }
-                })}
-              </tr>
-            ))}
-          </tbody>
-      </table>
-    );
-  }
-
   if(dataTable?.length > 0){
     const labelHeader = Object?.keys(dataTable[0]);
 
-    if (styleHeader === 'default') {
-      return <DefaultTabel headers={labelHeader} />
-    }else if(styleHeader === 'attendance'){
-      return <AttendanceTable headers={labelHeader} />
-    } 
+    return <DefaultTabel headers={labelHeader} />
   }else{
     return (
       <div className="border border-[#ddd] bg-[#ffffff] rounded-lg w-full my-2 min-h-[400px] flex flex-col items-center justify-center p-6">

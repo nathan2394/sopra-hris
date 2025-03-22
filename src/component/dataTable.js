@@ -12,7 +12,7 @@ const DataTable = ({ dataTable = [], columns, isAction = false, detailPath, befo
     return (<>
         {listTable?.length > 0 ?
         <div className="overflow-x-auto" style={{width: setWidth}}>
-        <div className="max-h-[640px] overflow-y-auto">
+        <div className="max-h-[550px] overflow-y-auto">
         <table className="w-full table-auto text-xs rounded-lg " border="1" cellPadding="5" style={{ borderCollapse: "collapse" }}>
             <thead className="text-white capitalize bg-[#747474] sticky top-0">
                 <tr>
@@ -31,7 +31,7 @@ const DataTable = ({ dataTable = [], columns, isAction = false, detailPath, befo
                     key={col.field}
                     className={`p-[8px] font-normal border-x border-[#d2cfcf] text-[${col?.color || "black"}] whitespace-nowrap text-${col.alignment || "left"}`}
                     >
-                        {col.render ? col.render(row[col.field], row) : row[col.field]}
+                        <div>{col.render ? col.render(row[col.field], row) : row[col.field]}</div>
                     </td>
                 ))}
                 </tr>

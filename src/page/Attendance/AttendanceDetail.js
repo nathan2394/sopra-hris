@@ -21,6 +21,7 @@ import MyDatePicker from "../../component/date_picker";
 import FormShift from "../../component/sections/formShift";
 import FormUnattendance from "../../component/sections/formUnattendance";
 import FormOvertime from "../../component/sections/formOvertime";
+import NavigateFooter from "../../component/navigateFooter";
 
 const AttendanceDetail = ({setIsLoading}) => {
     const { deleteData, loadData } = useAPI();
@@ -77,6 +78,38 @@ const AttendanceDetail = ({setIsLoading}) => {
     const [employeeName, setEmployeeName] = useState(null);
 
     useEffect(() => {
+        loadData({url: 'UnattendanceTypes'}).then((res) => {
+            setUnattendanceType(res?.data?.map((obj) => ({
+                value: obj?.code,
+                label: obj?.name
+            })))
+        })
+
+        loadData({url: 'Reasons'}).then((res) => {
+            setReasonType(res?.data?.map((obj) => ({
+                value: obj?.reasonID,
+                label: obj?.name
+            })))
+        })
+
+    }, []);
+
+    useEffect(() => {
+        loadData({url: `Employees/${getId}`})?.then((res) => {
+            setEmployeeName(res?.data?.employeeName || null)
+        });
+        fetchDetailAttendance();
+    }, [getId])
+
+    useEffect(() =>{
+        if(attendanceData?.date){
+            fetchAttendanceLog();
+        }
+    }, [attendanceData?.date, attendanceData?.shiftName])
+
+    const fetchDetailAttendance = () => {
+        setIsLoading(true);
+        setShowForm(false);
         loadData({url: `Attendances/DetailAttendance/${getId}/${localSetPeriod?.startDate}|${localSetPeriod?.endDate}`}).then((res) => {
             const filteredData = res?.data?.map((obj, idx) => {
                 const filteredObj = Object.fromEntries(
@@ -95,33 +128,9 @@ const AttendanceDetail = ({setIsLoading}) => {
                 };
             }).sort((a, b) => new Date(b.transDate) - new Date(a.transDate)); // Sort by transdace descending
             setListData(filteredData);
+            setIsLoading(false);
         })
-
-        loadData({url: 'UnattendanceTypes'}).then((res) => {
-            setUnattendanceType(res?.data?.map((obj) => ({
-                value: obj?.code,
-                label: obj?.name
-            })))
-        })
-
-        loadData({url: 'Reasons'}).then((res) => {
-            setReasonType(res?.data?.map((obj) => ({
-                value: obj?.reasonID,
-                label: obj?.name
-            })))
-        })
-
-        loadData({url: `Employees/${getId}`})?.then((res) => {
-            setEmployeeName(res?.data?.employeeName || null)
-        })
-
-    }, []);
-
-    useEffect(() =>{
-        if(attendanceData?.date){
-            fetchAttendanceLog();
-        }
-    }, [attendanceData?.date, attendanceData?.shiftName])
+    }
 
     const fetchAttendanceLog = useCallback(() => {
         loadData({url: 'Shifts', params: [{title: 'filter', value: `name:${attendanceData?.shiftName}`}]})?.then((res) => {
@@ -142,6 +151,12 @@ const AttendanceDetail = ({setIsLoading}) => {
             setAttendanceLog(res?.data?.sort((a, b) => new Date(a.clockIn) - new Date(b.clockIn)));
         })
     })
+
+    const handleAfterExecute = useCallback((targetId) => {
+        if(targetId){
+            navigate(`/attendance/detail?employeeId=${targetId}`);
+        }
+    }, [navigate]);
 
     const [isModalOpen, setModalOpen] = useState(false);
     const openModal = () => setModalOpen(true);
@@ -239,7 +254,7 @@ const AttendanceDetail = ({setIsLoading}) => {
             <TitlePage label={'Kehadiran'} subLabel={employeeName || "Nama Karyawan"} source={kehadiran} type="detail" setNavigateBack={'/attendance'} isAction={true} />
             <div>
                 {!isLoadData ? 
-                    <div className="flex flex-row justify-between">
+                    <div className="flex flex-row justify-between pb-8">
                         {/* <Table dataTable={listData} rowSettings={rowSettings} setWidth={'85%'} actionClick={handleClick} /> */}
                         <DataTable dataTable={listData} columns={setColumns} setWidth={'75%'} actionClick={handleClick} rowActive={rowActive} />
                         <div className="mx-2" />
@@ -261,6 +276,7 @@ const AttendanceDetail = ({setIsLoading}) => {
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />
                     </div>
                 }
+                <NavigateFooter navRoute={`/attendance/detail?employeeId=`} currId={getId} handleAction={handleAfterExecute} />
             </div>
             {renderFormModal()}
         </>
