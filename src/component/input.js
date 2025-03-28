@@ -39,7 +39,7 @@ const Input = ({label, subLabel, targetRef = null, content = 'input', isFocus = 
                 </div>
                 :
                 <div className="flex">
-                    <textarea ref={inputRef} rows="6" className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-[12px] px-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} value={value} />
+                    <textarea ref={inputRef} rows="6" name={setName} className={`border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-[12px] px-[9.35px]`} placeholder={placeholder} onKeyDown={handleKeyDown ? handleKeyDown : null} onChange={handleAction ? handleAction : null} required disabled={readOnly} onClick={handleClick} value={value} />
                 </div>
             }
         </div>

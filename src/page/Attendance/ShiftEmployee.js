@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
 // import { deleteData, loadData, postFormData } from "../../config/api";
-import { coverDate, exportToExcel, generateExcel, getCurrentDate } from "../../config/helper";
+import { convertDate, exportToExcel, generateExcel, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
 import Button from "../../component/button";

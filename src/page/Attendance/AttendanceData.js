@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
 // import { deleteData, loadData } from "../../config/api";
 import { useAPI } from "../../config/fetchApi";
-import { coverDate, exportToExcel, getCurrentDate } from "../../config/helper";
+import { convertDate, exportToExcel, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
 import Button from "../../component/button";
@@ -36,8 +36,8 @@ const AttendanceData = ({setIsLoading}) => {
     const [checkedValue, setCheckValue] = useState({});
     const [selectedValues, setSelectedValues] = useState({});
 
-    const [endDate, setEndDate] = useState(localSetPeriod?.endDate || coverDate(currentDate, 'input'));
-    const [startDate, setStartDate] = useState(localSetPeriod?.startDate || coverDate(currentDate.setDate(currentDate.getDate() - 30), 'input'));
+    const [endDate, setEndDate] = useState(localSetPeriod?.endDate || convertDate(currentDate, 'input'));
+    const [startDate, setStartDate] = useState(localSetPeriod?.startDate || convertDate(currentDate.setDate(currentDate.getDate() - 30), 'input'));
 
     const [searchForm, setSearchForm] = useState({
         name    : '',
@@ -54,8 +54,6 @@ const AttendanceData = ({setIsLoading}) => {
         nik     : '',
         ktp     : '',
     })
-
-    const [isAlert, setIsAlert] = useState(false);
 
     const [isFilter, setIsFilter] = useState(false);
     const [listFilter, setListFilter] = useState([]);
@@ -135,11 +133,11 @@ const AttendanceData = ({setIsLoading}) => {
         const params = [
             {
                 title: 'filter',
-                value: `limit:10 | ${searchForm?.name ? 'name:' + searchForm?.name +'|' : ''} ${searchForm?.nik ? 'nik:' + searchForm?.nik +'|' : ''} ${searchForm?.ktp ? 'ktp:' + searchForm?.ktp +'|' : ''} ${searchForm?.group ? 'group:' + searchForm?.group +'|' : ''} ${searchForm?.department ? 'department:' + searchForm?.department +'|' : ''} ${searchForm?.division ? 'division:' + searchForm?.division +'|' : ''} ${searchForm?.type ? 'employeeType:' + searchForm?.type +'|' : ''}`
+                value: `${searchInput?.name ? 'name:' + searchInput?.name +'|' : ''}`
             }
         ];
 
-        loadData({url: `Attendances/${coverDate(startDate, 'input')}|${coverDate(endDate, 'input')}`, params: params}).then((res) => {
+        loadData({url: `Attendances/${convertDate(startDate, 'input')}|${convertDate(endDate, 'input')}`, params: params}).then((res) => {
             if(res?.data?.length > 0){
                 const filteredData = res?.data?.map((obj, idx) => {
                     const filteredObj = Object.fromEntries(
@@ -178,8 +176,8 @@ const AttendanceData = ({setIsLoading}) => {
     }, [searchForm?.group, searchForm?.department, searchForm?.division, searchForm?.name, searchForm?.nik, searchForm?.ktp, searchForm?.type])
 
     useEffect(() => {
-        setIsFilter((listFilter?.length > 0 || JSON.stringify(checkedValue) !== "{}") ? true : false);
-    }, [listFilter, checkedValue]);
+        setIsFilter((listFilter?.length > 0) ? true : false);
+    }, [listFilter]);
 
     useEffect(() => {
         if(checkedValue){
@@ -194,17 +192,13 @@ const AttendanceData = ({setIsLoading}) => {
     }, [checkedValue])
 
     const submitSearch = () => {
-        // fetchAttendanceData();
+        fetchAttendanceData();
         
         let arr = [];
         if(searchInput?.name) arr?.push(`name: ${searchInput?.name}`);
-        if(searchInput?.nik) arr?.push(`nik: ${searchInput?.nik}`);
-        if(searchInput?.ktp) arr?.push(`no.ktp: ${searchInput?.ktp}`);
         setSearchForm({
             ...searchForm,
             name: searchInput?.name,
-            nik: searchInput?.nik,
-            ktp: searchInput?.ktp
         })
         setListFilter([
             ...listFilter?.filter(data => !data?.includes('name') && !data?.includes('nik') && !data?.includes('no.ktp')),
@@ -265,7 +259,7 @@ const AttendanceData = ({setIsLoading}) => {
                 {/* <!-- Modal header --> */}
                 <div className="flex items-center justify-between p-4 border-b rounded-t border-gray-200">
                     <h3 className="text-lg font-semibold text-gray-900 ">
-                        Search Employee Data
+                        Cari Nama Karyawan
                     </h3>
                     <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-toggle="crud-modal" onClick={() => setModalOpen(false)}>
                         <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -279,14 +273,11 @@ const AttendanceData = ({setIsLoading}) => {
                     <div className="flex flex-col">
                         <Input label={'Name'} isFocus={true} setName='name' value={searchInput.name} type={'text'} placeholder={"Search Employee Name..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
                         <div className="mx-2" />
-                        <Input label={'NIK'} setName='nik' value={searchInput.nik} type={'text'} placeholder={"Search Employee NIK..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
-                        <div className="mx-2" />
-                        <Input label={'No. KTP'} setName='ktp' value={searchInput.ktp} type={'text'} placeholder={"Search Employee No. KTP..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
                     </div>
                     <div className="flex flex-row w-full">
-                        <Button text="Close" setWidth={'full'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => closeModal()} />
+                        <Button text="Tutup" showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => closeModal()} />
                         <div className="mx-1" />
-                        <Button text="Submit" setWidth={'full'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => submitSearch()} />
+                        <Button text="Terapkan" showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => submitSearch()} />
                     </div>
                 </div>
             </div>
@@ -318,74 +309,6 @@ const AttendanceData = ({setIsLoading}) => {
     const submitFilter = () => {
         setCheckValue(selectedValues);
         setModalFilterOpen(false);
-    }
-
-    const renderFilter = () => {
-        const listFilterData = [
-            {
-                title: 'Grade',
-                target: 'group',
-                data: listGroup
-            },
-            {
-                title: 'Type',
-                target: 'type',
-                data: listType
-            },
-            {
-                title: 'Department',
-                target: 'department',
-                data: listDepart
-            },
-            {
-                title: 'Division',
-                target: 'division',
-                data: listDiv
-            }
-        ];
-
-        let arrFilter = selectedValues;
-
-        return (
-            <Modal isOpen={isModalFilterOpen} onClose={closeModalFilter} position="right">
-                <div className="relative bg-white rounded-lg shadow-sm">
-                    {/* <!-- Modal header --> */}
-                    <div className="flex items-center justify-between p-4 border-b rounded-t border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900 ">
-                            Filter
-                        </h3>
-                        <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-toggle="crud-modal" onClick={() => setModalFilterOpen(false)}>
-                            <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                        </button>
-                    </div>
-                    {/* <!-- Modal body --> */}
-                    <div className="pt-4 min-h-[400px] max-h-[450px] overflow-y-auto">
-                        {listFilterData?.map((value, idx) => (
-                            <CollapseMenu key={idx} title={value.title} isSetOpen={idx === 0 ? true : false}>
-                                {value?.data?.map((val, index) => (
-                                    <div key={index}>
-                                        <div className="flex flex-row py-2 px-4 cursor-pointer">
-                                            <input type="checkbox" id={`check${value?.target}${val?.id}`} value={val?.id} checked={arrFilter[value?.target]?.some((v) => v?.id === val?.id) || false} onChange={() => handleCheckbox(val, value?.target)} />
-                                            <label htmlFor={`check${value?.target}${val?.id}`} className="text-xs pl-2">{val?.value}</label>
-                                        </div>
-                                    </div>
-                                ))}
-                            </CollapseMenu>
-                        ))}
-                    </div>
-
-                    <div className="p-4 flex flex-row items-center">
-                        <Button setWidth={'auto'} bgcolor={'white'} handleAction={() => {
-                            setSelectedValues({});
-                        }} icon={reload} />
-                        <div className="mx-1" />
-                        <Button text={'Submit Filter'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={() => submitFilter()} />
-                    </div>
-                 </div>
-            </Modal>
-        )
     }
 
     const handleSubmitPeriod = () => {
@@ -424,14 +347,53 @@ const AttendanceData = ({setIsLoading}) => {
 
     return (
         <>
-            <TitlePage label={'Kehadiran'} source={kehadiran} handleSubmit={handleSubmitPeriod} startDateVal={startDate} setStartDateVal={setStartDate} endDateVal={endDate} setEndDateVal={setEndDate} isAction={true} />
+            <TitlePage label={'Kehadiran'} source={kehadiran} handleSubmit={handleSubmitPeriod} startDateVal={startDate} setStartDateVal={setStartDate} endDateVal={endDate} setEndDateVal={setEndDate} isAction={true} handleSearch={() => openModal()} />
             {/* handleSearch={() => {openModal(); }} handleFilter={() => openModalFilter()} /> */}
             <div>
+            {isFilter &&                
+                    <div className="mt-2 flex flex-row items-center justify-between mb-3">
+                        <div className="flex flex-row items-center">
+                            <IconImage size="small" source={filter} />
+                            <p className="font-bold text-sm px-2">Filter By:</p>
+                            <div className="flex flex-wrap gap-1">
+                                {listFilter?.map((val, idx) => (
+                                    <div className="flex flex-row pl-1 text-xs" key={idx}>
+                                        <span className="px-2 py-1 bg-white border border-gray-200 rounded-full flex items-center text-xs" style={{fontSize: '12px'}}>
+                                        {val}
+                                            <button
+                                                onClick={() => removeFilters(val)}
+                                                className={`ml-2 text-[${baseColor}] font-bold text-xs`}
+                                            >
+                                                ✕
+                                            </button>
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div>
+                            <Button text="Reset Filter" bgcolor={baseColor} color={'white'} setWidth="auto" setPadding="5px" handleAction={() => {
+                                setSearchForm({
+                                    name    : '',
+                                    nik     : '',
+                                    ktp     : '',
+                                    group   : 0,
+                                    department : 0,
+                                    division : 0,
+                                    type: 0
+                                });
+                                setSelectedValues({});
+                                setCheckValue({});
+                                setListFilter([]);
+                            }} />
+                        </div>
+                    </div>
+                }
+
                 <DataTable dataTable={listData} columns={setColumns} isAction={true} actionClick={handleClick}  />
             </div>
             {/* <AlertPopUp isOpen={isAlert} /> */}
             {renderModal()}
-            {renderFilter()}
         </>
     );
 }

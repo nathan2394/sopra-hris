@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 // import { loadData } from "../../config/api";
-import { coverDate, formatText, getMonthName, getQueryParam, months } from "../../config/helper";
+import { convertDate, formatText, getMonthName, getQueryParam, months } from "../../config/helper";
 import TitlePage from "../../component/titlePage";
 import { arrow_left_g, arrow_right_g, d_arrow_left_g, d_arrow_right_g, employee } from "../../config/icon";
 import Button from "../../component/button";
@@ -269,7 +269,7 @@ const EmployeePaySlip = ({}) => {
                         <div className="flex flex-row items-start">
                             <p className="font-normal text-xs pb-2 w-[100px]">Tanggal Masuk</p>
                             <p className="font-normal text-xs pb-2 w-[10px]">:</p>
-                            <p className="font-normal text-xs pb-2">{coverDate(formData?.startWorkingDate)}</p>
+                            <p className="font-normal text-xs pb-2">{convertDate(formData?.startWorkingDate)}</p>
                         </div>
                         <div className="flex flex-row items-start">
                             <p className="font-normal text-xs pb-2 w-[100px]">Status</p>

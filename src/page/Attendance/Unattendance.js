@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
 // import { deleteData, loadData } from "../../config/api";
-import { coverDate, formatText, getCurrentDate } from "../../config/helper";
+import { convertDate, formatText, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
 import Button from "../../component/button";
@@ -18,6 +18,7 @@ import InputContent from "../../component/sections/inputContent";
 import { useAPI } from "../../config/fetchApi";
 import DataTable from "../../component/dataTable";
 import MyDatePicker from "../../component/date_picker";
+import FormUnattendance from "../../component/sections/formUnattendance";
 
 const Unattendance = ({setIsLoading}) => {
     const navigate = useNavigate();
@@ -29,18 +30,20 @@ const Unattendance = ({setIsLoading}) => {
     const [listType, setListType] = useState([]);
     const [isLoadData, setIsLoadData] = useState(false);
 
+    const [btnApprove, setBtnApprove] = useState(false);
+
     const setColumns = [
         { field: "voucherNo", header: "No. SKT", alignment: "left"},
         { field: "employeeName", header: "Nama", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline"> {row?.employeeName} </Link> },
-        { field: "dateRange", header: "Tanggal Tidak Hadir", alignment: "center", render: (_, row) => `${coverDate(row.startDate)} - ${coverDate(row.endDate)}` },
+        { field: "dateRange", header: "Tanggal Tidak Hadir", alignment: "center", render: (_, row) => `${convertDate(row.startDate)} - ${convertDate(row.endDate)}` },
         { field: "duration", header: "Durasi", alignment: "left", render: (value) => `${value ? value : 0} Hari` },
         { field: "unattendanceTypeName", header: "Tipe", alignment: 'left' },
         { field: "status", header: "Status", alignment: 'center', render: (_, row) => row?.isApproved1 || row?.isApproved2 ? <p className="font-normal text-[#369D00]"> Approved </p> : <p> Pending </p> }
     ]
 
     const [formData, setFormData] = useState({
-
         employeeID: '',
+        duration: '',
         unattendanceTypeID: '',
         startDate: '',
         endDate: '',
@@ -88,135 +91,6 @@ const Unattendance = ({setIsLoading}) => {
         })
     }, [])
 
-    const sampleData = [
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-        {
-            name: 'Sample Employee',
-            nik: '123456789012',
-            pengajuan: '03/01/2025',
-            tanggalTidakHadir: '03/01/2025 - 03/01/2025',
-            Durasi: '1 hari',
-            Tipe: 'S',
-            Status: 'Pending',
-        },
-    ];
-
     const [isModalOpen, setModalOpen] = useState(false);
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
@@ -236,19 +110,33 @@ const Unattendance = ({setIsLoading}) => {
     }
 
     const handleAdd = () => {
-        setShowForm(false);
+        setShowForm(true);
+        setIsAdd(true);
+        setIsEdit(false);
+        setRowActive(0);
+        setBtnApprove(false);
+        setFormData({
+            employeeID: 0,
+            duration: 0,
+            unattendanceTypeID: 0,
+            startDate: new Date(),
+            endDate: new Date(),
+            description: ''
+        })
     }
 
     const handleClick = (data) => {
         const unattendanceData = listData?.find((obj) => obj?.id === data?.id);
         setFormData({
             employeeID: unattendanceData?.employeeID,
+            duration: unattendanceData?.duration,
             unattendanceTypeID: unattendanceData?.unattendanceTypeID,
             startDate: unattendanceData?.startDate,
             endDate: unattendanceData?.endDate,
             description: unattendanceData?.description
         })
         setRowActive(unattendanceData?.id);
+        setBtnApprove(unattendanceData?.isApproved1 || unattendanceData?.isApproved2 ? false : true);
         setShowForm(true);
         setIsAdd(false);
         setIsEdit(true);
@@ -256,61 +144,14 @@ const Unattendance = ({setIsLoading}) => {
 
     return (
         <>
-            <TitlePage label={'Data Cuti & Ijin'} source={list} isAction={true} handleAdd={() => {
-                setShowForm(true);
-                setIsAdd(true);
-                setIsEdit(false);
-            }}/>
+            <TitlePage label={'Data Cuti & Ijin'} source={list} isAction={true} handleAdd={() => handleAdd()}/>
             <div>
                 {!isLoadData ? 
                     <div className="flex flex-row justify-between">
                         {/* <Table dataTable={listData} rowSettings={rowSettings} setWidth={'85%'} actionClick={handleClick} /> */}
                         <DataTable dataTable={listData} columns={setColumns} setWidth={'85%'} actionClick={handleClick} rowActive={rowActive} />
                         <div className="mx-2" />
-                        <InputContent showForm={showForm}>
-                            <div>
-                                <div className="flex flex-row flex-wrap w-full">
-                                    <SearchableSelect handleAction={handleChangeSelect} name={`employeeID`} useSearchIcon={true} setPosition={'bottom'} label={'Cari Karyawan'} placeHolder={'Cari Karyawan'} setWidth="48%" options={listEmployee} value={formData?.employeeID} isDisabled={isEdit} />
-                                    <div className="mx-2" />
-                                    <Input textAlign={'left'} handleAction={handleChange} label={'Sisa Cuti'} setWidth="48%" value={0} readOnly={true}/>
-                                    {/* <Input textAlign={'left'} handleAction={handleChange} label={'Mulai Tanggal'} setName={'startDate'} setWidth="48%" value={formData?.startDate} type={'date'} /> */}
-                                    <MyDatePicker handleAction={handleChange} label={'Mulai Tanggal'} setName={'startDate'} setWidth="48%" value={formData?.startDate} />
-                                    <div className="mx-2" />
-                                    <MyDatePicker handleAction={handleChange} label={'Sampai Tanggal'} setName={'endDate'} setWidth="48%" value={formData?.endDate} />
-                                    {/* <Input textAlign={'left'} handleAction={handleChange} label={'Sampai Tanggal'} setName={'endDate'} setWidth="48%" value={formData?.endDate} type={'date'} /> */}
-                                    <Input textAlign={'left'} handleAction={handleChange} label={'Durasi Hari'} setWidth="48%" value={0} readOnly={true} />
-                                    <div className="mx-2" />
-                                    <SearchableSelect handleAction={handleChangeSelect} name={`unattendanceTypeID`} setPosition={'bottom'} label={'Tipe Cuti / Izin'} placeHolder={'Tipe Cuti / Izin'} setWidth="48%" options={listType} value={formData?.unattendanceTypeID} />
-                                    <Input handleAction={handleChange} label={'Alasan'} setName={''} placeholder={'isi alasan'} content="textarea" />
-                                </div>
-                                <div className="w-full">
-                                    <div className="flex flex-row items-center justify-between">
-                                        <p className="text-xs">Lampiran</p>
-                                        <IconImage size="small" source={add_g} />
-                                    </div>
-                                    <div className="h-[100px] flex items-center justify-center">
-                                        <p className="text-center text-xs text-gray-400">Tidak ada Lampiran</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="bg-[#ddd] mb-3 w-full h-[1.5px]" />
-                                <div className="flex flex-row justify-between w-full">
-                                    {isAdd &&
-                                        <>
-                                            <Button text="Close" setWidth={'100%'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => console.log('0')} />
-                                            <div className="mx-1" />
-                                            <Button text="Submit" setWidth={'100%'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => {
-                                                handleAdd();
-                                            }} />
-                                        </>
-                                    }
-                                    {isEdit &&
-                                        <Button text="Edit" setWidth={'100%'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => console.log('0')} />
-                                    }
-                                </div>
-                            </div>
-                        </InputContent>
+                        <FormUnattendance showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnApprove={btnApprove}/>
                     </div>
                     :
                     <div className="mt-20">

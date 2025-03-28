@@ -3,14 +3,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import IconImage from "./icon_img";
 import { calendar, calendar_g, clock_g } from "../config/icon";
 import DatePicker from "react-datepicker";
+import { convertDate } from "../config/helper";
 
-const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', value, setValue, startDateVal, setStartDateVal, endDateVal, setEndDateVal, isRange = false, isTimeOnly = false, readOnly = false, handleAction}) => {
+const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', value, setValue, startDateVal, setStartDateVal, endDateVal, setEndDateVal, isRange = false, isTimeOnly = false, isMinDateValidation = false, readOnly = false, handleAction}) => {
   
   const parseDate = (val) => {
     if (!val) return null;
 
     if (isTimeOnly && /^\d{2}:\d{2}(:\d{2})?$/.test(val)) {
-      // If value is time-only (e.g., "07:00:00"), use today's date with time
       const [hours, minutes, seconds = 0] = val.split(":").map(Number);
       const today = new Date();
       today.setHours(hours, minutes, seconds, 0);
@@ -35,17 +35,10 @@ const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', va
       }
     }
   }, [value, startDateVal, endDateVal])
-
-  // useEffect(() => {
-  //   if(startDate && endDate) 
-  //     setStartDateVal(startDate);
-  //     setEndDateVal(endDate);
-  // }, [startDate, endDate])
   
   const openDatePicker = () => {
-    datePickerRef.current.setFocus(); // Programmatically open date picker
+    datePickerRef.current.setFocus();
   };
-
 
   const onChange = (dates) => {
     const [start, end] = dates;
@@ -64,7 +57,8 @@ const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', va
         <DatePicker
             selected={isRange ? startDate : date}
             onChange={isRange ? onChange : handleAction ? (date) => {
-              handleAction(name, date);
+              if (isMinDateValidation && date < new Date()) return; // Prevent selecting past times
+              handleAction({ target: { name: name, value: convertDate(date, 'full') } });
               setDate(date);
             } : null}
             timeFormat="HH:mm"
@@ -76,7 +70,9 @@ const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', va
             calendarClassName="border border-gray-300 rounded-lg shadow-lg z-10"
             popperClassName="z-50"
             ref={datePickerRef}
+            timeIntervals={60}
             startDate={isRange ? startDate : date}
+            minDate={isMinDateValidation ? new Date() : null}
             endDate={isRange ? endDate : date}
             selectsRange={isRange}
         />

@@ -7,7 +7,7 @@ const Button = ({type = 'button', setWidth = '100%', position = 'left', text = '
     return (
         <div className={`py-1`} style={{width: setWidth}}>
             {/* <button className={`rounded-lg p-1 font-bold`} style={{background: bgcolor, color: color}} type="submit">{text}</button> */}
-            <button className={`${type === 'inputFile' ? 'rounded-l-md' : 'rounded-md' } font-bold cursor-pointer ${showBorder ? `border-2 border-[#369D00]` : '' }`} style={{width: setWidth, padding: setPadding, background: bgcolor, color: color, boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}} onClick={flagFilter ? () => handleAction(text) : handleAction}>
+            <button className={`${type === 'inputFile' ? 'rounded-l-md' : 'rounded-md' } font-bold cursor-pointer ${showBorder ? `border-2 border-[${bgcolor}]` : '' }`} style={{width: setWidth, padding: setPadding, background: bgcolor, color: color, boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}} onClick={flagFilter ? () => handleAction(text) : handleAction}>
                 <div className={`flex flex-row items-start ${labelPositon}`}>
                     {isLoading ? 
                         <LoadingIndicator showText={true} label={"Loading"} position={'left'} /> 

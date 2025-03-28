@@ -4,9 +4,10 @@ import Button from "../button";
 import { baseColor } from "../../config/setting";
 import IconImage from "../icon_img";
 
-const InputContent = ({children, showForm, setWidth = '100%', isAdd, setIsAdd, isEdit, setIsEdit, handleAction, btnLabel = 'Edit' }) => {
+const InputContent = ({children, showForm, setWidth = '100%', isAdd, setIsAdd, isEdit, setIsEdit, handleAction, btnLabel = 'Edit', showBtnApprove = false }) => {
     const toggleEdit = () => setIsEdit((prev) => !prev);
     const toggleAdd = () => setIsAdd((prev) => !prev);
+    const userData = JSON.parse(localStorage.getItem('userdata'));
 
     return (
         <div className="flex flex-col" style={{width: setWidth}}>
@@ -21,20 +22,31 @@ const InputContent = ({children, showForm, setWidth = '100%', isAdd, setIsAdd, i
                             </div>
                         }
                     </div>
-                    {showForm &&
+                    {(showForm && userData?.roleID !== 3) &&
                         <div>
                             <div className="bg-[#ddd] mb-3 w-full h-[1.5px]" />
-                            <div className="flex flex-row justify-between w-full">
-                                {(isEdit || isAdd) ?
-                                    <>
-                                        <Button text="Batal" showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={isEdit ? toggleEdit : toggleAdd} />
+                            {(showBtnApprove) ?
+                                <>
+                                    <div className="flex flex-row justify-between w-full">
+                                        <Button text="Tolak" showBorder={true} position="center" bgcolor={'#D22F27'} color={'white'} handleAction={isEdit ? toggleEdit : toggleAdd} />
                                         <div className="mx-1" />
-                                        <Button text="Simpan" showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={handleAction} />
-                                    </>
-                                    :
-                                    <Button text={btnLabel} showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={toggleEdit} />
-                                }
-                            </div>
+                                        <Button text="Terima" showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={handleAction} />
+                                    </div>
+                                    <Button text={btnLabel} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={handleAction} />
+                                </>
+                                :
+                                <div className="flex flex-row justify-between w-full">
+                                    {(isAdd || isEdit) ?
+                                        <>
+                                            <Button text="Batal" showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={isEdit ? toggleEdit : toggleAdd} />
+                                            <div className="mx-1" />
+                                            <Button text="Simpan" showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={handleAction} />
+                                        </>
+                                        :
+                                        <Button text={btnLabel} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={toggleEdit} />
+                                    }
+                                </div>
+                            }
                         </div>
                     }
                 </div>

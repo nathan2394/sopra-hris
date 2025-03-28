@@ -10,6 +10,7 @@ import Input from "./input";
 
 const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = 'header', setNavigateBack, setNavigateBack2, isAction = false, handleSearch = false, handleFilter = false, handleExport = false, handleAdd = false, handleSubmit = null, startDateVal, setStartDateVal, endDateVal, setEndDateVal }) => { 
     const navigate = useNavigate();
+    const userData = JSON.parse(localStorage.getItem('userdata'));
     const breadcrumb = JSON.parse(localStorage?.getItem('breadcrumb')) || null;
 
     return (
@@ -67,7 +68,7 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                                 <Button text={'Export Data'} setWidth={'auto'} bgcolor={'white'} color={baseColor} icon={exportData} handleAction={handleExport} />
                             </>
                         }
-                        {handleAdd && 
+                        {(handleAdd && userData?.roleID !== 3) && 
                             <>
                                 <div className="bg-[#33333328] h-[30px] w-[1px] mx-4" />
                                 <Button text={'+ Tambah Data'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={handleAdd} />
@@ -75,13 +76,12 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                         }
                         {label === 'Kehadiran' &&
                             <>
-                                <div className="bg-[#33333328] h-[30px] w-[1px] mx-4" />
+                                <div className="mx-2" />
                                 <MyDatePicker isRange={true} setWidth="220px" startDateVal={startDateVal} setStartDateVal={setStartDateVal} endDateVal={endDateVal} setEndDateVal={setEndDateVal} />
-                                <div className="mx-1" />
+                                <div className="bg-[#33333328] h-[30px] w-[1px] mx-4" />
 
                                 {handleSubmit !== null &&
                                 <>
-                                    <div className="mx-1" />
                                     <Button text={'Terapkan'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={handleSubmit} />
                                 </>
                                 }
