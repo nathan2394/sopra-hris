@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
 // import { deleteData, loadData } from "../../config/api";
-import { coverDate, formatText, getCurrentDate } from "../../config/helper";
+import { convertDate, formatText, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
 import Button from "../../component/button";
@@ -20,7 +20,6 @@ import DataTable from "../../component/dataTable";
 import FormOvertime from "../../component/sections/formOvertime";
 
 const Overtime = ({setIsLoading}) => {
-    const navigate = useNavigate();
     const { deleteData, loadData } = useAPI();
     const [isSubmit, setIsSubmit] = useState(false);
     const [rowActive, setRowActive] = useState(0);
@@ -29,12 +28,13 @@ const Overtime = ({setIsLoading}) => {
     const [listType, setListType] = useState([]);
     const [isLoadData, setIsLoadData] = useState(false);
 
+    const [btnApprove, setBtnApprove] = useState(false);
+
     const setColumns = [
         { field: "voucherNo", header: "No. SPL", alignment: "left"},
         { field: "employeeName", header: "Nama", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline"> {row?.employeeName} </Link> },
-        { field: "tanggal", header: "Tanggal Lembur", alignment: "center", render: (_, row) => `${coverDate(row.startDate)}` },
-        { field: "dateRange", header: "Jam Lembur", alignment: "center", render: (_, row) => `${coverDate(row.startDate, 'time')} - ${coverDate(row.endDate, 'time')}` },
-        { field: "duration", header: "Durasi", alignment: "left", render: (value) => `${value ? value : 0} Jam` },
+        { field: "tanggal", header: "Tanggal Lembur", alignment: "center", render: (_, row) => `${convertDate(row.startDate)}` },
+        { field: "dateRange", header: "Jam Lembur", alignment: "center", render: (_, row) => `${convertDate(row.startDate, 'time')} - ${convertDate(row.endDate, 'time')}` },
         { field: "reasonName", header: "Keterangan", alignment: 'left' },
         { field: "status", header: "Status", alignment: 'center', render: (_, row) => row?.isApproved1 || row?.isApproved2 ? <p className="font-normal text-[#369D00]"> Approved </p> : <p> Pending </p> }
     ]
@@ -97,15 +97,20 @@ const Overtime = ({setIsLoading}) => {
         });
     };
 
-    const handleChangeSelect = (target, value) => {
-        setFormData({
-            ...formData,
-            [target]: value,
-          });
-    }
-
     const handleAdd = () => {
-        setShowForm(false);
+        setShowForm(true);
+        setBtnApprove(false);
+        setIsAdd(true);
+        setIsEdit(false);
+        setRowActive(0);
+        setFormData({
+            employeeID: 0,
+            transDate: new Date(),
+            startDate: new Date(),
+            endDate: new Date(),
+            reasonID: 0,
+            description: "",
+        })
     }
 
     const handleClick = (data) => {
@@ -115,9 +120,10 @@ const Overtime = ({setIsLoading}) => {
             transDate: "",
             startDate: overtimeData?.startDate,
             endDate: overtimeData?.endDate,
-            reasonID: overtimeData?.unattendanceTypeID,
+            reasonID: overtimeData?.reasonID,
             description: overtimeData?.description,
         })
+        setBtnApprove(overtimeData?.isApproved1 || overtimeData?.isApproved2 ? true : false);
         setRowActive(overtimeData?.id);
         setShowForm(true);
         setIsAdd(false);
@@ -126,18 +132,13 @@ const Overtime = ({setIsLoading}) => {
 
     return (
         <>
-            <TitlePage label={'Data Lembur'} source={list} isAction={true} handleAdd={() => {
-                setShowForm(true);
-                setIsAdd(true);
-                setIsEdit(false);
-            }}/>
+            <TitlePage label={'Data Lembur'} source={list} isAction={true} handleAdd={() => handleAdd()}/>
             <div>
                 {!isLoadData ? 
                     <div className="flex flex-row justify-between">
-                        {/* <Table dataTable={listData} rowSettings={rowSettings} setWidth={'85%'} actionClick={handleClick} /> */}
                         <DataTable dataTable={listData} columns={setColumns} setWidth={'95%'} actionClick={handleClick} rowActive={rowActive} />
                         <div className="mx-2" />
-                        <FormOvertime showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee}/>
+                        <FormOvertime showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnApprove={btnApprove}/>
                     </div>
                     :
                     <div className="mt-20">

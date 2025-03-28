@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
 // import { deleteData, loadData } from "../../config/api";
-import { coverDate, exportToExcel, getCurrentDate } from "../../config/helper";
+import { convertDate, exportToExcel, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
 import Button from "../../component/button";
@@ -29,6 +29,7 @@ const EmployeeData = ({setIsLoading}) => {
     const [listType, setListType] = useState([]);
     const [listDepart, setListDepart] = useState([]);
     const [listDiv, setListDiv] = useState([]);
+    const [firstLoad, setFirstLoad] = useState(false);
 
     const [checkedValue, setCheckValue] = useState(localFilter?.checkedValue ?? {});
     const [selectedValues, setSelectedValues] = useState(localFilter?.checkedValue ?? {});
@@ -50,10 +51,18 @@ const EmployeeData = ({setIsLoading}) => {
     })
 
     const [listSearch, setlistSearch] = useState({
-        listName: [],
-        listNIK: [],
-        listKTP: []
+        name: [],
+        nik: [],
+        ktp: []
     })
+
+    const [targetSearch, setTargetSearch] = useState('name');
+
+    const listSearchType = [
+        { value: 'name', label: 'Nama' },
+        { value: 'nik', label: 'NIK' },
+        { value: 'ktp', label: 'KTP' }
+    ];
 
     const [isFilter, setIsFilter] = useState(false);
     const [listFilter, setListFilter] = useState(localFilter?.listFilter ?? []);
@@ -125,6 +134,7 @@ const EmployeeData = ({setIsLoading}) => {
     
 
     const fetchEmployeeData = () => {
+        console.log('test')
         setIsLoadData(true);
         setIsLoading(true);
 
@@ -167,11 +177,14 @@ const EmployeeData = ({setIsLoading}) => {
                     }
                 ))
 
-                setlistSearch({
-                    listName: res.data.map((obj) => ({label: obj?.employeeName, value: obj?.employeeName})),
-                    listNIK: res.data.map((obj) => ({label: obj?.nik, value: obj?.nik})),
-                    listKTP: res.data.map((obj) => ({label: obj?.ktp, value: obj?.ktp}))
-                })
+                if(!firstLoad){
+                    setlistSearch({
+                        name: res.data.map((obj) => ({label: obj?.employeeName, value: obj?.employeeName})),
+                        nik: res.data.map((obj) => ({label: obj?.nik, value: obj?.nik})),
+                        ktp: res.data.map((obj) => ({label: obj?.ktp, value: obj?.ktp}))
+                    })
+                    setFirstLoad(true);
+                }
 
                 setListData(filteredData);
                 setIsLoadData(false);
@@ -218,6 +231,7 @@ const EmployeeData = ({setIsLoading}) => {
     }, [checkedValue])
 
     const submitSearch = () => {
+        console.log('trigger', searchInput);
         // fetchEmployeeData();
         
         let arr = [];
@@ -237,32 +251,12 @@ const EmployeeData = ({setIsLoading}) => {
         setModalOpen(false);
     }
 
-    // const handleChange = (event) => {
-    //     setSearchInput((prev) => ({
-    //       ...prev,
-    //       [event.target.name]: event.target.value,
-    //     }));
-    // };
-
-    // const handleChange = useCallback((event) => {
-    //     setSearchInput((prev) => ({
-    //         ...prev,
-    //         [event.target.name]: event.target.value,
-    //       }));
-    // }, []);
-
-    const handleChangeSelect = (target, value) => {
+    const handleChange = (event) => {
         setSearchInput((prev) => ({
-            ...prev,
-            [target]: value,
-          }));
-    }
-
-    const handleKeyDown = useCallback((event) => {
-        if (event.key === "Enter") {
-            submitSearch();
-        }
-    }, []);
+          ...prev,
+          [event.target.name]: event.target.value,
+        }));
+    };
 
     const removeFilters = (target) => {
         if(target){
@@ -322,13 +316,13 @@ const EmployeeData = ({setIsLoading}) => {
                         'jobTitle': obj?.employeeJobTitleName,
                         'functionName': obj?.functionName,
                         'placeOfBirth': obj?.placeOfBirth,
-                        'dateOfBirth': coverDate(obj?.dateOfBirth),
+                        'dateOfBirth': convertDate(obj?.dateOfBirth),
                         'gender': obj?.gender,
                         'email': obj?.email,
                         'phoneNumber': obj?.phoneNumber,
                         'ktp': obj?.ktp,
-                        'startWorkingDate': coverDate(obj?.startWorkingDate),
-                        'startJointDate': coverDate(obj?.startJointDate),
+                        'startWorkingDate': convertDate(obj?.startWorkingDate),
+                        'startJointDate': convertDate(obj?.startJointDate),
                         'religion': obj?.religion,
                         'bpjstk': obj?.bpjstk,
                         'bpjskes': obj?.bpjskes,
@@ -354,7 +348,6 @@ const EmployeeData = ({setIsLoading}) => {
                 index: idx
             }
         ))));
-        localStorage?.setItem('emplIndx', index)
         navigate(`/employee/detail?id=${targetId}`)
     }
 
@@ -474,15 +467,17 @@ const EmployeeData = ({setIsLoading}) => {
                 </div>
                 {/* <!-- Modal body --> */}
                 <div className="">
-                    <div className="flex flex-col px-6 pt-4 pb-2">
+                    <div className="flex flex-row items-center w-full px-4 pt-4 pb-2">
                         {/* <Input label={'Name'} isFocus={true} setName='name' value={searchInput.name} type={'text'} placeholder={"Search Employee Name..."} handleKeyDown={handleKeyDown} handleAction={handleChange} /> */}
-                        <SearchableSelect handleAction={handleChangeSelect} label={'Name'} name={'name'} value={searchInput.name} options={listSearch?.listName} useSearchIcon={true} placeHolder={"Search Employee Name..."} setPosition="bottom" />
+                        <SearchableSelect setWidth="28%" options={listSearchType} value={targetSearch} setValue={setTargetSearch} />
+                        <div className="mx-1" />
+                        <SearchableSelect setWidth="65%" handleAction={handleChange} isFocus={true} name={targetSearch} value={searchInput[targetSearch]} options={listSearch[targetSearch]} useSearchIcon={true} placeHolder={`Search Employee ${targetSearch ?? ''}...`} setPosition="bottom" />
                         <div className="mx-2" />
-                        {/* <Input label={'NIK'} setName='nik' value={searchInput.nik} type={'text'} placeholder={"Search Employee NIK..."} handleKeyDown={handleKeyDown} handleAction={handleChange} /> */}
+                        {/* <Input label={'NIK'} setName='nik' value={searchInput.nik} type={'text'} placeholder={"Search Employee NIK..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
                         <SearchableSelect handleAction={handleChangeSelect} label={'NIK'} name={'nik'} value={searchInput.nik} options={listSearch?.listNIK} useSearchIcon={true} placeHolder={"Search Employee NIK..."} setPosition="bottom" />
                         <div className="mx-2" />
-                        {/* <Input label={'No. KTP'} setName='ktp' value={searchInput.ktp} type={'text'} placeholder={"Search Employee No. KTP..."} handleKeyDown={handleKeyDown} handleAction={handleChange} /> */}
-                        <SearchableSelect handleAction={handleChangeSelect} label={'No. KTP'} name={'ktp'} value={searchInput.ktp} options={listSearch?.listKTP} useSearchIcon={true} placeHolder={"Search Employee No. KTP..."} setPosition="bottom" />
+                        <Input label={'No. KTP'} setName='ktp' value={searchInput.ktp} type={'text'} placeholder={"Search Employee No. KTP..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
+                        <SearchableSelect handleAction={handleChangeSelect} label={'No. KTP'} name={'ktp'} value={searchInput.ktp} options={listSearch?.listKTP} useSearchIcon={true} placeHolder={"Search Employee No. KTP..."} setPosition="bottom" /> */}
                     </div>
                     <div className="border-t px-6 py-3 rounded-t border-gray-200">
                         <Button text="Cari Karyawan" showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => submitSearch()} />
@@ -490,7 +485,7 @@ const EmployeeData = ({setIsLoading}) => {
                 </div>
             </div>
         </Modal>
-    )}, [isModalOpen, searchInput, listSearch]);
+    )}, [isModalOpen, searchInput, listSearch, targetSearch]);
 
     return (
         <>

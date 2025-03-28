@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
 // import { deleteData, loadData } from "../../config/api";
 import { useAPI } from "../../config/fetchApi";
-import { coverDate, exportToExcel, formatText, getCurrentDate, getQueryParam } from "../../config/helper";
+import { convertDate, exportToExcel, formatText, getCurrentDate, getQueryParam } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
 import Button from "../../component/button";
@@ -63,6 +63,14 @@ const AttendanceDetail = ({setIsLoading}) => {
         unattendanceTypeID: 0
     })
 
+    const [ovtDetail, setOvtDetail] = useState({
+        employeeID: 0,
+        transDate: "",
+        startDate: "",
+        endDate: "",
+        reasonID: 0,
+        description: "",
+    })
 
     const [shiftDetail, setShiftDetail] = useState({
         employeeID: getId,
@@ -147,7 +155,7 @@ const AttendanceDetail = ({setIsLoading}) => {
             }
         })
 
-        loadData({url: `Attendances/ListAttendance/${getId}/${coverDate(attendanceData?.date, 'input')}`})?.then((res) => {
+        loadData({url: `Attendances/ListAttendance/${getId}/${convertDate(attendanceData?.date, 'input')}`})?.then((res) => {
             setAttendanceLog(res?.data?.sort((a, b) => new Date(a.clockIn) - new Date(b.clockIn)));
         })
     })
@@ -163,6 +171,7 @@ const AttendanceDetail = ({setIsLoading}) => {
     const closeModal = () => setModalOpen(false);
 
     const handleChange = (event) => {
+        console.log(event.target.name, event.target.value);
         setFormData({
           ...formData,
           [event.target.name]: event.target.value,
@@ -180,6 +189,19 @@ const AttendanceDetail = ({setIsLoading}) => {
         setShowForm(false);
     }
 
+    const handleViewOvt = (id, listData) => {
+        const target = listData?.find((obj) => obj?.id === id);
+        setOvtDetail({
+            employeeID: getId,
+            transDate: "",
+            startDate: target?.startDate,
+            endDate: target?.endDate,
+            reasonID: target?.reasonID,
+            description: target?.description,
+        });
+        setIsEdit(true);
+    }
+
     const handleClick = (data) => {
         const target = listData?.find((obj) => obj?.id === data?.id);
         setShowContent(target?.unattendance ? 'Unattendance' : 'Shift');
@@ -190,63 +212,18 @@ const AttendanceDetail = ({setIsLoading}) => {
         setUnattendanceDetail({employeeID: getId, unattendanceTypeID: target?.unattendance })
         setRowActive(data?.id);
         setShowForm(true);
-        setIsAdd(false);
-        setIsEdit(true);
-    }
-
-    const renderFormModal = () => {
-        return (
-            <Modal isOpen={isModalOpen} onClose={closeModal} setWidth='60%'>
-                <div className="relative bg-white rounded-lg shadow-sm p-4">
-                    <div className="flex items-center justify-between">
-                        <p className="font-bold text-sm">{'Edit Kehadiran'}</p>
-                        <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-toggle="crud-modal" onClick={() => setModalOpen(false)}>
-                            <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                            <span className="sr-only">Close modal</span>
-                        </button>
-                    </div>
-                    <div className="bg-[#ddd] my-3 h-[1.5px]" />
-                    <div className="flex flex-row flex-wrap w-full pt-2">
-                        <Input textAlign="left" handleAction={handleChange} label={'Tanggal'} setWidth="48%" value={null} type={'date'} />
-                        <div className="mx-2" />
-                        <SearchableSelect handleAction={handleChangeSelect} setPosition={'bottom'} label={'Shift'} placeHolder={'Pilih Shift'} setWidth="48%" options={[{label: 'Pagi', value: 'pagi'}]} value={null} />
-
-                        <Input textAlign="left" handleAction={handleChange} label={'Jam Masuk'} setWidth="48%" value={null} type={'time'} />
-                        <div className="mx-2" />
-                        <Input textAlign="left" handleAction={handleChange} label={'Jam Keluar'} setWidth="48%" value={null} type={'time'} />
-
-                        <Input textAlign="left" handleAction={handleChange} label={'Overtime (Dari)'} setWidth="48%" value={null} type={'time'} />
-                        <div className="mx-2" />
-                        <Input textAlign="left" handleAction={handleChange} label={'Overtime (Sampai)'} setWidth="48%" value={null} type={'time'} />
-                    </div>
-                    <div className="bg-[#ddd] my-3 h-[1.5px]" />
-                    <div className="flex flex-row justify-between w-full">
-                        <div className="flex flex-row py-2 items-center cursor-pointer">
-                            <input type="checkbox"  />
-                            <label className="text-xs pl-2">{'Data Sudah Benar'}</label>
-                        </div>
-                        <div className="flex flex-row">
-                            <Button text="Batal" setWidth={'100px'} showBorder={true} position="center" bgcolor={'white'} color={baseColor} setPadding="6px" handleAction={() => closeModal()} />
-                            <div className="mx-1" />
-                            <Button text="Simpan" setWidth={'100px'} showBorder={true} position="center" bgcolor={baseColor} color={'white'} setPadding="6px" handleAction={() => closeModal()} />
-                        </div>
-                    </div>
-                </div>
-            </Modal>
-        )
     }
 
     const setColumns = [
-        { field: "tanggal", header: "Tanggal", alignment: "center", render: (_, row) => `${coverDate(row.transDate)}` },
-        { field: "shiftName", header: "Shift", alignment: "left"},
-        { field: "actualStartTime", header: "Sistem Masuk", alignment: "center", render: (value) => `${coverDate(value, 'time')}` },
-        { field: "actualEndTime", header: "Sistem Keluar", alignment: "center", render: (value) => `${coverDate(value, 'time')}` },
+        { field: "tanggal", header: "Tanggal", alignment: "center", render: (_, row) => `${convertDate(row.transDate)}` },
+        { field: "shiftCode", header: "Shift", alignment: "center"},
+        { field: "actualStartTime", header: "Sistem Masuk", alignment: "center", render: (value) => `${convertDate(value, 'time')}` },
+        { field: "actualEndTime", header: "Sistem Keluar", alignment: "center", render: (value) => `${convertDate(value, 'time')}` },
+        { field: "earlyClockOut", header: "Pulang Cepat", alignment: 'center' },
         { field: "late", header: "Terlambat", alignment: 'center' },
         { field: "ovt", header: "Lembur", alignment: 'center' },
         { field: "unattendance", header: "Keterangan", alignment: 'center', color: '#D22F27'},
-        { field: "effectiveHours", header: "Jam Kerja Efektif", alignment: 'center' }
+        { field: "effectiveHours", header: "Jam Kerja Efektif", alignment: 'center', render: (value) => `${Math?.round(value)}`}
     ]
 
     return (
@@ -260,15 +237,27 @@ const AttendanceDetail = ({setIsLoading}) => {
                         <div className="mx-2" />
                         <div className="flex flex-col w-[40%]">
                             <div className="w-full flex flex-row items-center mb-3">
-                                <Button text="Shift" bgcolor={showContent === 'Shift' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => setShowContent('Shift')} />
+                                <Button text="Shift" bgcolor={showContent === 'Shift' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => {
+                                    setShowContent('Shift');
+                                    setIsAdd(false);
+                                    setIsEdit(false);
+                                }} />
                                 <div className="mx-1" />
-                                <Button text="Ketidakhadiran" bgcolor={showContent === 'Unattendance' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => setShowContent('Unattendance')} />
+                                <Button text="Ketidakhadiran" bgcolor={showContent === 'Unattendance' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => {
+                                    setShowContent('Unattendance');
+                                    setIsAdd(false);
+                                    setIsEdit(false);
+                                }} />
                                 <div className="mx-1" />
-                                <Button text="Lembur" bgcolor={showContent === 'Overtime' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => setShowContent('Overtime')} />
+                                <Button text="Lembur" bgcolor={showContent === 'Overtime' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => {
+                                    setShowContent('Overtime');
+                                    setIsAdd(false);
+                                    setIsEdit(false);
+                                }} />
                             </div>
-                            {showContent === 'Shift' && <FormShift showForm={showForm} setWidth={'auto'} dataObj={shiftDetail} targetDate={attendanceData?.date} listLog={attendanceLog} /> }
-                            {showContent === 'Unattendance' && <FormUnattendance showForm={true} setWidth={'auto'} dataObj={unattendanceDetail} targetDate={attendanceData?.date} listType={listUnattendanceType} /> }
-                            {showContent === 'Overtime' && <FormOvertime showForm={true} setWidth={'auto'} targetDate={attendanceData?.date} listType={reasonType}/> }
+                            {showContent === 'Shift' && <FormShift showForm={showForm} setWidth={'auto'} dataObj={shiftDetail} targetDate={attendanceData?.date} listLog={attendanceLog} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} /> }
+                            {showContent === 'Unattendance' && <FormUnattendance showForm={true} setWidth={'auto'} dataObj={unattendanceDetail} targetDate={attendanceData?.date} listType={listUnattendanceType} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} /> }
+                            {showContent === 'Overtime' && <FormOvertime showForm={true} setWidth={'auto'} dataObj={ovtDetail} targetDate={attendanceData?.date} listType={reasonType} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} handleView={handleViewOvt} /> }
                         </div>
                     </div>
                     :
@@ -278,7 +267,6 @@ const AttendanceDetail = ({setIsLoading}) => {
                 }
                 <NavigateFooter navRoute={`/attendance/detail?employeeId=`} currId={getId} handleAction={handleAfterExecute} />
             </div>
-            {renderFormModal()}
         </>
     );
 }

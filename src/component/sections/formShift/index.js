@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import InputContent from "../inputContent";
 import Input from "../../input";
 import MyDatePicker from "../../date_picker";
-import { coverDate, formatText } from "../../../config/helper";
+import { convertDate, formatText } from "../../../config/helper";
 import { baseColor } from "../../../config/setting";
 import Button from "../../button";
 import { add } from "../../../config/icon";
 
-const FormShift = ({dataObj, listLog = [], targetDate = null, showForm = false, setWidth = '100%'}) => {
+const FormShift = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listLog = [], targetDate = null, showForm = false, setWidth = '100%', handleChange, handleChangeSelect }) => {
 
-    const [isAdd, setIsAdd] = useState(false);
-    const [isEdit, setIsEdit] = useState(false);
+    // const [isAdd, setIsAdd] = useState(false);
+    // const [isEdit, setIsEdit] = useState(false);
 
     const [shiftDetail, setShiftDetail] = useState({
         employeeID: dataObj?.employeeID,
@@ -19,26 +19,26 @@ const FormShift = ({dataObj, listLog = [], targetDate = null, showForm = false, 
         clockIn: null
     })
 
-    const handleChange = (event) => {
-        // setFormData({
-        //   ...formData,
-        //   [event.target.name]: event.target.value,
-        // });
-    };
+    // const handleChange = (event) => {
+    //     // setFormData({
+    //     //   ...formData,
+    //     //   [event.target.name]: event.target.value,
+    //     // });
+    // };
 
-    const handleChangeSelect = (target, value) => {
-        // setFormShift({
-        //     ...formData,
-        //     [target]: value,
-        //   });
-    }
+    // const handleChangeSelect = (target, value) => {
+    //     // setFormShift({
+    //     //     ...formData,
+    //     //     [target]: value,
+    //     //   });
+    // }
 
-    const handleChangeDate = (target, value) => {
-        setShiftDetail({
-            ...shiftDetail,
-            [target]: target === 'clockIn' ? coverDate(value, 'time') : coverDate(value, 'input'),
-        });
-    }
+    // const handleChangeDate = (target, value) => {
+    //     setShiftDetail({
+    //         ...shiftDetail,
+    //         [target]: target === 'clockIn' ? convertDate(value, 'time') : convertDate(value, 'input'),
+    //     });
+    // }
 
     const handleSubmit = () => {
         let obj = {
@@ -81,15 +81,15 @@ const FormShift = ({dataObj, listLog = [], targetDate = null, showForm = false, 
                             {listLog?.map((obj, idx) => (
                                 <div className={`flex flex-row justify-center items-center ${idx%2 !== 0 ? 'bg-[#f0f0f0]' : 'bg-white'} border-b border-[#d1d1d1] text-xs p-1`}>
                                     <div className="w-[120px] text-center p-1">{formatText(obj?.clockIn)}</div>
-                                    <div className="w-[120px] text-center">{coverDate(obj?.clockIn, 'time')}</div>
+                                    <div className="w-[120px] text-center">{convertDate(obj?.clockIn, 'time')}</div>
                                     <div className="w-[150px] text-left">{obj?.description || 'Sistem'}</div>
                                 </div>
                             ))}
                             {(isAdd && isEdit) && 
                                 <div className={`flex flex-row justify-center items-center bg-white border-b border-[#d1d1d1] text-xs p-2`}>
-                                    <MyDatePicker name={'transDate'} handleAction={handleChangeDate} placeholder="Pilih Tanggal" setWidth="45%" value={shiftDetail?.transDate} />
+                                    <MyDatePicker name={'transDate'} handleAction={handleChange} placeholder="Pilih Tanggal" setWidth="45%" value={shiftDetail?.transDate} />
                                     <div className="mx-1" />
-                                    <MyDatePicker name={'clockIn'} handleAction={handleChangeDate} placeholder="Pilih Jam" setWidth="45%" value={shiftDetail?.clockIn} isTimeOnly={true} />
+                                    <MyDatePicker name={'clockIn'} handleAction={handleChange} placeholder="Pilih Jam" setWidth="45%" value={shiftDetail?.clockIn} isTimeOnly={true} />
                                     <div className="mx-1" />
                                     <Button bgcolor={baseColor} setWidth="auto" icon={add} position="center" handleAction={handleSubmit} />
                                 </div>

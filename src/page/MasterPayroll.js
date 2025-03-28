@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import Button from "../component/button";
 import Table from "../component/table";
-import { coverDate, currentMonth, currYear, exportToExcel, formatText, getCurrentDate, getMonthName } from "../config/helper";
+import { convertDate, exportToExcel, formatText, getCurrentDate, getMonthName } from "../config/helper";
 import { arrow_g, close, download, empty, excel, payroll, reload, save, upload } from "../config/icon";
 import IconImage from "../component/icon_img";
 // import { loadData, postData, postFormData } from "../config/api";
@@ -120,8 +120,8 @@ const MasterPayroll = ({setIsLoading}) => {
       return;
     }
 
-    let uploadMonth = uploadPeriod?.split(" ")[0] ?? currentMonth;
-    let uploadYear = uploadPeriod?.split(" ")[1] ?? currYear;
+    let uploadMonth = uploadPeriod?.split(" ")[0] ?? getCurrentDate('month');
+    let uploadYear = uploadPeriod?.split(" ")[1] ?? getCurrentDate('year');
 
     setIsLoadExport(true);
 
@@ -142,7 +142,7 @@ const MasterPayroll = ({setIsLoading}) => {
             "accountNo" : val?.accountNo,
             "month" : val?.month,
             "year" : val?.year,
-            "startWorkingDate" : coverDate(val?.startWorkingDate),
+            "startWorkingDate" : convertDate(val?.startWorkingDate),
             "payrollType" : val?.payrollType,
             "hks" : val?.hks,
             "hka" : val?.hka,
@@ -178,7 +178,7 @@ const MasterPayroll = ({setIsLoading}) => {
             "emp.Number": val?.nik,
             "emp.Name": val?.name,
             "Dept": val?.departmentCode,
-            "Trans. Date": coverDate(val?.transDate, 'custom')
+            "Trans. Date": convertDate(val?.transDate, 'custom')
           }
         ))
       }

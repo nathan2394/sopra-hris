@@ -28,15 +28,6 @@ export const years = [
     {label: "2025", value: 2025}
 ];
 
-export const currYear = new Date().getFullYear();
-
-export const currentMonth = new Date().getMonth() + 1;
-
-export const isValidDate = (dateString) => {
-    const date = new Date(dateString);
-    return !isNaN(date.getTime()); // Check if the date is valid
-}
-
 export const exportToExcel = (dataTable, filename = 'data', template = 'default') => {
     let arrObj = dataTable;
 
@@ -104,7 +95,14 @@ export const generateExcel = (mainList, optionList, countColumn, countList, file
     });
 };
 
-export const getCurrentDate = () => {
+export const getCurrentDate = (display = 'full') => {
+
+    if(display === 'year'){
+        return new Date().getFullYear();
+    }else if(display === 'month'){
+        return new Date().getMonth() + 1;
+    }
+
     const today = new Date();
     const day = String(today.getDate()).padStart(2, '0');
     const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
@@ -113,34 +111,40 @@ export const getCurrentDate = () => {
     return `${day}-${month}-${year}`;
 };
 
-export const coverDate = (val, display = 'default') => {
+export const convertDate = (val, target = 'default') => {
     if(val){
         const inputDate = val;
         const date = new Date(inputDate);
     
-        if(display === 'time'){
+        if(target === 'time'){
             return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
         }
 
-        if(display !== 'default'){
+        if(target !== 'default'){
             let day = date.getDate();
             let month = date.getMonth() + 1; // Months are zero based
             let year = date.getFullYear().toString(); // Get last two digits of year
+            let hours = String(date.getHours()).padStart(2, '0');
+            let minutes = String(date.getMinutes()).padStart(2, '0');
           
             // Pad day and month with leading zeros if needed
             day = day < 10 ? '0' + day : day;
             month = month < 10 ? '0' + month : month;
           
             // Return formatted date
-            if(display === 'input'){
+            if(target === 'input'){
                 return `${year}-${month}-${day}`;
+            }
+
+            if(target === 'full'){
+                return `${year}-${month}-${day} ${hours}:${minutes}`;
             }
 
             return `${month}/${day}/${year}`;
         }else{            
             const day = date.getDate().toString().padStart(2, "0");;
             const month = date.toLocaleString("en-GB", { month: "short" });
-            const year = display !== 'default' ? date.getFullYear().toString().slice(-2) : date.getFullYear().toString();
+            const year = target !== 'default' ? date.getFullYear().toString().slice(-2) : date.getFullYear().toString();
             
             const formattedDate = `${day}-${month}-${year}`;
         
@@ -173,56 +177,22 @@ export const formatText = (value) => {
     if (checkText === "number") {
         return Math?.round(value)?.toLocaleString('id-ID');
     } else if (checkText === "string" && !isNaN(value)) {
-        // If it's a string and can be parsed as a number, treat it as a string
         return value;
     } else {
-        // const date = new Date(value);
-        // if (!isNaN(date.getTime())) {
-        //     return coverDate(value);
-        // }
         const datePatterns = [
             /^\d{2}\/\d{2}\/\d{4}$/, // dd/mm/yyyy or mm/dd/yyyy
             /^\d{4}-\d{2}-\d{2}$/,    // yyyy-mm-dd (ISO format)
             /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/
         ];
     
-        // Check if dateString matches any of the patterns
         const isValidFormat = datePatterns.some(pattern => pattern.test(value));
         if (isValidFormat){
-            return coverDate(value);
+            return convertDate(value);
         }
         
         return value;
     }
 };
-
-// export const formatNum = (value) => {
-//     if(value){
-//         let rawValue = value?.replace(/,/g, '');
-//         console.log(rawValue)
-//         const num = Number(rawValue);
-//         return num.toLocaleString("id-ID");
-//     }
-//     // console.log(num, rawValue)
-//     // if (typeof value === "number") {
-//     //     //console.log(value,'test')
-//     //     let rawValue = value;
-//     //     if(value){
-//     //         rawValue = value?.replace(/,/g, '');
-//     //     }
-//     //     return rawValue.toLocaleString("id-ID");
-//     // } 
-    
-//     // if (typeof value === "string") {
-//     //     console.log(value,'testing')
-//     //     const num = Number(value);
-//     //     if (!isNaN(num)) {
-//     //         return num.toLocaleString("id-ID");
-//     //     }
-//     // }
-
-//     return value;
-// };
 
 export const getQueryParam = (param) => {
     const hash = window.location.hash; // e.g. "#/employee?id=123"

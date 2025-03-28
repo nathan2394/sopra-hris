@@ -4,7 +4,7 @@ import Input from "../component/input";
 import { arrow_left_g, arrow_right_g, d_arrow_left_g, d_arrow_right_g, employee, empty, payroll } from "../config/icon";
 // import { loadData } from "../config/api";
 import { useAPI } from "../config/fetchApi";
-import { coverDate, formatText, getMonthName, getQueryParam } from "../config/helper";
+import { convertDate, formatText, getMonthName, getQueryParam } from "../config/helper";
 import { baseColor } from "../config/setting";
 import SearchableSelect from "../component/select2";
 import Button from "../component/button";
@@ -318,7 +318,7 @@ const ReportDetail = ({setIsLoading}) => {
                         <div className="flex flex-row items-start">
                             <p className="font-normal text-xs pb-2 w-[100px]">Tanggal Masuk</p>
                             <p className="font-normal text-xs pb-2 w-[10px]">:</p>
-                            <p className="font-normal text-xs pb-2">{coverDate(formData?.startWorkingDate)}</p>
+                            <p className="font-normal text-xs pb-2">{convertDate(formData?.startWorkingDate)}</p>
                         </div>
                         <div className="flex flex-row items-start">
                             <p className="font-normal text-xs pb-2 w-[100px]">Status</p>

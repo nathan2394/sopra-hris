@@ -11,7 +11,7 @@ import { baseColor } from "../config/setting";
 import Select from "../component/select";
 import LoadingIndicator from "../component/loading_indicator";
 import IconImage from "../component/icon_img";
-import { currentMonth, currYear, exportToExcel, getCurrentDate, months, years } from "../config/helper";
+import { exportToExcel, getCurrentDate, months, years } from "../config/helper";
 import SearchableSelect from "../component/select2";
 import { useNavigate } from "react-router-dom";
 
@@ -21,8 +21,8 @@ const Report = ({setIsLoading}) => {
     const [data, listData] = useState([]);
     const [isLoadData, setIsLoadData] = useState(true);
     const [isLoadExport, setIsLoadExport] = useState(false);
-    const [currMonth, setCurrMonth] = useState(currentMonth);
-    const [currentYear, setCurrentYear] = useState(currYear);
+    const [currMonth, setCurrMonth] = useState(getCurrentDate('month'));
+    const [currentYear, setCurrentYear] = useState(getCurrentDate('year'));
     const [isLoad, setIsLoad] = useState(true);
 
     useEffect(() => {
@@ -109,7 +109,6 @@ const Report = ({setIsLoading}) => {
                 index: idx
             }
         ))));
-        localStorage?.setItem('emplIndx', index)
         navigate(`/report/detail?id=${targetId}`)
     }
 
@@ -117,9 +116,9 @@ const Report = ({setIsLoading}) => {
         <>
             <TitlePage label={'Report Salary'} source={list} isAction={true} handleExport={(e) => exportFile('default', e)} />
             <div className="flex flex-row items-center pb-2">
-                <SearchableSelect placeHolder = 'Periode' setPosition="bottom" setWidth="160px" options={months} value={currMonth} setValue={setCurrMonth}  />
+                <SearchableSelect placeHolder = 'Periode' setPosition="bottom" setWidth="160px" options={months} value={getCurrentDate('month')} setValue={setCurrMonth}  />
                 <div className="mx-1" />
-                <SearchableSelect placeHolder = 'Year' setPosition="bottom" setWidth="100px" options={years} value={currYear} setValue={setCurrentYear}  />
+                <SearchableSelect placeHolder = 'Year' setPosition="bottom" setWidth="100px" options={years} value={getCurrentDate('year')} setValue={setCurrentYear}  />
             </div>
             <div>
                 {!isLoadData ? 

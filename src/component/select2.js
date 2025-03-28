@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Select, { components } from "react-select";
 
 const SearchableSelect = ({
@@ -9,6 +9,7 @@ const SearchableSelect = ({
   options,
   value,
   setValue,
+  isFocus = false,
   isDisabled = false,
   setWidth = "100%",
   handleAction = null,
@@ -17,13 +18,20 @@ const SearchableSelect = ({
 }) => {
   const [selectedOption, setSelectedOption] = React.useState(null);
 
-  React.useEffect(() => {
+  const selectRef = useRef(null);
+
+  useEffect(() => {
     if (options?.length > 0 && value !== undefined) {
       setSelectedOption(options.find((data) => data.value === value) || null);
     }
+    if(isFocus){
+      if (selectRef.current) {
+        selectRef.current.focus();
+      }
+    }
   }, [value, options]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (setValue) {
       setValue(selectedOption?.value);
     }
@@ -60,12 +68,14 @@ const SearchableSelect = ({
         </label>
       )}
       <Select
+        ref={selectRef}
         options={options}
         value={selectedOption}
         onChange={(value) => {
           setSelectedOption(value);
           if (handleAction) {
-              handleAction(name, value?.value);
+              // handleAction(name, value?.value);
+              handleAction({ target: { name: name, value: value?.value } });
           }
           if (handleAfterExecute) {
               handleAfterExecute(value?.value);
@@ -77,7 +87,7 @@ const SearchableSelect = ({
         menuPlacement={setPosition}
         classNames={{
           control: () =>
-            `border border-gray-300 rounded-lg shadow-sm bg-white text-xs hover:border-blue-500 p-[2px] ${
+            `border border-gray-300 rounded-lg shadow-sm bg-white text-xs hover:border-blue-500 ${useSearchIcon ? 'p-[5.5px]' : 'p-[2px]'} ${
               isDisabled ? "pointer-events-none bg-[]" : ""
             }`,
           menu: () =>
