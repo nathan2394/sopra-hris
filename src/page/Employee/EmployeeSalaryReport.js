@@ -34,7 +34,7 @@ const EmployeeReport = ({setIsLoading}) => {
         }
     ];
     const [targetSearch, setTargetSearch] = useState('name');
-    const listDatas = JSON.parse(localStorage?.getItem('empolyeeList'));
+    const listDatas = JSON.parse(localStorage?.getItem('employeeList'));
     const listFilterEmpl = JSON.parse(localStorage?.getItem('filterEmpl')) ?? {};
     const currentIndex = listDatas?.findIndex(obj => obj?.id === parseInt(getId))
     const prevId = listDatas[currentIndex-1]?.id ?? 0;
@@ -142,24 +142,24 @@ const EmployeeReport = ({setIsLoading}) => {
                         <SearchableSelect setWidth="54%" placeHolder={'Cari Karwayan...'} options={listDatas?.map((obj) => ({value: obj?.id, label: obj?.[targetSearch]}))} isDisabled={targetSearch === '' ? true : false} useSearchIcon={true} setValue={setChangesID} value={changesId} handleAfterExecute={handleAfterExecute} />
                     </div>
                     <div className="flex flex-row items-center justify-end w-full">
-                        <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_left_g} handleAction={() => {
+                        <Button setWidth="auto" bgcolor={'white'} isGray={parseInt(getId) === prevDataId} icon={d_arrow_left_g} handleAction={() => {
                             navigate(`/employee/salaryreport?id=${prevDataId}`);
                             setChangesID(prevDataId);
                         }} />
                         <div className="mx-2" />
-                        <Button setWidth="auto" bgcolor={'white'} icon={arrow_left_g} handleAction={prevId > 0 ? () => {
+                        <Button setWidth="auto" bgcolor={'white'} isGray={prevId === 0} icon={arrow_left_g} handleAction={prevId > 0 ? () => {
                             navigate(`/employee/salaryreport?id=${prevId}`);
                             setChangesID(prevId);
                         } : null} />
                         <div className="mx-[6px]" />
                         <Button setWidth="80px" bgcolor={'white'} position="center" text={`${currentIndex+1}/${listDatas?.length}`} />
                         <div className="mx-[6px]" />
-                        <Button setWidth="auto" bgcolor={'white'} icon={arrow_right_g} handleAction={nextId > 0 ? () => {
+                        <Button setWidth="auto" bgcolor={'white'} isGray={nextId === 0} icon={arrow_right_g} handleAction={nextId > 0 ? () => {
                             navigate(`/employee/salaryreport?id=${nextId}`)
                             setChangesID(nextId);
                         } : null} />
                         <div className="mx-2" />
-                        <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_right_g} handleAction={() => {
+                        <Button setWidth="auto" bgcolor={'white'} isGray={parseInt(getId) === lastDataId} icon={d_arrow_right_g} handleAction={() => {
                             navigate(`/employee/salaryreport?id=${lastDataId}`);
                             setChangesID(lastDataId);
                         }} />

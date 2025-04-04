@@ -19,7 +19,7 @@ const Navbar = ({setAuth}) => {
     toggleSidebar();
     localStorage?.removeItem('calc');
     localStorage?.removeItem('filterEmpl');
-    localStorage?.removeItem('empolyeeList');
+    localStorage?.removeItem('employeeList');
     localStorage?.removeItem('setPeriod');
     localStorage?.setItem('breadcrumb', JSON?.stringify(
       {

@@ -5,7 +5,7 @@ import MyDatePicker from "../../date_picker";
 import { convertDate, formatText } from "../../../config/helper";
 import SearchableSelect from "../../select2";
 import IconImage from "../../icon_img";
-import { add_g } from "../../../config/icon";
+import { add_g, empty } from "../../../config/icon";
 import { useAPI } from "../../../config/fetchApi";
 import { useNavigate } from "react-router-dom";
 import { baseColor } from "../../../config/setting";
@@ -97,7 +97,8 @@ const FormUnattendance = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType
                     </>
                     :
                     <>
-                        <div className="h-[100px] flex items-center justify-center">
+                        <div className="h-[100px] flex flex-col items-center justify-center">
+                            <img className="w-[55%] mx-auto pt-[280px]" alt="logo" src={empty} />
                             <p className="text-center text-xs text-gray-400">Tidak ada data</p>
                         </div>
                     </>

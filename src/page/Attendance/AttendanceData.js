@@ -160,6 +160,15 @@ const AttendanceData = ({setIsLoading}) => {
                 setIsLoadData(false);
                 setIsLoading(false);
                 localStorage?.setItem('setPeriod', JSON.stringify({startDate: startDate, endDate: endDate}));
+                localStorage?.setItem('employeeList', JSON.stringify( filteredData?.map((obj, idx) => (
+                    {
+                        id: obj?.id,
+                        name: obj?.employeeName,
+                        nik: obj?.nik,
+                        ktp: obj?.ktp,
+                        index: idx
+                    }
+                ))));
             }else{
                 setListData([]);
                 setIsLoadData(false);
@@ -170,7 +179,6 @@ const AttendanceData = ({setIsLoading}) => {
 
     useEffect(() => {
         if(!isLoadData){
-            // console.log('trigger', searchForm?.group, searchForm?.department, searchForm?.division)
             fetchAttendanceData();
         }
     }, [searchForm?.group, searchForm?.department, searchForm?.division, searchForm?.name, searchForm?.nik, searchForm?.ktp, searchForm?.type])
@@ -317,15 +325,6 @@ const AttendanceData = ({setIsLoading}) => {
     }
 
     const handleClick = (data) => {
-        localStorage?.setItem('empolyeeList', JSON.stringify( listData?.map((obj, idx) => (
-            {
-                id: obj?.id,
-                name: obj?.employeeName,
-                nik: obj?.nik,
-                ktp: obj?.ktp,
-                index: idx
-            }
-        ))));
         navigate(`/attendance/detail?employeeId=${data?.employeeID}`);
     }
 

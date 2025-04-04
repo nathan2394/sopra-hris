@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
 // import { deleteData, loadData } from "../../config/api";
-import { convertDate, formatText, getCurrentDate } from "../../config/helper";
+import { convertDate, filterUniqueList, formatText, getCurrentDate } from "../../config/helper";
 import Modal from "../../component/modal";
 import Input from "../../component/input";
 import Button from "../../component/button";
@@ -80,6 +80,14 @@ const Unattendance = ({setIsLoading}) => {
                 };
             }); 
             setListData(filteredData);
+
+            localStorage?.setItem('employeeList', JSON.stringify(filterUniqueList(filteredData, 'employeeID', (obj, idx) => ({
+                id: obj?.employeeID,
+                name: obj?.employeeName,
+                nik: obj?.nik,
+                ktp: obj?.ktp,
+                index: idx
+            }))));
             setIsLoading(false);
         });
 

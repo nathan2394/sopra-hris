@@ -18,7 +18,7 @@ const EmployeeForm = ({setIsLoading}) => {
     const getId = getQueryParam("id");
     const [isAdd] = useState(getQueryParam("action") === 'add' ? true : false);
     const userData = JSON.parse(localStorage.getItem('userdata'));
-    const listData = JSON.parse(localStorage?.getItem('empolyeeList'));
+    const listData = JSON.parse(localStorage?.getItem('employeeList'));
     const listFilterEmpl = JSON.parse(localStorage?.getItem('filterEmpl')) ?? {};
     const [targetSearch, setTargetSearch] = useState('name');
     const listSearch = [
@@ -48,12 +48,16 @@ const EmployeeForm = ({setIsLoading}) => {
             setIsHovered(initialList);
         }
     }, [])
+
+    console.log(listData)
     
-    const currentIndex = listData?.findIndex(obj => obj?.id === parseInt(getId))
-    const prevId = listData[currentIndex-1]?.id ?? 0;
-    const nextId = listData[currentIndex+1]?.id ?? 0;
+    const currentIndex = listData?.findIndex(obj => obj?.id === parseInt(getId)) ?? 0
+    const prevId = listData[currentIndex-1]?.id || 0;
+    const nextId = listData[currentIndex+1]?.id || 0;
     const prevDataId = listData[0]?.id;
     const lastDataId = listData[listData?.length-1]?.id;
+
+    console.log(prevId, ':prevId', nextId, ':nextId', prevDataId, ':prevDataId', lastDataId, ':lastDataId', getId, ':getId');
 
     const [formData, setFormData] = useState({
         name: '',
@@ -608,15 +612,15 @@ const EmployeeForm = ({setIsLoading}) => {
                             <SearchableSelect setWidth="54%" placeHolder={'Cari Karwayan...'} options={listData?.map((obj) => ({value: obj?.id, label: obj?.[targetSearch]}))} isDisabled={targetSearch === '' ? true : false} useSearchIcon={true} handleAfterExecute={handleAfterExecute} />
                         </div>
                         <div className="flex flex-row items-center justify-end w-full">
-                            <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_left_g} handleAction={() => navigate(`/employee/detail?id=${prevDataId}`)} />
+                            <Button setWidth="auto" bgcolor={'white'} isGray={parseInt(getId) === prevDataId} icon={d_arrow_left_g} handleAction={() => navigate(`/employee/detail?id=${prevDataId}`)} />
                             <div className="mx-2" />
-                            <Button setWidth="auto" bgcolor={'white'} icon={arrow_left_g} handleAction={prevId > 0 ? () => navigate(`/employee/detail?id=${prevId}`) : null} />
+                            <Button setWidth="auto" bgcolor={'white'} isGray={prevId === 0} icon={arrow_left_g} handleAction={prevId > 0 ? () => navigate(`/employee/detail?id=${prevId}`) : null} />
                             <div className="mx-[6px]" />
                             <Button setWidth="80px" bgcolor={'white'} position="center" text={`${currentIndex+1}/${listData?.length}`} />
                             <div className="mx-[6px]" />
-                            <Button setWidth="auto" bgcolor={'white'} icon={arrow_right_g} handleAction={nextId > 0 ? () => navigate(`/employee/detail?id=${nextId}`) : null} />
+                            <Button setWidth="auto" bgcolor={'white'} isGray={nextId === 0} icon={arrow_right_g} handleAction={nextId > 0 ? () => navigate(`/employee/detail?id=${nextId}`) : null} />
                             <div className="mx-2" />
-                            <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_right_g} handleAction={() => navigate(`/employee/detail?id=${lastDataId}`)} />
+                            <Button setWidth="auto" bgcolor={'white'} isGray={parseInt(getId) === lastDataId} icon={d_arrow_right_g} handleAction={() => navigate(`/employee/detail?id=${lastDataId}`)} />
                         </div>
                         <div className="w-full flex flex-row items-end justify-end">
                             {listFilterEmpl?.checkedValue &&

@@ -7,6 +7,7 @@ import SearchableSelect from "../../select2";
 import { useAPI } from "../../../config/fetchApi";
 import { baseColor } from "../../../config/setting";
 import { useNavigate } from "react-router-dom";
+import { empty } from "../../../config/icon";
 
 const FormOvertime = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listEmployee = [], handleChange, handleChangeSelect, handleView, targetDate = null, showForm = false, setWidth = '100%', btnApprove = false}) => {
     const navigate = useNavigate();
@@ -98,7 +99,8 @@ const FormOvertime = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [
                         </div>
                         :
                         <>
-                            <div className="h-[100px] flex items-center justify-center">
+                            <div className="h-[100px] flex flex-col items-center justify-center">
+                                <img className="w-[55%] mx-auto pt-[280px]" alt="logo" src={empty} />
                                 <p className="text-center text-xs text-gray-400">Tidak ada data</p>
                             </div>
                         </>
