@@ -18,7 +18,7 @@ const EmployeeForm = ({setIsLoading}) => {
     const getId = getQueryParam("id");
     const [isAdd] = useState(getQueryParam("action") === 'add' ? true : false);
     const userData = JSON.parse(localStorage.getItem('userdata'));
-    const listData = JSON.parse(localStorage?.getItem('empolyeeList'));
+    const listData = JSON.parse(localStorage?.getItem('employeeList'));
     const listFilterEmpl = JSON.parse(localStorage?.getItem('filterEmpl')) ?? {};
     const [targetSearch, setTargetSearch] = useState('name');
     const listSearch = [

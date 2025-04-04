@@ -54,6 +54,7 @@ export const exportToExcel = (dataTable, filename = 'data', template = 'default'
     saveAs(data, `${filename}.xlsx`);
 }
 
+//add select options to the value
 export const generateExcel = (mainList, optionList, countColumn, countList, filename = 'data') => {
     const arr1 = mainList;
     const arr2 = optionList;
@@ -205,3 +206,20 @@ export const checkType = (value) => {
     const checkType = typeof value;
     return checkType;
 }
+
+export const filterUniqueList = (data, uniqueKey, mapCallback) => {
+    if (!Array.isArray(data) || typeof mapCallback !== 'function') return;
+
+    const seen = new Set();
+    const uniqueItems = [];
+
+    data.forEach((item, idx) => {
+        const id = item?.[uniqueKey];
+        if (id && !seen.has(id)) {
+            seen.add(id);
+            uniqueItems.push(mapCallback(item, idx));
+        }
+    });
+
+    return uniqueItems;
+};

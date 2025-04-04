@@ -55,7 +55,7 @@ const ReportDetail = ({setIsLoading}) => {
 
     const getId = getQueryParam("id");
     const [changesId, setChangesID] = useState(getQueryParam("id") ?? 0);
-    const listData = JSON.parse(localStorage?.getItem('empolyeeList'));
+    const listData = JSON.parse(localStorage?.getItem('employeeList'));
     const [targetSearch, setTargetSearch] = useState('name');
 
     const listSearch = [

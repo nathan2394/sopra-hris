@@ -34,7 +34,7 @@ const EmployeeReport = ({setIsLoading}) => {
         }
     ];
     const [targetSearch, setTargetSearch] = useState('name');
-    const listDatas = JSON.parse(localStorage?.getItem('empolyeeList'));
+    const listDatas = JSON.parse(localStorage?.getItem('employeeList'));
     const listFilterEmpl = JSON.parse(localStorage?.getItem('filterEmpl')) ?? {};
     const currentIndex = listDatas?.findIndex(obj => obj?.id === parseInt(getId))
     const prevId = listDatas[currentIndex-1]?.id ?? 0;

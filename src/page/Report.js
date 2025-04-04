@@ -101,7 +101,7 @@ const Report = ({setIsLoading}) => {
     }
 
     const beforeNavigate = (targetId, index) => {
-        localStorage?.setItem('empolyeeList', JSON.stringify( data?.map((obj, idx) => (
+        localStorage?.setItem('employeeList', JSON.stringify( data?.map((obj, idx) => (
             {
                 id: obj?.id,
                 name: obj?.employeeName,

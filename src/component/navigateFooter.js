@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const NavigateFooter = ({showPrevFilter = false, navRoute, currId, handleAction}) => {
     const navigate = useNavigate();
-    const listData = JSON.parse(localStorage?.getItem('empolyeeList'));
+    const listData = JSON.parse(localStorage?.getItem('employeeList'));
     const listFilterEmpl = JSON.parse(localStorage?.getItem('filterEmpl')) ?? {};
     const [isHovered, setIsHovered] = useState({});
     const [changesId, setChangesID] = useState(currId ?? 0);

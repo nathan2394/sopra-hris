@@ -339,7 +339,7 @@ const EmployeeData = ({setIsLoading}) => {
     }
 
     const beforeNavigate = (targetId, index) => {
-        localStorage?.setItem('empolyeeList', JSON.stringify( listData?.map((obj, idx) => (
+        localStorage?.setItem('employeeList', JSON.stringify( listData?.map((obj, idx) => (
             {
                 id: obj?.id,
                 name: obj?.employeeName,
