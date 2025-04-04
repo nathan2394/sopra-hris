@@ -39,24 +39,24 @@ const NavigateFooter = ({showPrevFilter = false, navRoute, currId, handleAction}
                     <SearchableSelect setWidth={showPrevFilter ? "54%" : "46%"} placeHolder={'Cari Karwayan...'} options={listData?.map((obj) => ({value: obj?.id, label: obj?.[targetSearch]}))} isDisabled={targetSearch === '' ? true : false} useSearchIcon={true} setValue={setChangesID} value={changesId} handleAfterExecute={handleAction} />
                 </div>
                 <div className="flex flex-row items-center justify-end w-full">
-                    <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_left_g} handleAction={() => {
+                    <Button setWidth="auto" bgcolor={'white'} isGray={parseInt(currId) === prevDataId} icon={d_arrow_left_g} handleAction={() => {
                         navigate(`${navRoute}${prevDataId}`);
                         setChangesID(prevDataId);
                     }} />
                     <div className="mx-2" />
-                    <Button setWidth="auto" bgcolor={'white'} icon={arrow_left_g} handleAction={prevId > 0 ? () => {
+                    <Button setWidth="auto" bgcolor={'white'} isGray={prevId === 0} icon={arrow_left_g} handleAction={prevId > 0 ? () => {
                         navigate(`${navRoute}${prevId}`);
                         setChangesID(prevId);
                     } : null} />
                     <div className="mx-[6px]" />
                     <Button setWidth="80px" bgcolor={'white'} position="center" text={`${currentIndex+1}/${listData?.length}`} />
                     <div className="mx-[6px]" />
-                    <Button setWidth="auto" bgcolor={'white'} icon={arrow_right_g} handleAction={nextId > 0 ? () => {
+                    <Button setWidth="auto" bgcolor={'white'} isGray={nextId === 0} icon={arrow_right_g} handleAction={nextId > 0 ? () => {
                         navigate(`${navRoute}${nextId}`)
                         setChangesID(nextId);
                     } : null} />
                     <div className="mx-2" />
-                    <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_right_g} handleAction={() => {
+                    <Button setWidth="auto" bgcolor={'white'} isGray={parseInt(currId) === lastDataId} icon={d_arrow_right_g} handleAction={() => {
                         navigate(`${navRoute}${lastDataId}`);
                         setChangesID(lastDataId);
                     }} />

@@ -366,24 +366,24 @@ const EmployeePaySlip = ({}) => {
                 <div className="flex flex-row items-center justify-between mt-2">
                         <SearchableSelect setWidth="20%" placeHolder="Plih Bulan" value={changesId} setValue={setChangesID} options={listMonth} handleAfterExecute={handleAfterExecute} />
                         <div className="flex flex-row items-center justify-end w-full">
-                            <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_left_g} handleAction={() => {
+                            <Button setWidth="auto" bgcolor={'white'} isGray={parseInt(getId) === prevDataId} icon={d_arrow_left_g} handleAction={() => {
                                 navigate(`/salaryreport?employeeId=${employeeId}&id=${prevDataId}`);
                                 setChangesID(prevDataId);
                             }} />
                             <div className="mx-2" />
-                            <Button setWidth="auto" bgcolor={'white'} icon={arrow_left_g} handleAction={prevId > 0 ? () => {
+                            <Button setWidth="auto" bgcolor={'white'} isGray={prevId === 0} icon={arrow_left_g} handleAction={prevId > 0 ? () => {
                                 navigate(`/salaryreport?employeeId=${employeeId}&id=${prevId}`);
                                 setChangesID(prevId);
                             } : null} />
                             <div className="mx-[6px]" />
                             <Button setWidth="80px" bgcolor={'white'} position="center" text={`${currentIndex+1}/${listData?.length}`} />
                             <div className="mx-[6px]" />
-                            <Button setWidth="auto" bgcolor={'white'} icon={arrow_right_g} handleAction={nextId > 0 ? () => {
+                            <Button setWidth="auto" bgcolor={'white'} isGray={nextId === 0} icon={arrow_right_g} handleAction={nextId > 0 ? () => {
                                 navigate(`/salaryreport?employeeId=${employeeId}&id=${nextId}`)
                                 setChangesID(nextId);
                             } : null} />
                             <div className="mx-2" />
-                            <Button setWidth="auto" bgcolor={'white'} icon={d_arrow_right_g} handleAction={() => {
+                            <Button setWidth="auto" bgcolor={'white'} isGray={parseInt(getId) === lastDataId} icon={d_arrow_right_g} handleAction={() => {
                                 navigate(`/salaryreport?employeeId=${employeeId}&id=${lastDataId}`);
                                 setChangesID(lastDataId);
                             }} />
