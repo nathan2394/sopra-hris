@@ -134,7 +134,6 @@ const EmployeeData = ({setIsLoading}) => {
     
 
     const fetchEmployeeData = () => {
-        console.log('test')
         setIsLoadData(true);
         setIsLoading(true);
 
@@ -231,7 +230,6 @@ const EmployeeData = ({setIsLoading}) => {
     }, [checkedValue])
 
     const submitSearch = () => {
-        console.log('trigger', searchInput);
         // fetchEmployeeData();
         
         let arr = [];
@@ -261,6 +259,7 @@ const EmployeeData = ({setIsLoading}) => {
     const removeFilters = (target) => {
         if(target){
             const arrFilter = listFilter?.filter(val => !val?.includes(target))
+            setFirstLoad(false);
             setListFilter(arrFilter);
             if(target?.toLowerCase()?.includes('name')) {
                 setSearchForm({...searchForm, name: ''}) 
@@ -274,6 +273,7 @@ const EmployeeData = ({setIsLoading}) => {
                 setSearchForm({...searchForm, ktp: ''}) 
                 setSearchInput({...searchInput, name: ''}) 
             }
+            localStorage?.removeItem('employeeList');
         }
     }
 
@@ -473,11 +473,6 @@ const EmployeeData = ({setIsLoading}) => {
                         <div className="mx-1" />
                         <SearchableSelect setWidth="65%" handleAction={handleChange} isFocus={true} name={targetSearch} value={searchInput[targetSearch]} options={listSearch[targetSearch]} useSearchIcon={true} placeHolder={`Search Employee ${targetSearch ?? ''}...`} setPosition="bottom" />
                         <div className="mx-2" />
-                        {/* <Input label={'NIK'} setName='nik' value={searchInput.nik} type={'text'} placeholder={"Search Employee NIK..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
-                        <SearchableSelect handleAction={handleChangeSelect} label={'NIK'} name={'nik'} value={searchInput.nik} options={listSearch?.listNIK} useSearchIcon={true} placeHolder={"Search Employee NIK..."} setPosition="bottom" />
-                        <div className="mx-2" />
-                        <Input label={'No. KTP'} setName='ktp' value={searchInput.ktp} type={'text'} placeholder={"Search Employee No. KTP..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
-                        <SearchableSelect handleAction={handleChangeSelect} label={'No. KTP'} name={'ktp'} value={searchInput.ktp} options={listSearch?.listKTP} useSearchIcon={true} placeHolder={"Search Employee No. KTP..."} setPosition="bottom" /> */}
                     </div>
                     <div className="border-t px-6 py-3 rounded-t border-gray-200">
                         <Button text="Cari Karyawan" showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => submitSearch()} />

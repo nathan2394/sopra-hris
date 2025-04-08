@@ -16,6 +16,7 @@ import AlertPopUp from "../../component/popupAlert";
 import SearchableSelect from "../../component/select2";
 import StartEndDatePick from "../../component/startEndDatePick";
 import { useAPI } from "../../config/fetchApi";
+import MyDatePicker from "../../component/date_picker";
 
 const ShiftEmployee = ({setIsLoading}) => {
     const navigate = useNavigate();
@@ -28,6 +29,9 @@ const ShiftEmployee = ({setIsLoading}) => {
     const [isLoadData, setIsLoadData] = useState(true);
     const [listData, setListData] = useState([]);
     const [exportType, setExportType] = useState('employee');
+
+    const [startDateVal, setStartDateVal] = useState(null);
+    const [endDateVal, setEndDateVal] = useState(null);
 
     const [listDatePeriod, setListDatePeriod] = useState([]);
 
@@ -126,9 +130,10 @@ const ShiftEmployee = ({setIsLoading}) => {
 
     return (
         <>
-            <TitlePage label={'Grup Shift Karyawan'} source={shift} subMenu={subMenu} isAction={true}/>
+            <TitlePage label={'Grup Shift Karyawan'} source={shift} isAction={true}/>
             <div className="flex flex-row items-center">
-              <StartEndDatePick setList={setListDatePeriod} />
+              <MyDatePicker placeholder="Pilih Periode" isRange={true} setWidth="220px" startDateVal={startDateVal} setStartDateVal={setStartDateVal} endDateVal={endDateVal} setEndDateVal={setEndDateVal} setList={setListDatePeriod}/>
+              <div className="mx-1" />
               <SearchableSelect placeHolder = 'Select Export Type' setWidth="185px" value={exportType} setValue={setExportType} options={exportTypes}  />
               <div className="mx-1" />
               <Button text={'Unduh Form'} setWidth="auto" bgcolor={baseColor} color={'white'} handleAction={() => downloadTemplate()} icon={download} />

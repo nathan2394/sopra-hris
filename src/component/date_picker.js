@@ -5,7 +5,7 @@ import { calendar, calendar_g, clock_g } from "../config/icon";
 import DatePicker from "react-datepicker";
 import { convertDate } from "../config/helper";
 
-const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', value, setValue, startDateVal, setStartDateVal, endDateVal, setEndDateVal, isRange = false, isTimeOnly = false, isMinDateValidation = false, readOnly = false, handleAction}) => {
+const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', value, setValue, startDateVal, setStartDateVal, endDateVal, setEndDateVal, isRange = false, setList, isTimeOnly = false, isMinDateValidation = false, readOnly = false, handleAction}) => {
   
   const parseDate = (val) => {
     if (!val) return null;
@@ -29,6 +29,20 @@ const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', va
     if(isRange){
       if(startDateVal) setStartDate(parseDate(startDateVal));
       if(endDateVal) setEndDate(parseDate(endDateVal));
+      if(startDateVal && endDateVal && setList){
+        let start = new Date(startDateVal);
+        let end = new Date(endDateVal); 
+        let daysArray = [];
+
+        while (start <= end) {
+            daysArray.push({
+                date: `${start.getFullYear()}/${start.getMonth() + 1}/${start.getDate()}`
+            });
+            start.setDate(start.getDate() + 1); // Move to the next day
+        }
+
+        if(setList) setList(daysArray);
+      }
     }else{
       if(value){
         setDate(parseDate(value));
