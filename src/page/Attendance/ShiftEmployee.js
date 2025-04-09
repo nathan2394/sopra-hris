@@ -134,7 +134,7 @@ const ShiftEmployee = ({setIsLoading}) => {
             <div className="flex flex-row items-center">
               <MyDatePicker placeholder="Pilih Periode" isRange={true} setWidth="220px" startDateVal={startDateVal} setStartDateVal={setStartDateVal} endDateVal={endDateVal} setEndDateVal={setEndDateVal} setList={setListDatePeriod}/>
               <div className="mx-1" />
-              <SearchableSelect placeHolder = 'Select Export Type' setWidth="185px" value={exportType} setValue={setExportType} options={exportTypes}  />
+              <SearchableSelect placeHolder = 'Select Export Type' setWidth="185px" value={exportType} setValue={setExportType} options={exportTypes} setPosition="bottom" />
               <div className="mx-1" />
               <Button text={'Unduh Form'} setWidth="auto" bgcolor={baseColor} color={'white'} handleAction={() => downloadTemplate()} icon={download} />
             </div>

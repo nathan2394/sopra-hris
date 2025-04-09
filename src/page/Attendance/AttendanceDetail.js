@@ -204,7 +204,8 @@ const AttendanceDetail = ({setIsLoading}) => {
 
     const handleClick = (data) => {
         const target = listData?.find((obj) => obj?.id === data?.id);
-        setShowContent(target?.unattendance ? 'Unattendance' : 'Shift');
+        // setShowContent(target?.unattendance ? 'Unattendance' : 'Shift');
+        setShowContent('Shift');
         setAttendanceData({
             date: target?.transDate,
             shiftName: target?.shiftName

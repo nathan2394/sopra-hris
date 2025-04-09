@@ -366,11 +366,11 @@ const EmployeeForm = ({setIsLoading}) => {
 
     return (
         <>
-            <TitlePage label={'Data Karyawan'} subLabel={'Data Personal'} isAction={true} subMenu={isAdd ? [] : subMenu} source={employee} type={'detail'} setNavigateBack={`/employee`} />
+            <TitlePage label={'Data Karyawan'} subLabel={formData?.name ? `Data Personal : ${formData?.name}` : 'Data Personal'} isAction={true} subMenu={isAdd ? [] : subMenu} source={employee} type={'detail'} setNavigateBack={`/employee`} />
             <div className={`flex flex-row justify-between ${!isAdd ? 'mb-16' : 'mb-2' }`}>
                 <div className="bg-white rounded-lg w-full mr-2">
                     <div className="flex flex-row justify-between px-4 pt-2">
-                        <p className="font-bold text-sm">{isAdd ? 'Data Karyawan' : 'Detil Data Karyawan'}</p>
+                        <p className="font-bold text-sm">{isAdd ? 'Data Karyawan' : 'Detail Data Karyawan'}</p>
                         <div className="flex flex-row">
                             {isEdit ?                             
                                 <>
