@@ -54,6 +54,10 @@ export const calculator_w = '/icon/calculator_w.png';
 
 export const setting = '/icon/setting.png';
 
+export const pending = '/icon/pending.png';
+export const approve = '/icon/approve.png';
+export const reject = '/icon/reject.png';
+
 //logo
 export const sopra = '/logo/sopra.png';
 export const sopra_logo = '/logo/sopra_full_2.png';

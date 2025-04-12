@@ -7,7 +7,7 @@ import Input from "../../component/input";
 import Button from "../../component/button";
 import { baseColor } from "../../config/setting";
 import TitlePage from "../../component/titlePage";
-import { add_g, employee, filter, kehadiran, list, reload } from "../../config/icon";
+import { add_g, approve, employee, filter, kehadiran, list, pending, reject, reload } from "../../config/icon";
 import IconImage from "../../component/icon_img";
 import Table from "../../component/table";
 import LoadingIndicator from "../../component/loading_indicator";
@@ -29,7 +29,9 @@ const Unattendance = ({setIsLoading}) => {
     const [listEmployee, setListEmployee] = useState([]);
     const [listType, setListType] = useState([]);
     const [isLoadData, setIsLoadData] = useState(false);
-
+    const [btnAction, setBtnAction] = useState(false);
+    const [btnCancel, setBtnCancel] = useState(false);
+    const [inputLock, setInputLock] = useState(false);
     const [btnApprove, setBtnApprove] = useState(false);
 
     const setColumns = [
@@ -38,10 +40,19 @@ const Unattendance = ({setIsLoading}) => {
         { field: "dateRange", header: "Tanggal Tidak Hadir", alignment: "center", render: (_, row) => `${convertDate(row.startDate)} - ${convertDate(row.endDate)}` },
         { field: "duration", header: "Durasi", alignment: "left", render: (value) => `${value ? value : 0} Hari` },
         { field: "unattendanceTypeName", header: "Tipe", alignment: 'left' },
-        { field: "status", header: "Status", alignment: 'center', render: (_, row) => row?.isApproved1 || row?.isApproved2 ? <p className="font-normal text-[#369D00]"> Approved </p> : <p> Pending </p> }
+        { field: "status", header: "Status", alignment: 'center', render: (_, row) => 
+            <div className="flex justify-center"> 
+                {row?.isApproved1 && row?.isApproved2 ? 
+                    <IconImage size="w-3" source={approve} /> 
+                    : (row?.approvedBy1 === false && row?.isApproved2 === false) && (row?.approvedBy1 || row?.approvedBy2) 
+                    ? <IconImage size="w-3" source={reject} /> 
+                    : <IconImage size="h-4" source={pending} />} 
+            </div> 
+        }
     ]
 
     const [formData, setFormData] = useState({
+        id: 0,
         employeeID: '',
         duration: '',
         unattendanceTypeID: '',
@@ -123,7 +134,11 @@ const Unattendance = ({setIsLoading}) => {
         setIsEdit(false);
         setRowActive(0);
         setBtnApprove(false);
+        setInputLock(false);
+        setBtnAction(true);
+        setBtnCancel(false);
         setFormData({
+            id: 0,
             employeeID: 0,
             duration: 0,
             unattendanceTypeID: 0,
@@ -136,6 +151,7 @@ const Unattendance = ({setIsLoading}) => {
     const handleClick = (data) => {
         const unattendanceData = listData?.find((obj) => obj?.id === data?.id);
         setFormData({
+            id: unattendanceData?.id,
             employeeID: unattendanceData?.employeeID,
             duration: unattendanceData?.duration,
             unattendanceTypeID: unattendanceData?.unattendanceTypeID,
@@ -144,7 +160,9 @@ const Unattendance = ({setIsLoading}) => {
             description: unattendanceData?.description
         })
         setRowActive(unattendanceData?.id);
-        setBtnApprove(unattendanceData?.isApproved1 || unattendanceData?.isApproved2 ? false : true);
+        setBtnAction(false);
+        setBtnCancel(unattendanceData?.isApproved1 && unattendanceData?.isApproved2 ? false : true);
+        setInputLock(true);
         setShowForm(true);
         setIsAdd(false);
         setIsEdit(true);
@@ -159,7 +177,7 @@ const Unattendance = ({setIsLoading}) => {
                         {/* <Table dataTable={listData} rowSettings={rowSettings} setWidth={'85%'} actionClick={handleClick} /> */}
                         <DataTable dataTable={listData} columns={setColumns} setWidth={'85%'} actionClick={handleClick} rowActive={rowActive} />
                         <div className="mx-2" />
-                        <FormUnattendance showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnApprove={btnApprove}/>
+                        <FormUnattendance showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAction={btnAction} btnCancel={btnCancel} inputLock={inputLock}/>
                     </div>
                     :
                     <div className="mt-20">

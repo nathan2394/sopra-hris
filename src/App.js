@@ -21,6 +21,7 @@ import AttendanceDetail from "./page/Attendance/AttendanceDetail";
 import Overtime from "./page/Attendance/Overtime";
 import { AuthProvider, AuthContext } from "./context/authContext"; // ✅ Import AuthContext
 import { NavigationProvider } from "./context/navigationContext";
+import Approval from "./page/Attendance/Approval";
 
 const App = () => { // ✅ Use Context instead of state
   const [isLoading, setIsLoading] = useState(false);
@@ -100,6 +101,14 @@ const App = () => { // ✅ Use Context instead of state
               element={
                 <ProtectedRoute>
                   <Overtime setIsLoading={setIsLoading} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/approval"
+              element={
+                <ProtectedRoute>
+                  <Approval setIsLoading={setIsLoading} />
                 </ProtectedRoute>
               }
             />
