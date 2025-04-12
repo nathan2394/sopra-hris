@@ -220,7 +220,7 @@ const EmployeePaySlip = ({}) => {
     return (
         formData?.name &&
         <>
-            <TitlePage label={'Data Personal'} label2={'Data Gaji Bulanan'} subLabel={'Detil Gaji'} source={employee} type={'detail'} setNavigateBack={`/employee/detail?id=${employeeId}`} setNavigateBack2={`/employee/salaryreport?id=${employeeId}`} />
+            <TitlePage label={'Data Personal'} label2={'Data Gaji Bulanan'} subLabel={'Detail Gaji'} source={employee} type={'detail'} setNavigateBack={`/employee/detail?id=${employeeId}`} setNavigateBack2={`/employee/salaryreport?id=${employeeId}`} />
             <div className="border bg-white p-6 rounded-lg mb-16">
 
                 <div className="flex flex-row justify-between">

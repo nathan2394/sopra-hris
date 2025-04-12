@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputContent from "../inputContent";
 import Input from "../../input";
 import MyDatePicker from "../../date_picker";
@@ -6,11 +6,18 @@ import { convertDate, formatText } from "../../../config/helper";
 import { baseColor } from "../../../config/setting";
 import Button from "../../button";
 import { add } from "../../../config/icon";
+import { useAPI } from "../../../config/fetchApi";
+import { useNavigate } from "react-router-dom";
+import SearchableSelect from "../../select2";
 
-const FormShift = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listLog = [], targetDate = null, showForm = false, setWidth = '100%', handleChange, handleChangeSelect }) => {
+const FormShift = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listShift = [], showLogs = true, listLog = [], targetDate = null, showForm = false, setWidth = '100%', handleChange, btnApprove = false, btnCancel = false, btnAction = true, handleAfterExecute, inputLock = false, btnAdd = false }) => {
+    const navigate = useNavigate();
+    const { loadData, postData, updateData } = useAPI();
 
-    // const [isAdd, setIsAdd] = useState(false);
-    // const [isEdit, setIsEdit] = useState(false);
+    const userData = JSON.parse(localStorage.getItem('userdata'));
+
+    const [targetClockIn, setTargetClockIn] = useState(null);
+    const [targetClockOut, setTargetClockOut] = useState(null);
 
     const [shiftDetail, setShiftDetail] = useState({
         employeeID: dataObj?.employeeID,
@@ -26,82 +33,134 @@ const FormShift = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listLog = [], t
     //     // });
     // };
 
-    // const handleChangeSelect = (target, value) => {
-    //     // setFormShift({
-    //     //     ...formData,
-    //     //     [target]: value,
-    //     //   });
-    // }
+    function adjustTime(timeStr, difHour) {
+        if(timeStr && difHour){
+            const [hours, minutes, seconds] = timeStr?.split(":")?.map(Number);
+            
+            // Create a date object with today's date and given time
+            const date = new Date();
+            date.setHours(hours);
+            date.setMinutes(minutes);
+            date.setSeconds(seconds);
+    
+            // Adjust the hour
+            date.setHours(date.getHours() + parseInt(difHour));
+          
+            // Format it back to HH:MM:SS
+            const pad = (num) => String(num).padStart(2, "0");
+            const newTime = `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+          
+            return newTime;
+        }
+    }
+      
 
-    // const handleChangeDate = (target, value) => {
-    //     setShiftDetail({
-    //         ...shiftDetail,
-    //         [target]: target === 'clockIn' ? convertDate(value, 'time') : convertDate(value, 'input'),
-    //     });
-    // }
+    useEffect(() => {
+        if(dataObj?.shiftFromID === dataObj?.shiftToID){
+            let startTime = adjustTime(dataObj?.clockIn, dataObj?.hourDiff);
+            let endTime = adjustTime(dataObj?.clockOut, dataObj?.hourDiff);
+            setTargetClockIn(startTime);
+            setTargetClockOut(endTime);
+        }else{
+            let shiftData = listShift?.find(obj => obj?.value === dataObj?.shiftToID);
+            setTargetClockIn(shiftData?.clockIn);
+            setTargetClockOut(shiftData?.clockOut);
+        }
+    }, [dataObj?.shiftToID, dataObj?.hourDiff])
 
     const handleSubmit = () => {
         let obj = {
             employeeID: dataObj?.employeeID,
-            shiftID: 3,
-            transDate: shiftDetail?.transDate,
-            attendances: [{
-                employeeID: dataObj?.employeeID,
-                clockIn: shiftDetail?.clockIn,
-                description: "Manual"
-            }]
+            clockIn: convertDate(targetDate, 'input') + ' ' + convertDate(dataObj?.clockIn, 'time'),
+            description: `Manual By ${userData?.roleName || '-'}`
         }
-        console.log(obj)
+
+        postData({url: 'Attendances', formData: obj})?.then((res) => {
+            navigate(0);
+        })
     }
 
+    const handleApproveReject = (val) => {
+        const isApproved = val;
+        const requestData = [];
+        if(isApproved === true || isApproved === false){
+            const request = {
+                id: dataObj?.id,
+                isApproved1: isApproved,
+                isApproved2: isApproved
+            }
+
+            requestData?.push(request)
+
+            postData({url: 'EmployeeTransferShifts/Approval', formData: requestData})?.then((res) => {
+                if(handleAfterExecute){
+                    handleAfterExecute();
+                }else{
+                    navigate(0);
+                }
+            })
+        }
+    }
+
+    const handleCancel = () => {}
 
     return (
-        <InputContent showForm={showForm} setWidth={setWidth} isEdit={isEdit} setIsEdit={setIsEdit} handleAction={handleSubmit}> 
+        <InputContent showForm={showForm} setWidth={setWidth} isEdit={isEdit} setIsEdit={setIsEdit} handleAction={handleSubmit} handleApproveReject={handleApproveReject} handleCancel={handleCancel} showBtnApprove={btnApprove} showBtnCancel={btnCancel} showBtnAction={btnAction} showBtnAdd={btnAdd}> 
             <div className="flex flex-row flex-wrap w-full">
-                <MyDatePicker label={'Tanggal'} placeholder="Pilih Tanggal" setWidth="48%" value={targetDate} readOnly={true} />
+                <MyDatePicker label={'Tanggal'} placeholder="Pilih Tanggal" setWidth="48%" value={targetDate ? targetDate : dataObj?.transDate} readOnly={true} />
                 <div className="mx-2" />
-                <Input textAlign={'left'} handleAction={handleChange} label={'Nama Shift'} setName={'endDate'} setWidth="48%" value={dataObj?.shiftName} type={'input'} />
-                {/* <Input textAlign={'left'} handleAction={handleChange} label={'Jam Masuk'} setWidth="48%" value={'08.00'} readOnly={true} type={'time'} /> */}
+                <SearchableSelect handleAction={handleChange} name={`shiftFromID`} setPosition={'bottom'} label={'Nama Shift'} setWidth="48%" options={listShift} value={dataObj?.shiftFromID} isDisabled={inputLock} />
                 <MyDatePicker label={'Jam Masuk'} placeholder="Pilih Jam" setWidth="48%" value={dataObj?.clockIn} isTimeOnly={true} readOnly={true} />
                 <div className="mx-2" />
                 <MyDatePicker label={'Jam Keluar'} placeholder="Pilih Jam" setWidth="48%" value={dataObj?.clockOut} isTimeOnly={true} readOnly={true} />
             </div>
-            <div className="w-full">
-                <div className="flex flex-row items-center justify-between">
-                    <p className="text-xs">Scan Log</p>
-                    {isEdit && 
-                        <p className={`text-xs text-[${isAdd ? '#D22F27' : baseColor}] underline cursor-pointer`} onClick={() => setIsAdd(!isAdd)}>
-                            {isAdd ? "Batal" : "Tambah Scan Log"}
-                        </p> 
-                    }
-                </div>
-                <div className={`h-[180px] overflow-y-visible border border-[#d1d1d1] bg-[#f0f0f0] rounded-md mt-2`}>
-                    {listLog?.length > 0 ? 
-                        <div className="flex flex-col w-full">
-                            {listLog?.map((obj, idx) => (
-                                <div className={`flex flex-row justify-center items-center ${idx%2 !== 0 ? 'bg-[#f0f0f0]' : 'bg-white'} border-b border-[#d1d1d1] text-xs p-1`}>
-                                    <div className="w-[120px] text-center p-1">{formatText(obj?.clockIn)}</div>
-                                    <div className="w-[120px] text-center">{convertDate(obj?.clockIn, 'time')}</div>
-                                    <div className="w-[150px] text-left">{obj?.description || 'Sistem'}</div>
-                                </div>
-                            ))}
-                            {(isAdd && isEdit) && 
-                                <div className={`flex flex-row justify-center items-center bg-white border-b border-[#d1d1d1] text-xs p-2`}>
-                                    <MyDatePicker name={'transDate'} handleAction={handleChange} placeholder="Pilih Tanggal" setWidth="45%" value={shiftDetail?.transDate} />
-                                    <div className="mx-1" />
-                                    <MyDatePicker name={'clockIn'} handleAction={handleChange} placeholder="Pilih Jam" setWidth="45%" value={shiftDetail?.clockIn} isTimeOnly={true} />
-                                    <div className="mx-1" />
-                                    <Button bgcolor={baseColor} setWidth="auto" icon={add} position="center" handleAction={handleSubmit} />
-                                </div>
-                            }
-                        </div>
-                        :
-                        <div className="m-auto mt-16">
-                            <p className="text-center text-xs text-gray-400">Tidak ada Lampiran</p>
-                        </div>
-                    }
-                </div>
+            <div className="bg-[#ddd] mb-4 h-[1.5px]" />
+            <div className="flex flex-row flex-wrap w-full">
+                <SearchableSelect handleAction={handleChange} name={`shiftToID`} setPosition={'bottom'} label={'Shift Tujuan'} setWidth="48%" options={listShift} value={dataObj?.shiftToID} isDisabled={inputLock} />
+                <div className="mx-2" />
+                <Input textAlign={'left'} handleAction={handleChange} label={'Pergeresan Durasi'} setName={'hourDiff'} setWidth="48%" value={dataObj?.shiftFromID === dataObj?.shiftToID ? dataObj?.hourDiff : 0} type={'number'} readOnly={dataObj?.shiftFromID !== dataObj?.shiftToID} />
+                <MyDatePicker label={'Jam Masuk'} placeholder="Pilih Jam" setWidth="48%" value={targetClockIn} isTimeOnly={true} readOnly={true} />
+                <div className="mx-2" />
+                <MyDatePicker label={'Jam Keluar'} placeholder="Pilih Jam" setWidth="48%" value={targetClockOut} isTimeOnly={true} readOnly={true} />
             </div>
+            {showLogs &&
+                <div className="w-full">
+                    <div className="flex flex-row items-center justify-between">
+                        <p className="text-xs">Scan Log</p>
+                        {isEdit && 
+                            <p className={`text-xs text-[${isAdd ? '#D22F27' : baseColor}] underline cursor-pointer`} onClick={() => setIsAdd(!isAdd)}>
+                                {isAdd ? "Batal" : "Tambah Scan Log"}
+                            </p> 
+                        }
+                    </div>
+                    <div className={`h-[180px] overflow-y-visible border border-[#d1d1d1] bg-[#f0f0f0] rounded-md mt-2`}>
+                        {listLog?.length > 0 ? 
+                            <div className="flex flex-col w-full">
+                                {listLog?.map((obj, idx) => (
+                                    <div className={`flex flex-row justify-center items-center ${idx%2 !== 0 ? 'bg-[#f0f0f0]' : 'bg-white'} border-b border-[#d1d1d1] text-xs p-1`}>
+                                        <div className="w-[120px] text-center p-1">{formatText(obj?.clockIn)}</div>
+                                        <div className="w-[120px] text-center">{convertDate(obj?.clockIn, 'time')}</div>
+                                        <div className="w-[150px] text-left">{obj?.description || 'Sistem'}</div>
+                                    </div>
+                                ))}
+                                {(isAdd && isEdit) && 
+                                    <div className={`flex flex-row justify-center items-center bg-white border-b border-[#d1d1d1] text-xs p-2`}>
+                                        <MyDatePicker name={'transDate'} handleAction={handleChange} placeholder="Pilih Tanggal" setWidth="45%" value={targetDate ? targetDate : shiftDetail?.transDate} readOnly={true}/>
+                                        <div className="mx-1" />
+                                        <MyDatePicker name={'clockIn'} handleAction={handleChange} placeholder="Pilih Jam" setWidth="45%" value={shiftDetail?.clockIn} isTimeOnly={true} />
+                                        <div className="mx-1" />
+                                        <Button bgcolor={baseColor} setWidth="auto" icon={add} position="center" handleAction={handleSubmit} />
+                                    </div>
+                                }
+                            </div>
+                            :
+                            <div className="m-auto mt-16">
+                                <p className="text-center text-xs text-gray-400">Tidak ada Lampiran</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
         </InputContent>
     )
 }

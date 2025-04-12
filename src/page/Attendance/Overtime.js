@@ -7,7 +7,7 @@ import Input from "../../component/input";
 import Button from "../../component/button";
 import { baseColor } from "../../config/setting";
 import TitlePage from "../../component/titlePage";
-import { add_g, employee, filter, kehadiran, list, reload } from "../../config/icon";
+import { add_g, approve, employee, filter, kehadiran, list, pending, reject, reload } from "../../config/icon";
 import IconImage from "../../component/icon_img";
 import Table from "../../component/table";
 import LoadingIndicator from "../../component/loading_indicator";
@@ -27,8 +27,9 @@ const Overtime = ({setIsLoading}) => {
     const [listEmployee, setListEmployee] = useState([]);
     const [listType, setListType] = useState([]);
     const [isLoadData, setIsLoadData] = useState(false);
-
-    const [btnApprove, setBtnApprove] = useState(false);
+    const [btnAction, setBtnAction] = useState(false);
+    const [btnCancel, setBtnCancel] = useState(false);
+    const [inputLock, setInputLock] = useState(false);
 
     const setColumns = [
         { field: "voucherNo", header: "No. SPL", alignment: "left"},
@@ -36,10 +37,19 @@ const Overtime = ({setIsLoading}) => {
         { field: "tanggal", header: "Tanggal Lembur", alignment: "center", render: (_, row) => `${convertDate(row.startDate)}` },
         { field: "dateRange", header: "Jam Lembur", alignment: "center", render: (_, row) => `${convertDate(row.startDate, 'time')} - ${convertDate(row.endDate, 'time')}` },
         { field: "reasonName", header: "Keterangan", alignment: 'left' },
-        { field: "status", header: "Status", alignment: 'center', render: (_, row) => row?.isApproved1 || row?.isApproved2 ? <p className="font-normal text-[#369D00]"> Approved </p> : <p> Pending </p> }
+        { field: "status", header: "Status", alignment: 'center', render: (_, row) => 
+            <div className="flex justify-center"> 
+                {row?.isApproved1 && row?.isApproved2 ? 
+                    <IconImage size="w-3" source={approve} /> 
+                    : (row?.approvedBy1 === false && row?.isApproved2 === false) && (row?.approvedBy1 || row?.approvedBy2) 
+                    ? <IconImage size="w-3" source={reject} /> 
+                    : <IconImage size="h-4" source={pending} />} 
+            </div> 
+        }
     ]
 
     const [formData, setFormData] = useState({
+        id: 0,
         employeeID: 0,
         transDate: "",
         startDate: "",
@@ -107,11 +117,13 @@ const Overtime = ({setIsLoading}) => {
 
     const handleAdd = () => {
         setShowForm(true);
-        setBtnApprove(false);
+        setBtnAction(true);
         setIsAdd(true);
         setIsEdit(false);
         setRowActive(0);
+        setInputLock(false);
         setFormData({
+            id: 0,
             employeeID: 0,
             transDate: new Date(),
             startDate: new Date(),
@@ -124,15 +136,18 @@ const Overtime = ({setIsLoading}) => {
     const handleClick = (data) => {
         const overtimeData = listData?.find((obj) => obj?.id === data?.id);
         setFormData({
+            id: overtimeData?.id || 0,
             employeeID: overtimeData?.employeeID,
-            transDate: "",
+            transDate: overtimeData?.transDate,
             startDate: overtimeData?.startDate,
             endDate: overtimeData?.endDate,
             reasonID: overtimeData?.reasonID,
             description: overtimeData?.description,
         })
-        setBtnApprove(overtimeData?.isApproved1 || overtimeData?.isApproved2 ? true : false);
         setRowActive(overtimeData?.id);
+        setBtnAction(false);
+        setBtnCancel(overtimeData?.isApproved1 && overtimeData?.isApproved2 ? false : true);
+        setInputLock(true);
         setShowForm(true);
         setIsAdd(false);
         setIsEdit(true);
@@ -146,7 +161,7 @@ const Overtime = ({setIsLoading}) => {
                     <div className="flex flex-row justify-between">
                         <DataTable dataTable={listData} columns={setColumns} setWidth={'95%'} actionClick={handleClick} rowActive={rowActive} />
                         <div className="mx-2" />
-                        <FormOvertime showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnApprove={btnApprove}/>
+                        <FormOvertime showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAction={btnAction} btnCancel={btnCancel} inputLock={inputLock} />
                     </div>
                     :
                     <div className="mt-20">

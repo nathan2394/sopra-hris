@@ -42,13 +42,12 @@ const AuthPage = () => {
     }, [user, login, navigate]);
 
     return (
-        <div className="bg-gray-50">
+        <div className="bg-gray-50" style={{backgroundImage: 'url("/logo/sopra.png")', backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
             <div className="w-full h-screen flex flex-col items-center justify-center">
                 <div className="border border-[#ddd] bg-white rounded-lg py-6 w-[400px]">
                     <div className="px-4 pb-6">
                         <div className="flex flex-col justify-center items-center">
-                            <img className="w-[28%] mx-auto" alt="logo" src={sopra_full} />
-                            <p className="text-sm font-bold text-gray-500 mt-2">Master Payroll</p>
+                            <img className="w-[32%] mx-auto" alt="logo" src={sopra_full} />
                         </div>
                     </div>
 
@@ -56,7 +55,7 @@ const AuthPage = () => {
 
                     <div className="px-4 pt-6">
                         <div className="max-w-sm mx-auto w-full">
-                            <Input type={"text"} sufix={"+62"} placeholder={"858xxxx"} />
+                            <Input label={'Nomer Telepon'} type={"text"} sufix={"+62"} placeholder={"858xxxx"} />
 
                             <div className="bg-[#ddd] my-4 h-[1px]" />
 

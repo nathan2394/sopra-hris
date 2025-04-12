@@ -133,6 +133,12 @@ const Navbar = ({setAuth}) => {
             navRoute: '/attendance',
             icon: kehadiran_g,
             icon_b: kehadiran
+          },
+          {
+            title: 'Approval',
+            navRoute: '/approval',
+            icon: kehadiran_g,
+            icon_b: kehadiran
           }
         ]
       },

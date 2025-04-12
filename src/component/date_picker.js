@@ -3,10 +3,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import IconImage from "./icon_img";
 import { calendar, calendar_g, clock_g } from "../config/icon";
 import DatePicker from "react-datepicker";
-import { convertDate } from "../config/helper";
+import { convertDate, formatText } from "../config/helper";
 
 const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', value, setValue, startDateVal, setStartDateVal, endDateVal, setEndDateVal, isRange = false, setList, isTimeOnly = false, isMinDateValidation = false, readOnly = false, handleAction}) => {
-  
+  const ref = useRef(null);
   const parseDate = (val) => {
     if (!val) return null;
 
@@ -64,6 +64,41 @@ const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', va
     }
   };
 
+  const formatDateDisplayRange = (start, end) => {
+    const formatter = new Intl.DateTimeFormat('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  
+    if (!start && !end) return '';
+    if (start && !end) return `${formatter.format(start)} - ...`;
+    return `${formatter.format(start)} - ${formatter.format(end)}`;
+  }; 
+
+  const CustomInput = React.forwardRef(({ value, onClick }, ref) => {
+    let displayValue = '';
+
+    if (isRange) {
+      displayValue = formatDateDisplayRange(startDate, endDate);
+    } else if (value) {
+      displayValue = formatText(value);
+    }
+    
+    return (
+      <button
+        type="button"
+        className={`w-full text-left p-2 rounded-l-lg text-[12px] ${
+          readOnly ? 'pointer-events-none bg-[#f4f2f2cc]' : ''
+        }`}
+        onClick={onClick}
+        ref={ref}
+      >
+        {displayValue || placeholder}
+      </button>
+    )
+  });
+
   return (
     <div className={`${label ? "mb-5" : ""}`} style={{width: setWidth}}>
       {label && <label className="block mb-2 text-xs font-medium text-gray-900">{label}</label> }
@@ -89,6 +124,7 @@ const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', va
             minDate={isMinDateValidation ? new Date() : null}
             endDate={isRange ? endDate : date}
             selectsRange={isRange}
+            customInput={<CustomInput />}
         />
         <span className={`inline-flex items-center pl-2 pr-2 text-sm border-l border-gray-300 rounded-r-lg ${readOnly ? 'pointer-events-none bg-[#f4f2f2cc]' : 'bg-white'}`}>
           <IconImage size="normal" source={isTimeOnly ? clock_g : calendar_g} />

@@ -103,7 +103,6 @@ export const useAPI = () => {
     const deleteData = useCallback(async ({ url, id }) => {
         try {
             let res;
-
             res = await axios.delete(`${api_endpoint}/${url}/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${userToken}`,

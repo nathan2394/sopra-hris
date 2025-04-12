@@ -41,13 +41,22 @@ const AttendanceDetail = ({setIsLoading}) => {
     const [listEmployee, setListEmployee] = useState([]);
     const [listType, setListType] = useState([]);
     const [listUnattendanceType, setUnattendanceType] = useState([]);
+
+    const [listUnattendance, setListUnattendance] = useState([]);
+    const [listOvertime, setListOvertime] = useState([]);
+
     const [reasonType, setReasonType] = useState([]);
     const [isLoadData, setIsLoadData] = useState(false);
     const [attendanceLog, setAttendanceLog] = useState([]);
 
+    const [btnAction, setBtnAction] = useState(false);
+    const [btnCancel, setBtnCancel] = useState(false);
+    const [inputLock, setInputLock] = useState(false);
+
     const [formData, setFormData] = useState({
         attendanceID: 0,
         employeeID: 0,
+        transDate: "",
         clockIn: "",
         description: "",
         unattendanceTypeID: 0
@@ -88,7 +97,7 @@ const AttendanceDetail = ({setIsLoading}) => {
     useEffect(() => {
         loadData({url: 'UnattendanceTypes'}).then((res) => {
             setUnattendanceType(res?.data?.map((obj) => ({
-                value: obj?.code,
+                value: obj?.unattendanceTypeID,
                 label: obj?.name
             })))
         })
@@ -160,6 +169,29 @@ const AttendanceDetail = ({setIsLoading}) => {
         })
     })
 
+    const fetchUnattendance = () => {
+        if(localSetPeriod)
+        loadData({url: 'Unattendances', params:[{title: 'date', value: `${localSetPeriod?.startDate}|${localSetPeriod?.endDate}`}, {title: 'filter', value: `name:${employeeName}`}]}).then((res) => {  
+            const filteredData = res?.data.map(obj => {
+                return {
+                    id: obj?.unattendanceID,
+                    employeeID: obj?.employeeID,
+                    voucherNo: obj?.voucherNo,
+                    transDate: obj?.transDate,
+                    startDate: obj?.startDate,
+                    unattendanceTypeID: obj?.unattendanceTypeID,
+                    isApproved1: obj?.isApproved1,
+                    isApproved2: obj?.isApproved2,
+                    approvedBy1: obj?.approvedBy1,
+                    approvedBy2: obj?.approvedBy1,
+                    description: obj?.description,
+                    endDate: obj?.endDate
+                };
+            });
+            setListUnattendance(filteredData);
+        });
+    }
+
     const handleAfterExecute = useCallback((targetId) => {
         if(targetId){
             navigate(`/attendance/detail?employeeId=${targetId}`);
@@ -204,14 +236,37 @@ const AttendanceDetail = ({setIsLoading}) => {
 
     const handleClick = (data) => {
         const target = listData?.find((obj) => obj?.id === data?.id);
-        setShowContent(target?.unattendance ? 'Unattendance' : 'Shift');
+        // setShowContent(target?.unattendance ? 'Unattendance' : 'Shift');
+        setShowContent('Shift');
         setAttendanceData({
             date: target?.transDate,
             shiftName: target?.shiftName
         });
+        setFormData(prev => ({
+            ...prev,
+            employeeID: getId
+          }));
         setUnattendanceDetail({employeeID: getId, unattendanceTypeID: target?.unattendance })
         setRowActive(data?.id);
         setShowForm(true);
+    }
+
+    const actionOpenDetail = (obj, target) => {
+        console.log(obj)
+        setFormData({
+            id: obj?.id,
+            employeeID: obj?.employeeID,
+            duration: obj?.duration,
+            unattendanceTypeID: obj?.unattendanceTypeID,
+            startDate: obj?.startDate,
+            endDate: obj?.endDate,
+            description: obj?.description
+        })
+        setBtnCancel(obj?.isApproved1 && obj?.isApproved2 ? false : true);
+        setShowForm(true);
+        setIsEdit(true);
+        // setInputLock(true);
+        setBtnAction(false);
     }
 
     const setColumns = [
@@ -247,17 +302,20 @@ const AttendanceDetail = ({setIsLoading}) => {
                                     setShowContent('Unattendance');
                                     setIsAdd(false);
                                     setIsEdit(false);
+                                    setBtnAction(true);
+                                    fetchUnattendance();
                                 }} />
                                 <div className="mx-1" />
                                 <Button text="Lembur" bgcolor={showContent === 'Overtime' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => {
                                     setShowContent('Overtime');
                                     setIsAdd(false);
                                     setIsEdit(false);
+                                    setBtnAction(true);
                                 }} />
                             </div>
-                            {showContent === 'Shift' && <FormShift showForm={showForm} setWidth={'auto'} dataObj={shiftDetail} targetDate={attendanceData?.date} listLog={attendanceLog} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} /> }
-                            {showContent === 'Unattendance' && <FormUnattendance showForm={true} setWidth={'auto'} dataObj={unattendanceDetail} targetDate={attendanceData?.date} listType={listUnattendanceType} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} /> }
-                            {showContent === 'Overtime' && <FormOvertime showForm={true} setWidth={'auto'} dataObj={ovtDetail} targetDate={attendanceData?.date} listType={reasonType} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} handleView={handleViewOvt} /> }
+                            {showContent === 'Shift' && <FormShift showForm={showForm} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listLog={attendanceLog} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAdd={true} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} inputLock={inputLock} /> }
+                            {showContent === 'Unattendance' && <FormUnattendance listData={listUnattendance} showForm={true} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listType={listUnattendanceType} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAdd={true} actionOpenDetail={actionOpenDetail} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} inputLock={inputLock}/> }
+                            {showContent === 'Overtime' && <FormOvertime showForm={true} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listType={reasonType} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} handleView={handleViewOvt} btnAdd={true} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} inputLock={inputLock}/> }
                         </div>
                     </div>
                     :

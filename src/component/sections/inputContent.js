@@ -4,9 +4,15 @@ import Button from "../button";
 import { baseColor } from "../../config/setting";
 import IconImage from "../icon_img";
 
-const InputContent = ({children, showForm, setWidth = '100%', isAdd, setIsAdd, isEdit, setIsEdit, handleAction, btnLabel = 'Edit', showBtnApprove = false }) => {
-    const toggleEdit = () => setIsEdit((prev) => !prev);
-    const toggleAdd = () => setIsAdd((prev) => !prev);
+const InputContent = ({children, showForm, setWidth = '100%', isAdd, setIsAdd, isEdit, setIsEdit, handleAction, handleApproveReject, handleCancel, btnLabel = 'Edit', showBtnApprove = false, showBtnCancel = false, showBtnAction = true, setBtnAction, showBtnAdd = false, showBtnBack = false }) => {
+    const toggleEdit = () => {
+        setIsEdit((prev) => !prev);
+        if(setBtnAction) setBtnAction(!showBtnAction);
+    };
+    const toggleAdd = () => {
+        setIsAdd((prev) => !prev);
+        // if(setBtnAction) setBtnAction(!showBtnAction);
+    };
     const userData = JSON.parse(localStorage.getItem('userdata'));
 
     return (
@@ -28,22 +34,31 @@ const InputContent = ({children, showForm, setWidth = '100%', isAdd, setIsAdd, i
                             {(showBtnApprove) ?
                                 <>
                                     <div className="flex flex-row justify-between w-full">
-                                        <Button text="Tolak" showBorder={true} position="center" bgcolor={'#D22F27'} color={'white'} handleAction={isEdit ? toggleEdit : toggleAdd} />
+                                        <Button text="Reject" showBorder={true} position="center" bgcolor={'#D22F27'} color={'white'} handleAction={() => handleApproveReject(false)} />
                                         <div className="mx-1" />
-                                        <Button text="Terima" showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={handleAction} />
+                                        <Button text="Approve" showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => handleApproveReject(true)} />
                                     </div>
-                                    <Button text={btnLabel} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={handleAction} />
                                 </>
                                 :
                                 <div className="flex flex-row justify-between w-full">
-                                    {(isAdd || isEdit) ?
+                                    {showBtnAction && (
+                                        ((isAdd || isEdit)) ?
                                         <>
                                             <Button text="Batal" showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={isEdit ? toggleEdit : toggleAdd} />
                                             <div className="mx-1" />
                                             <Button text="Simpan" showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={handleAction} />
                                         </>
                                         :
-                                        <Button text={btnLabel} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={toggleEdit} />
+                                        <>
+                                            {showBtnAdd && <Button text={btnLabel} showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={toggleAdd} />}
+                                        </>
+                                    )} 
+                                    {(!showBtnAction) && showBtnBack &&
+                                        <Button text="Kembali" showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={toggleEdit} />
+                                    }
+                                    {showBtnBack && showBtnCancel && <div className="mx-1" />}
+                                    {showBtnCancel &&
+                                        <Button text="Cancel" showBorder={true} position="center" bgcolor={'#D22F27'} color={'white'} handleAction={handleCancel} />                       
                                     }
                                 </div>
                             }

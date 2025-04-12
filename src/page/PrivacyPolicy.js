@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const PrivacyPolicy = () => {
     return (
-        <div className='bg-gray-50 p-4 w-full'>
+        <div className='bg-gray-50 p-4 w-full' style={{backgroundImage: 'url("/logo/sopra.png")', backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
             <div className='flex flex-row justify-between items-center'>
                 <p className='font-bold text-[20px]'>Kebijakan Privasi SOPRA HRIS</p>
                 <Link className='flex justify-end' to={'/login'}>
