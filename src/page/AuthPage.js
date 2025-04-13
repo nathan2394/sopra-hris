@@ -34,7 +34,11 @@ const AuthPage = () => {
                 .then((res) => {
                     if (res?.token) {
                         login(res.token, res.data); // Call login function from AuthContext
-                        navigate("/");
+                        if(res?.data?.roleID === 4){
+                            navigate("/attendance");
+                        }else{
+                            navigate("/");
+                        }
                     }
                 })
                 .catch((err) => console.log(err));

@@ -75,10 +75,10 @@ const SearchableSelect = ({
           setSelectedOption(value);
           if (handleAction) {
               // handleAction(name, value?.value);
-              handleAction({ target: { name: name, value: value?.value } });
+              handleAction({ target: { name: name, value: value?.id ?? value?.value } });
           }
           if (handleAfterExecute) {
-              handleAfterExecute(value?.value);
+              handleAfterExecute(value?.id ?? value?.value);
           }
       }}
         isSearchable
