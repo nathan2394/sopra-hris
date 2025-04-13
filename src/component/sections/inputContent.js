@@ -4,14 +4,14 @@ import Button from "../button";
 import { baseColor } from "../../config/setting";
 import IconImage from "../icon_img";
 
-const InputContent = ({children, showForm, setWidth = '100%', isAdd, setIsAdd, isEdit, setIsEdit, handleAction, handleApproveReject, handleCancel, btnLabel = 'Edit', showBtnApprove = false, showBtnCancel = false, showBtnAction = true, setBtnAction, showBtnAdd = false, showBtnBack = false }) => {
+const InputContent = ({children, showForm, setWidth = '100%', isAdd, setIsAdd, isEdit, setIsEdit, handleAction, handleApproveReject, handleCancel, btnLabel = 'Edit', showBtnApprove = false, showBtnCancel = false, setBtnCancel, showBtnAction = true, setBtnAction, showBtnAdd = false, showBtnBack = false }) => {
     const toggleEdit = () => {
         setIsEdit((prev) => !prev);
         if(setBtnAction) setBtnAction(!showBtnAction);
+        if(setBtnCancel && showBtnCancel) setBtnCancel(false);
     };
     const toggleAdd = () => {
         setIsAdd((prev) => !prev);
-        // if(setBtnAction) setBtnAction(!showBtnAction);
     };
     const userData = JSON.parse(localStorage.getItem('userdata'));
 
