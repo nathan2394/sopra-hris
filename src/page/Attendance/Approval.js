@@ -531,7 +531,7 @@ const Approval = ({setIsLoading}) => {
             <div>
                 {!isLoadData ? 
                     <div className="flex flex-row justify-between">
-                        <div style={{width: '95%'}}>
+                        <div style={{width: '85%'}}>
                             <div className="mb-3 flex flex-row justify-between">
                                 <div className="flex flex-row items-center justify-start w-full">
                                     <MyDatePicker placeholder="Pilih Periode" isRange={true} setWidth="320px" startDateVal={startDateVal} setStartDateVal={setStartDateVal} endDateVal={endDateVal} setEndDateVal={setEndDateVal} />

@@ -29,6 +29,7 @@ const AttendanceDetail = ({setIsLoading}) => {
 
     const [listData, setListData] = useState([]);
     const [listUnattendanceType, setUnattendanceType] = useState([]);
+    const [listShift, setListShift] = useState([]);
 
     const [listUnattendance, setListUnattendance] = useState([]);
     const [listOvertime, setListOvertime] = useState([]);
@@ -97,6 +98,19 @@ const AttendanceDetail = ({setIsLoading}) => {
             })))
         })
 
+        loadData({url: 'Shifts'})?.then((res) => {
+            if(res?.data?.length > 0){
+                setListShift(res?.data?.map((data) => (
+                    {
+                        value: data?.shiftID,
+                        label: data?.code,
+                        clockIn: data?.startTime || null,
+                        clockOut: data?.endTime || null,
+                    }
+                )))
+            }
+        })
+
     }, []);
 
     useEffect(() => {
@@ -138,19 +152,19 @@ const AttendanceDetail = ({setIsLoading}) => {
     }
 
     const fetchAttendanceLog = useCallback(() => {
-        loadData({url: 'Shifts', params: [{title: 'filter', value: `name:${attendanceData?.shiftName}`}]})?.then((res) => {
-            if(res?.data?.length > 0){
-                const data = res?.data[0];
-                setShiftDetail({
-                    employeeID: getId,
-                    clockIn: data?.startTime || null,
-                    clockOut: data?.endTime || null,
-                    clockInWeekend: data?.weekendStartTime ?? null,
-                    clockOutWeekend: data?.weekendEndTime ?? null,
-                    shiftName: data?.name
-                })
-            }
-        })
+        // loadData({url: 'Shifts', params: [{title: 'filter', value: `name:${attendanceData?.shiftName}`}]})?.then((res) => {
+        //     if(res?.data?.length > 0){
+        //         const data = res?.data[0];
+        //         setShiftDetail({
+        //             employeeID: getId,
+        //             clockIn: data?.startTime || null,
+        //             clockOut: data?.endTime || null,
+        //             clockInWeekend: data?.weekendStartTime ?? null,
+        //             clockOutWeekend: data?.weekendEndTime ?? null,
+        //             shiftName: data?.name
+        //         })
+        //     }
+        // })
 
         loadData({url: `Attendances/ListAttendance/${getId}/${convertDate(attendanceData?.date, 'input')}`})?.then((res) => {
             setAttendanceLog(res?.data?.sort((a, b) => new Date(a.clockIn) - new Date(b.clockIn)));
@@ -207,7 +221,7 @@ const AttendanceDetail = ({setIsLoading}) => {
         setIsEdit(false);
         setBtnAction(true);
         setBtnCancel(false);
-        setShowForm(false);
+        if(showContent ==='Shift') setShowForm(false);
         if(showContent ==='Overtime') fetchOvertime();
         if(showContent ==='Unattendance') fetchUnattendance();
     }
@@ -220,6 +234,7 @@ const AttendanceDetail = ({setIsLoading}) => {
 
 
     const handleChange = (event) => {
+        console.log(event)
         setFormData({
           ...formData,
           [event.target.name]: event.target.value,
@@ -249,18 +264,27 @@ const AttendanceDetail = ({setIsLoading}) => {
     const handleClick = (data) => {
         const target = listData?.find((obj) => obj?.id === data?.id);
         // setShowContent(target?.unattendance ? 'Unattendance' : 'Shift');
-        setShowContent('Shift');
+
+        let shiftData = showContent === 'Shift' ? listShift?.find(obj => obj?.label === target?.shiftCode) : {};
+        
         setAttendanceData({
             date: target?.transDate,
             shiftName: target?.shiftName
         });
         setFormData(prev => ({
             ...prev,
-            employeeID: getId
+            employeeID: getId,
+            transDate: data?.transDate,
+            shiftFromID: shiftData?.value,
+            shiftToID: null,
+            hourDiff: 0,
+            clockIn: shiftData?.clockIn || null,
+            clockOut: shiftData?.clockOut || null,
           }));
         setUnattendanceDetail({employeeID: getId, unattendanceTypeID: target?.unattendance })
         setRowActive(data?.id);
         setShowForm(true);
+        setBtnAction(true);
     }
 
     const actionOpenDetail = (obj, target) => {
@@ -274,7 +298,7 @@ const AttendanceDetail = ({setIsLoading}) => {
             endDate: obj?.endDate,
             description: obj?.description,
             isApproved1: obj?.isApproved1, 
-            isApproved2: obj?.isApproved2
+            isApproved2: obj?.isApproved2,
         })
         setBtnCancel(obj?.isApproved1 && obj?.isApproved2 ? false : true);
         setShowForm(true);
@@ -330,7 +354,7 @@ const AttendanceDetail = ({setIsLoading}) => {
                                     fetchOvertime();
                                 }} />
                             </div>
-                            {showContent === 'Shift' && <FormShift showForm={showForm} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listLog={attendanceLog} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAdd={true} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} inputLock={inputLock} handleAfterExecute={handleActionAfterExecute} /> }
+                            {showContent === 'Shift' && <FormShift showForm={showForm} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listLog={attendanceLog} listShift={listShift} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAdd={true} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} inputLock={inputLock} handleAfterExecute={handleActionAfterExecute} /> }
                             {showContent === 'Unattendance' && <FormUnattendance listData={listUnattendance} showForm={true} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listType={listUnattendanceType} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAdd={true} actionOpenDetail={actionOpenDetail} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} setBtnCancel={setBtnCancel} inputLock={inputLock} handleAfterExecute={handleActionAfterExecute} /> }
                             {showContent === 'Overtime' && <FormOvertime listData={listOvertime} showForm={true} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listType={reasonType} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} handleView={handleViewOvt} btnAdd={true} actionOpenDetail={actionOpenDetail} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} setBtnCancel={setBtnCancel} inputLock={inputLock} handleAfterExecute={handleActionAfterExecute} /> }
                         </div>

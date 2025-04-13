@@ -10,6 +10,7 @@ const Navbar = ({setAuth}) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const userData = JSON.parse(localStorage.getItem('userdata'));
+  console.log(userData?.roleID);
   const listContentMenu = JSON.parse(localStorage.getItem('listContentMenu'));
   const { logout } = useContext(AuthContext);
   const sidebarRef = useRef(null);
@@ -76,15 +77,18 @@ const Navbar = ({setAuth}) => {
             title: 'Master Payroll',
             navRoute: '/',
             icon: payroll_g,
-            icon_b: payroll
+            icon_b: payroll,
+            role_eligible: [1,2,3]
           },
           {
             title: 'Kalkulator',
             navRoute: '/calculator',
             icon: calculator_g,
-            icon_b: calculator
+            icon_b: calculator,
+            role_eligible: [1,2,3]
           }
-        ]
+        ],
+        role_eligible: [1,2,3]
       },
       {
         groupName: 'Personalia',
@@ -93,19 +97,11 @@ const Navbar = ({setAuth}) => {
             title: 'Data Karyawan',
             navRoute: '/employee',
             icon: employee_g,
-            icon_b: employee
-          },
-          // {
-          //   title: 'Jabatan',
-          //   navRoute: '/#',
-          //   icon: employee_g
-          // },
-          // {
-          //   title: 'Grade Karyawan',
-          //   navRoute: '/#',
-          //   icon: employee_g
-          // },
-        ]
+            icon_b: employee,
+            role_eligible: [1,2,3,4]
+          }
+        ],
+        role_eligible: [1,2,3]
       },
       {
         groupName: 'Absensi',
@@ -114,33 +110,39 @@ const Navbar = ({setAuth}) => {
             title: 'Grup Shift Karyawan',
             navRoute: '/shift',
             icon: shift_g,
-            icon_b: shift
+            icon_b: shift,
+            role_eligible: [1,2,3,4]
           },
           {
             title: 'Cuti & Ijin',
             navRoute: '/unattendance',
             icon: list_g,
-            icon_b: list
+            icon_b: list,
+            role_eligible: [1,2,3,4]
           },
           {
             title: 'Lembur',
             navRoute: '/overtime',
             icon: list_g,
-            icon_b: list
-          },
-          {
-            title: 'Kehadiran',
-            navRoute: '/attendance',
-            icon: kehadiran_g,
-            icon_b: kehadiran
+            icon_b: list,
+            role_eligible: [1,2,3,4]
           },
           {
             title: 'Approval',
             navRoute: '/approval',
             icon: kehadiran_g,
-            icon_b: kehadiran
+            icon_b: kehadiran,
+            role_eligible: [1,2,3,4]
+          },
+          {
+            title: 'Kehadiran',
+            navRoute: '/attendance',
+            icon: kehadiran_g,
+            icon_b: kehadiran,
+            role_eligible: [1,2,3,4]
           }
-        ]
+        ],
+        role_eligible: [1,2,3,4]
       },
       {
         groupName: 'Report',
@@ -149,19 +151,21 @@ const Navbar = ({setAuth}) => {
             title: 'Report Salary',
             navRoute: '/report',
             icon: list_g,
-            icon_b: list
+            icon_b: list,
+            role_eligible: [1,2,3]
           },
-        ]
+        ],
+        role_eligible: [1,2,3]
       },
     ];
 
     return(
       <div ref={sidebarRef} className="fixed bg-[#F5F5F5] w-[340px] top-0 bottom-0 mt-[67.8px] shadow-lg transition-transform duration-300 ease-in-out -translate-x-full flex flex-col" style={{boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.2)'}}>
         <div className="flex-grow overflow-y-auto">
-          {listMenu?.map((obj, index) => (
+          {listMenu?.filter(obj => obj?.role_eligible?.includes(userData?.roleID))?.map((obj, index) => (
             <div className="flex flex-col bg-white border-b-[26px] border-[#F5F5F5]" key={index}>
               <p className="text-sm font-bold px-10 pt-3 pb-2">{obj?.groupName}</p>
-              {obj?.list?.map((data, idx) => (
+              {obj?.list?.filter(obj => obj?.role_eligible?.includes(userData?.roleID))?.map((data, idx) => (
                 <div key={idx} onClick={() => { handleNavigation(data); }}>
                   <div className={`hover:bg-[#379d0067] py-3 px-10 border-b border-[#dddddd55] flex flex-row items-center cursor-pointer`}>
                     <IconImage size="small" source={data?.icon} />
