@@ -10,11 +10,9 @@ import { useAPI } from "../../../config/fetchApi";
 import { useNavigate } from "react-router-dom";
 import SearchableSelect from "../../select2";
 
-const FormShift = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listShift = [], showLogs = true, listLog = [], targetDate = null, showForm = false, setWidth = '100%', handleChange, btnApprove = false, btnCancel = false, btnAction = true, handleAfterExecute, inputLock = false, btnAdd = false }) => {
+const FormShift = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listShift = [], showLogs = true, listLog = [], targetDate = null, showForm = false, setWidth = '100%', handleChange, btnApprove = false, btnCancel = false, btnAction = true, handleAfterExecute, inputLock = false, btnAdd = false }) => {
     const navigate = useNavigate();
     const { loadData, postData, updateData } = useAPI();
-
-    const userData = JSON.parse(localStorage.getItem('userdata'));
 
     const [targetClockIn, setTargetClockIn] = useState(null);
     const [targetClockOut, setTargetClockOut] = useState(null);
@@ -126,11 +124,11 @@ const FormShift = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listShift = [],
     const handleCancel = () => {}
 
     return (
-        <InputContent showForm={showForm} setWidth={setWidth} isAdd={isAdd} setIsAdd={setIsAdd} btnLabel="Tukar Shift" isEdit={isEdit} setIsEdit={setIsEdit} handleAction={handleSubmit} handleApproveReject={handleApproveReject} handleCancel={handleCancel} showBtnApprove={btnApprove} showBtnCancel={btnCancel} showBtnAction={btnAction} showBtnAdd={btnAdd}> 
+        <InputContent userData={userData} showForm={showForm} setWidth={setWidth} isAdd={isAdd} setIsAdd={setIsAdd} btnLabel="Tukar Shift" isEdit={isEdit} setIsEdit={setIsEdit} handleAction={handleSubmit} handleApproveReject={handleApproveReject} handleCancel={handleCancel} showBtnApprove={btnApprove} showBtnCancel={btnCancel} showBtnAction={btnAction} showBtnAdd={btnAdd}> 
             <div className="flex flex-row flex-wrap w-full">
                 <MyDatePicker label={'Tanggal'} placeholder="Pilih Tanggal" setWidth="48%" value={targetDate ? targetDate : dataObj?.transDate} readOnly={true} />
                 <div className="mx-2" />
-                <SearchableSelect handleAction={handleChange} name={`shiftFromID`} setPosition={'bottom'} label={'Nama Shift'} setWidth="48%" options={listShift} value={dataObj?.shiftFromID} isDisabled={inputLock} />
+                <SearchableSelect handleAction={handleChange} name={`shiftFromID`} setPosition={'bottom'} label={'Nama Shift'} setWidth="48%" options={listShift} value={dataObj?.shiftFromID} isDisabled={true} />
                 <MyDatePicker label={'Jam Masuk'} placeholder="Pilih Jam" setWidth="48%" value={dataObj?.clockIn} isTimeOnly={true} readOnly={true} />
                 <div className="mx-2" />
                 <MyDatePicker label={'Jam Keluar'} placeholder="Pilih Jam" setWidth="48%" value={dataObj?.clockOut} isTimeOnly={true} readOnly={true} />
@@ -151,9 +149,11 @@ const FormShift = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listShift = [],
                 <div className="w-full">
                     <div className="flex flex-row items-center justify-between">
                         <p className="text-xs">Scan Log</p>
-                        <p className={`text-xs text-[${editLog ? '#D22F27' : baseColor}] underline cursor-pointer`} onClick={() => setEditLog(!editLog)}>
-                            {editLog ? "Batal" : "Tambah Scan Log"}
-                        </p> 
+                        {userData?.roleID !== 3 && userData?.roleID !== 4 &&
+                            <p className={`text-xs text-[${editLog ? '#D22F27' : baseColor}] underline cursor-pointer`} onClick={() => setEditLog(!editLog)}>
+                                {editLog ? "Batal" : "Tambah Scan Log"}
+                            </p> 
+                        }
                     </div>
                     <div className={`h-[180px] overflow-y-visible border border-[#d1d1d1] bg-[#f0f0f0] rounded-md mt-2`}>
                         {listLog?.length > 0 ? 

@@ -11,7 +11,7 @@ import { approve, empty, pending, reject } from "../../../config/icon";
 import IconImage from "../../icon_img";
 
 // const FormOvertime = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listEmployee = [], handleChange, handleChangeSelect, handleView, targetDate = null, showForm = false, setWidth = '100%', btnApprove = false, btnCancel = false, btnAction = true, handleAfterExecute, inputLock = false, btnAdd = false}) => {
-const FormOvertime = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listData = [], listEmployee, targetDate = null, showForm = false, setWidth = '100%', handleChange, btnCancel = false, setBtnCancel, btnAction = true, setBtnAction, btnApprove = false, handleAfterExecute, actionOpenDetail, inputLock = false, btnAdd = false}) => {
+const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listData = [], listEmployee, targetDate = null, showForm = false, setWidth = '100%', handleChange, btnCancel = false, setBtnCancel, btnAction = true, setBtnAction, btnApprove = false, handleAfterExecute, actionOpenDetail, inputLock = false, btnAdd = false}) => {
     const navigate = useNavigate();
 
     const [duration, setDuration] = useState(dataObj?.duration || 0);
@@ -79,7 +79,7 @@ const FormOvertime = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [
     }
 
     return (
-        <InputContent showForm={showForm} handleAction={handleSubmit} handleApproveReject={handleApproveReject} isAdd={isAdd} setIsAdd={setIsAdd} isEdit={isEdit} setIsEdit={setIsEdit} setWidth={setWidth}  btnLabel="Tambah Data Lembur" showBtnApprove={btnApprove} showBtnAction={btnAction} setBtnAction={setBtnAction} showBtnCancel={btnCancel} setBtnCancel={setBtnCancel} handleCancel={handleCancel} showBtnAdd={btnAdd} showBtnBack={listData?.length > 0}>
+        <InputContent userData={userData} showForm={showForm} handleAction={handleSubmit} handleApproveReject={handleApproveReject} isAdd={isAdd} setIsAdd={setIsAdd} isEdit={isEdit} setIsEdit={setIsEdit} setWidth={setWidth}  btnLabel="Tambah Data Lembur" showBtnApprove={btnApprove} showBtnAction={btnAction} setBtnAction={setBtnAction} showBtnCancel={btnCancel} setBtnCancel={setBtnCancel} handleCancel={handleCancel} showBtnAdd={btnAdd} showBtnBack={listData?.length > 0}>
             {(isAdd || isEdit) ?          
                 <div className="flex flex-row flex-wrap w-full">
                     {/* <Input textAlign={'left'} handleAction={handleChange} label={'Mulai Tanggal'} setName={'startDate'} setWidth="48%" value={null} type={'date'} /> */}

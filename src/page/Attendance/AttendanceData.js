@@ -20,6 +20,7 @@ const AttendanceData = ({setIsLoading}) => {
     const { deleteData, loadData } = useAPI();
     const navigate = useNavigate();
 
+    const userData = JSON.parse(localStorage.getItem('userdata'));
     const localSetPeriod = JSON.parse(localStorage?.getItem('setPeriod'));
 
     const [isSubmit, setIsSubmit] = useState(false);
@@ -334,7 +335,12 @@ const AttendanceData = ({setIsLoading}) => {
     }
 
     const setColumns = [
-        { field: "employeeName", header: "Nama Karyawan", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline" onClick={(e) => e.stopPropagation()}> {row?.employeeName} </Link> },
+        { field: "employeeName", header: "Nama Karyawan", alignment: "left", render: (_, row) => 
+            userData?.roleID !== 4 ?
+            <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline" onClick={(e) => e.stopPropagation()}> {row?.employeeName} </Link> 
+            :
+            <> {row?.employeeName} </> 
+        },
         { field: "nik", header: "NIK", alignment: "left"},
         { field: "groupType", header: "Grade", alignment: "center" },
         { field: "employeeTypeName", header: "Tipe Karyawan", alignment: "left" },

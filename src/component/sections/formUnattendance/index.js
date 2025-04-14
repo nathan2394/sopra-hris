@@ -10,7 +10,7 @@ import { useAPI } from "../../../config/fetchApi";
 import { useNavigate } from "react-router-dom";
 import { baseColor } from "../../../config/setting";
 
-const FormUnattendance = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listData = [], listEmployee, targetDate = null, showForm = false, setWidth = '100%', handleChange, btnCancel = false, setBtnCancel, btnAction = true, setBtnAction, btnApprove = false, handleAfterExecute, actionOpenDetail, inputLock = false, btnAdd = false}) => {
+const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listData = [], listEmployee, targetDate = null, showForm = false, setWidth = '100%', handleChange, btnCancel = false, setBtnCancel, btnAction = true, setBtnAction, btnApprove = false, handleAfterExecute, actionOpenDetail, inputLock = false, btnAdd = false}) => {
     const navigate = useNavigate();
     const [duration, setDuration] = useState(dataObj?.duration || 0);
     const { deleteData, loadData, postData } = useAPI();
@@ -69,7 +69,7 @@ const FormUnattendance = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType
     }
 
     return (
-        <InputContent showForm={showForm} handleAction={handleSubmit} handleApproveReject={handleApproveReject} isAdd={isAdd} setIsAdd={setIsAdd} isEdit={isEdit} setIsEdit={setIsEdit} setWidth={setWidth}  btnLabel="Tambah Data Ketidakhadiran" showBtnApprove={btnApprove} showBtnAction={btnAction} setBtnAction={setBtnAction} showBtnCancel={btnCancel} setBtnCancel={setBtnCancel} handleCancel={handleCancel} showBtnAdd={btnAdd} showBtnBack={listData?.length > 0}> 
+        <InputContent userData={userData} showForm={showForm} handleAction={handleSubmit} handleApproveReject={handleApproveReject} isAdd={isAdd} setIsAdd={setIsAdd} isEdit={isEdit} setIsEdit={setIsEdit} setWidth={setWidth}  btnLabel="Tambah Data Ketidakhadiran" showBtnApprove={btnApprove} showBtnAction={btnAction} setBtnAction={setBtnAction} showBtnCancel={btnCancel} setBtnCancel={setBtnCancel} handleCancel={handleCancel} showBtnAdd={btnAdd} showBtnBack={listData?.length > 0}> 
             {(isAdd || isEdit) ?
                 <div className="flex flex-row flex-wrap w-full">
                     <>
