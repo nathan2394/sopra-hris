@@ -17,6 +17,7 @@ import NavigateFooter from "../../component/navigateFooter";
 const AttendanceDetail = ({setIsLoading}) => {
     const { loadData } = useAPI();
     const navigate = useNavigate();
+    const userData = JSON.parse(localStorage.getItem('userdata'));
     const getId = getQueryParam("employeeId");
     const localSetPeriod = JSON.parse(localStorage?.getItem('setPeriod'));
     const [rowActive, setRowActive] = useState(0);
@@ -354,9 +355,9 @@ const AttendanceDetail = ({setIsLoading}) => {
                                     fetchOvertime();
                                 }} />
                             </div>
-                            {showContent === 'Shift' && <FormShift showForm={showForm} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listLog={attendanceLog} listShift={listShift} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAdd={true} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} inputLock={inputLock} handleAfterExecute={handleActionAfterExecute} /> }
-                            {showContent === 'Unattendance' && <FormUnattendance listData={listUnattendance} showForm={true} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listType={listUnattendanceType} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAdd={true} actionOpenDetail={actionOpenDetail} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} setBtnCancel={setBtnCancel} inputLock={inputLock} handleAfterExecute={handleActionAfterExecute} /> }
-                            {showContent === 'Overtime' && <FormOvertime listData={listOvertime} showForm={true} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listType={reasonType} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} handleView={handleViewOvt} btnAdd={true} actionOpenDetail={actionOpenDetail} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} setBtnCancel={setBtnCancel} inputLock={inputLock} handleAfterExecute={handleActionAfterExecute} /> }
+                            {showContent === 'Shift' && <FormShift userData={userData} showForm={showForm} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listLog={attendanceLog} listShift={listShift} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAdd={true} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} inputLock={inputLock} handleAfterExecute={handleActionAfterExecute} /> }
+                            {showContent === 'Unattendance' && <FormUnattendance userData={userData} listData={listUnattendance} showForm={true} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listType={listUnattendanceType} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAdd={true} actionOpenDetail={actionOpenDetail} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} setBtnCancel={setBtnCancel} inputLock={inputLock} handleAfterExecute={handleActionAfterExecute} /> }
+                            {showContent === 'Overtime' && <FormOvertime userData={userData} listData={listOvertime} showForm={true} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listType={reasonType} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} handleView={handleViewOvt} btnAdd={true} actionOpenDetail={actionOpenDetail} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} setBtnCancel={setBtnCancel} inputLock={inputLock} handleAfterExecute={handleActionAfterExecute} /> }
                         </div>
                     </div>
                     :

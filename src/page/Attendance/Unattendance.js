@@ -23,7 +23,6 @@ import FormUnattendance from "../../component/sections/formUnattendance";
 const Unattendance = ({setIsLoading}) => {
     const navigate = useNavigate();
     const { deleteData, loadData } = useAPI();
-    const [isSubmit, setIsSubmit] = useState(false);
     const [rowActive, setRowActive] = useState(0);
     const [listData, setListData] = useState([]);
     const [listEmployee, setListEmployee] = useState([]);
@@ -34,9 +33,16 @@ const Unattendance = ({setIsLoading}) => {
     const [inputLock, setInputLock] = useState(false);
     const [btnApprove, setBtnApprove] = useState(false);
 
+    const userData = JSON.parse(localStorage.getItem('userdata'));
+
     const setColumns = [
         { field: "voucherNo", header: "No. SKT", alignment: "left"},
-        { field: "employeeName", header: "Nama", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline"> {row?.employeeName} </Link> },
+        { field: "employeeName", header: "Nama Karyawan", alignment: "left", render: (_, row) => 
+            userData?.roleID !== 4 ?
+            <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline" onClick={(e) => e.stopPropagation()}> {row?.employeeName} </Link> 
+            :
+            <> {row?.employeeName} </> 
+        },
         { field: "dateRange", header: "Tanggal Tidak Hadir", alignment: "center", render: (_, row) => `${convertDate(row.startDate)} - ${convertDate(row.endDate)}` },
         { field: "duration", header: "Durasi", alignment: "left", render: (value) => `${value ? value : 0} Hari` },
         { field: "unattendanceTypeName", header: "Tipe", alignment: 'left' },
@@ -177,7 +183,7 @@ const Unattendance = ({setIsLoading}) => {
                         {/* <Table dataTable={listData} rowSettings={rowSettings} setWidth={'85%'} actionClick={handleClick} /> */}
                         <DataTable dataTable={listData} columns={setColumns} setWidth={'85%'} actionClick={handleClick} rowActive={rowActive} />
                         <div className="mx-2" />
-                        <FormUnattendance showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAction={btnAction} btnCancel={btnCancel} inputLock={inputLock}/>
+                        <FormUnattendance userData={userData} showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAction={btnAction} btnCancel={btnCancel} inputLock={inputLock}/>
                     </div>
                     :
                     <div className="mt-20">

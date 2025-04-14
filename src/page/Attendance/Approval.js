@@ -25,6 +25,8 @@ import FormUnattendance from "../../component/sections/formUnattendance";
 
 const Approval = ({setIsLoading}) => {
     const { loadData } = useAPI();
+
+    const userData = JSON.parse(localStorage.getItem('userdata'));
     
     const [listEmployee, setListEmployee] = useState([]);
     const [listShift, setListShift] = useState([]);
@@ -224,7 +226,12 @@ const Approval = ({setIsLoading}) => {
                 }))));
     
                 const setColumns = [
-                    { field: "employeeName", header: "Nama", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline"> {row?.employeeName} </Link> },
+                    { field: "employeeName", header: "Nama Karyawan", alignment: "left", render: (_, row) => 
+                        userData?.roleID !== 4 ?
+                        <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline" onClick={(e) => e.stopPropagation()}> {row?.employeeName} </Link> 
+                        :
+                        <> {row?.employeeName} </> 
+                    },
                     { field: "transDate", header: "Tanggal Pengajuan", alignment: "center", render: (value) => convertDate(value) },
                     { field: "tanggal", header: "Tanggal Lembur", alignment: "center", render: (_, row) => `${convertDate(row.startDate)}` },
                     { field: "dateRange", header: "Jam Lembur", alignment: "center", render: (_, row) => `${convertDate(row.startDate, 'time')} - ${convertDate(row.endDate, 'time')}` },
@@ -293,7 +300,12 @@ const Approval = ({setIsLoading}) => {
                 setIsLoadData(false);
     
                 const setColumns = [
-                    { field: "employeeName", header: "Nama", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline"> {row?.employeeName} </Link> },
+                    { field: "employeeName", header: "Nama Karyawan", alignment: "left", render: (_, row) => 
+                        userData?.roleID !== 4 ?
+                        <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline" onClick={(e) => e.stopPropagation()}> {row?.employeeName} </Link> 
+                        :
+                        <> {row?.employeeName} </> 
+                    },
                     { field: "dateRange", header: "Tanggal Tidak Hadir", alignment: "center", render: (_, row) => `${convertDate(row.startDate)} - ${convertDate(row.endDate)}` },
                     { field: "duration", header: "Durasi", alignment: "left", render: (value) => `${value ? value : 0} Hari` },
                     { field: "voucherNo", header: "No. SKT", alignment: "left"},
@@ -361,7 +373,12 @@ const Approval = ({setIsLoading}) => {
                 setIsLoadData(false);
     
                 const setColumns = [
-                    { field: "employeeName", header: "Nama", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline"> {row?.employeeName} </Link> },
+                    { field: "employeeName", header: "Nama Karyawan", alignment: "left", render: (_, row) => 
+                        userData?.roleID !== 4 ?
+                        <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline" onClick={(e) => e.stopPropagation()}> {row?.employeeName} </Link> 
+                        :
+                        <> {row?.employeeName} </> 
+                    },
                     { field: "transDate", header: "Tanggal Pengajuan", alignment: "center", render: (_, row) => `${convertDate(row.transDate)}` },
                     { field: "shiftFromID", header: "Shift Awal", alignment: "center", render: (value) => listShift?.find(obj => obj?.value === value)?.label || '-' },
                     { field: "shiftToID", header: "Shift Tujuan", alignment: "center", render: (value) => listShift?.find(obj => obj?.value === value)?.label || '-' },
@@ -552,9 +569,9 @@ const Approval = ({setIsLoading}) => {
                             <DataTable dataTable={listData} showCheck={true} columns={tableColumn} actionClick={handleClick} rowActive={rowActive} />
                         </div>
                         <div className="mx-2" />
-                        {activeMenu === 'Ketidakhadiran' && <FormUnattendance showForm={showForm} dataObj={formData} setWidth={'45%'} listType={typeUnattendance}  listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnApprove={btnApprove} btnAction={false} handleAfterExecute={handleAfterExecute} inputLock={true} />}
-                        {activeMenu === 'Lembur' && <FormOvertime showForm={showForm} dataObj={formData} setWidth={'45%'} listType={typeOvt} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnApprove={btnApprove} btnAction={false} handleAfterExecute={handleAfterExecute} inputLock={true} /> }
-                        {activeMenu === 'Tukar Shift' && <FormShift showForm={showForm} setWidth={'45%'} dataObj={formData} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} inputLock={true} showLogs={false} listShift={listShift} btnApprove={btnApprove} btnAction={false} handleAfterExecute={handleAfterExecute}/> }
+                        {activeMenu === 'Ketidakhadiran' && <FormUnattendance userData={userData} showForm={showForm} dataObj={formData} setWidth={'45%'} listType={typeUnattendance}  listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnApprove={btnApprove} btnAction={false} handleAfterExecute={handleAfterExecute} inputLock={true} />}
+                        {activeMenu === 'Lembur' && <FormOvertime userData={userData} showForm={showForm} dataObj={formData} setWidth={'45%'} listType={typeOvt} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnApprove={btnApprove} btnAction={false} handleAfterExecute={handleAfterExecute} inputLock={true} /> }
+                        {activeMenu === 'Tukar Shift' && <FormShift userData={userData} showForm={showForm} setWidth={'45%'} dataObj={formData} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} inputLock={true} showLogs={false} listShift={listShift} btnApprove={btnApprove} btnAction={false} handleAfterExecute={handleAfterExecute}/> }
                     </div>
                     :
                     <div className="mt-20">

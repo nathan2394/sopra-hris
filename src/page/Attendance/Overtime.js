@@ -31,9 +31,16 @@ const Overtime = ({setIsLoading}) => {
     const [btnCancel, setBtnCancel] = useState(false);
     const [inputLock, setInputLock] = useState(false);
 
+    const userData = JSON.parse(localStorage.getItem('userdata'));
+
     const setColumns = [
         { field: "voucherNo", header: "No. SPL", alignment: "left"},
-        { field: "employeeName", header: "Nama", alignment: "left", render: (_, row) => <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline"> {row?.employeeName} </Link> },
+        { field: "employeeName", header: "Nama Karyawan", alignment: "left", render: (_, row) => 
+            userData?.roleID !== 4 ?
+            <Link to={`/employee/detail?id=${row?.employeeID}`} className="text-[#369D00] underline" onClick={(e) => e.stopPropagation()}> {row?.employeeName} </Link> 
+            :
+            <> {row?.employeeName} </> 
+        },
         { field: "tanggal", header: "Tanggal Lembur", alignment: "center", render: (_, row) => `${convertDate(row.startDate)}` },
         { field: "dateRange", header: "Jam Lembur", alignment: "center", render: (_, row) => `${convertDate(row.startDate, 'time')} - ${convertDate(row.endDate, 'time')}` },
         { field: "reasonName", header: "Keterangan", alignment: 'left' },
@@ -161,7 +168,7 @@ const Overtime = ({setIsLoading}) => {
                     <div className="flex flex-row justify-between">
                         <DataTable dataTable={listData} columns={setColumns} setWidth={'95%'} actionClick={handleClick} rowActive={rowActive} />
                         <div className="mx-2" />
-                        <FormOvertime showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAction={btnAction} btnCancel={btnCancel} inputLock={inputLock} />
+                        <FormOvertime userData={userData} showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAction={btnAction} btnCancel={btnCancel} inputLock={inputLock} />
                     </div>
                     :
                     <div className="mt-20">

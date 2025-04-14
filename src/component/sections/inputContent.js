@@ -4,7 +4,7 @@ import Button from "../button";
 import { baseColor } from "../../config/setting";
 import IconImage from "../icon_img";
 
-const InputContent = ({children, showForm, setWidth = '100%', isAdd, setIsAdd, isEdit, setIsEdit, handleAction, handleApproveReject, handleCancel, btnLabel = 'Edit', showBtnApprove = false, showBtnCancel = false, setBtnCancel, showBtnAction = true, setBtnAction, showBtnAdd = false, showBtnBack = false }) => {
+const InputContent = ({userData, children, showForm, setWidth = '100%', isAdd, setIsAdd, isEdit, setIsEdit, handleAction, handleApproveReject, handleCancel, btnLabel = 'Edit', showBtnApprove = false, showBtnCancel = false, setBtnCancel, showBtnAction = true, setBtnAction, showBtnAdd = false, showBtnBack = false }) => {
     const toggleEdit = () => {
         setIsEdit((prev) => !prev);
         if(setBtnAction) setBtnAction(!showBtnAction);
@@ -13,7 +13,6 @@ const InputContent = ({children, showForm, setWidth = '100%', isAdd, setIsAdd, i
     const toggleAdd = () => {
         setIsAdd((prev) => !prev);
     };
-    const userData = JSON.parse(localStorage.getItem('userdata'));
 
     return (
         <div className="flex flex-col" style={{width: setWidth}}>
@@ -28,7 +27,7 @@ const InputContent = ({children, showForm, setWidth = '100%', isAdd, setIsAdd, i
                             </div>
                         }
                     </div>
-                    {(showForm && userData?.roleID !== 3) &&
+                    {(showForm) &&
                         <div>
                             <div className="bg-[#ddd] mb-3 w-full h-[1.5px]" />
                             {(showBtnApprove) ?
