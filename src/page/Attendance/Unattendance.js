@@ -181,9 +181,9 @@ const Unattendance = ({setIsLoading}) => {
                 {!isLoadData ? 
                     <div className="flex flex-row justify-between">
                         {/* <Table dataTable={listData} rowSettings={rowSettings} setWidth={'85%'} actionClick={handleClick} /> */}
-                        <DataTable dataTable={listData} columns={setColumns} setWidth={'85%'} actionClick={handleClick} rowActive={rowActive} />
+                        <DataTable dataTable={listData} columns={setColumns} setWidth={'90%'} actionClick={handleClick} rowActive={rowActive} />
                         <div className="mx-2" />
-                        <FormUnattendance userData={userData} showForm={showForm} dataObj={formData} setWidth={'45%'} listType={listType} listEmployee={listEmployee} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAction={btnAction} btnCancel={btnCancel} inputLock={inputLock}/>
+                        <FormUnattendance userData={userData} showForm={showForm} dataObj={formData} setWidth={'50%'} listType={listType} listEmployee={listEmployee} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAction={btnAction} btnCancel={btnCancel} inputLock={inputLock}/>
                     </div>
                     :
                     <div className="mt-20">

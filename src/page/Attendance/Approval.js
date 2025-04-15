@@ -47,6 +47,15 @@ const Approval = ({setIsLoading}) => {
     const [listFilter, setListFilter] = useState([]);
     const [isModalFilterOpen, setModalFilterOpen] = useState(false);
 
+    const [targetSearch, setTargetSearch] = useState('name');
+    const [searchInput, setSearchInput] = useState({
+        name    : '',
+        nik     : '',
+        ktp     : '',
+    });
+    const [listSearch, setListSearch] = useState([]);
+
+    const [modalContent, setModalContent] = useState('');
     const openModalFilter = () => setModalFilterOpen(true);
     const closeModalFilter = () => setModalFilterOpen(false);
 
@@ -78,6 +87,10 @@ const Approval = ({setIsLoading}) => {
             setListEmployee(res?.data?.map((obj) => ({
                 label: obj?.employeeName,
                 value: obj?.employeeID
+            })))
+            setListSearch(res?.data?.map((obj) => ({
+                label: obj?.employeeName,
+                value: obj?.employeeName
             })))
         });
 
@@ -269,6 +282,7 @@ const Approval = ({setIsLoading}) => {
                 value: `${convertDate(startDateVal)}|${convertDate(endDateVal)}`
             }
         ];
+        console.log(params)
         loadData({url: 'Unattendances/ListApproval', params: params}).then((res) => {  
             if(res?.data){
                 const filteredData = res?.data.map(obj => {
@@ -384,7 +398,15 @@ const Approval = ({setIsLoading}) => {
                     { field: "shiftToID", header: "Shift Tujuan", alignment: "center", render: (value) => listShift?.find(obj => obj?.value === value)?.label || '-' },
                     { field: "hourDiff", header: "Pergeseran Waktu", alignment: "center", render: (value) => `${value} jam` },
                     // { field: "remarks", header: "Remark", alignment: 'left' },
-                    { field: "status", header: "Status", alignment: 'center', render: (_, row) => row?.isApproved1 || row?.isApproved2 ? <p className="font-normal text-[#369D00]"> Approved </p> : <p> Pending </p> }
+                    { field: "status", header: "Status", alignment: 'center', render: (_, row) => 
+                        <div className="flex justify-center"> 
+                            {row?.isApproved1 && row?.isApproved2 ? 
+                                <IconImage size="w-3" source={approve} /> 
+                                : (row?.approvedBy1 === false && row?.isApproved2 === false) && (row?.approvedBy1 || row?.approvedBy2) 
+                                ? <IconImage size="w-3" source={reject} /> 
+                                : <IconImage size="h-4" source={pending} />} 
+                        </div> 
+                    }
                 ]
     
                 setTableColumn(setColumns);
@@ -395,6 +417,18 @@ const Approval = ({setIsLoading}) => {
             }
         });
     }
+
+    useEffect(() => {
+        console.log(searchInput);
+    }, [searchInput])
+
+    const handleSearchChange = (event) => {
+        console.log(event.target.name, event.target.value)
+        setSearchInput((prev) => ({
+          ...prev,
+          [event.target.name]: event.target.value,
+        }));
+    };
 
     const handleChange = (event) => {
         setFormData({
@@ -429,8 +463,23 @@ const Approval = ({setIsLoading}) => {
         setIsFilter(true);
         setCheckValue(selectedValues);
         setModalFilterOpen(false);
-        setListFilter(selectedValues);
     };
+
+    const submitSearch = () => {
+        let arr = [];
+        console.log(searchInput);
+        if(searchInput?.name) arr?.push(`name: ${searchInput?.name}`);
+        setSearchForm(prev => ({  // Using prev to ensure the reference changes
+            ...prev,
+            name: searchInput?.name
+        }));
+        setListFilter([
+            ...listFilter?.filter(data => !data?.includes('name')),
+            ...arr
+        ]);
+        setIsFilter(true);
+        setModalFilterOpen(false);
+    }
 
     const handleClick = (data) => {
         const targetData = listData?.find((obj) => obj?.id === data?.id);
@@ -482,13 +531,13 @@ const Approval = ({setIsLoading}) => {
         let arrFilter = selectedValues;
 
         return (
-            <Modal isOpen={isModalFilterOpen} onClose={closeModalFilter} position="right">
+            <Modal isOpen={isModalFilterOpen} onClose={closeModalFilter} position={modalContent === 'filter' ? "right" : "center"}>
                 <div className="relative bg-white rounded-lg shadow-sm">
                     <div className="flex items-center justify-between p-4 border-b rounded-t border-gray-200">
                         <div className="flex flex-row items-center">
                             <IconImage source={filter} size="small"/>
                             <h3 className="text-base font-semibold text-gray-900 pl-2">
-                                Pilih Filter
+                            {modalContent === 'filter' ? 'Pilih Filter' : 'Cari Data Karyawan'}
                             </h3>
                         </div>
                         <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-toggle="crud-modal" onClick={() => setModalFilterOpen(false)}>
@@ -497,32 +546,47 @@ const Approval = ({setIsLoading}) => {
                             </svg>
                         </button>
                     </div>
-                    <div className="pt-4 min-h-[400px] max-h-[450px] overflow-y-auto">
-                        {listFilterData?.map((value, idx) => (
-                            <CollapseMenu key={idx} title={value.title} isSetOpen={idx === 0 ? true : false}>
-                                {value?.data?.map((val, index) => (
-                                    <div key={index}>
-                                        <div className="flex flex-row py-2 px-4 cursor-pointer">
-                                            <input type="checkbox" id={`check${value?.target}${val?.id}`} value={val?.id} checked={arrFilter[value?.target]?.some((v) => v?.id === val?.id) || false} onChange={() => handleCheckbox(val, value?.target)} />
-                                            <label htmlFor={`check${value?.target}${val?.id}`} className="text-xs pl-2 cursor-pointer">{val?.value}</label>
+                    {modalContent === 'filter' ? 
+                    <>
+                        <div className="pt-4 min-h-[400px] max-h-[450px] overflow-y-auto">
+                            {listFilterData?.map((value, idx) => (
+                                <CollapseMenu key={idx} title={value.title} isSetOpen={idx === 0 ? true : false}>
+                                    {value?.data?.map((val, index) => (
+                                        <div key={index}>
+                                            <div className="flex flex-row py-2 px-4 cursor-pointer">
+                                                <input type="checkbox" id={`check${value?.target}${val?.id}`} value={val?.id} checked={arrFilter[value?.target]?.some((v) => v?.id === val?.id) || false} onChange={() => handleCheckbox(val, value?.target)} />
+                                                <label htmlFor={`check${value?.target}${val?.id}`} className="text-xs pl-2 cursor-pointer">{val?.value}</label>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </CollapseMenu>
-                        ))}
-                    </div>
+                                    ))}
+                                </CollapseMenu>
+                            ))}
+                        </div>
 
-                    <div className="p-4 flex flex-row items-center w-full">
-                        <Button setWidth={'auto'} bgcolor={'white'} handleAction={() => {
-                            setSelectedValues({});
-                        }} icon={reload} />
-                        <div className="mx-1" />
-                        <Button text={'Terapkan Filter'} setWidth={'auto'} icon={filter_w} bgcolor={baseColor} color={'white'} handleAction={() => submitFilter()} />
-                    </div>
+                        <div className="p-4 flex flex-row items-center w-full">
+                            <Button setWidth={'auto'} bgcolor={'white'} handleAction={() => {
+                                setSelectedValues({});
+                            }} icon={reload} />
+                            <div className="mx-1" />
+                            <Button text={'Terapkan Filter'} setWidth={'auto'} icon={filter_w} bgcolor={baseColor} color={'white'} handleAction={() => submitFilter()} />
+                        </div>
+                    </>
+                    :
+                    <>
+                        <div className="flex flex-row items-center w-full px-4 pt-4 pb-4">
+                            <div className="mx-2" />
+                            <SearchableSelect  handleAction={handleSearchChange} isFocus={true} name={'name'} value={searchInput?.name} options={listSearch} useSearchIcon={true} placeHolder={`Search Employee ${targetSearch ?? ''}...`} setPosition="bottom" />
+                            <div className="mx-2" />
+                        </div>
+                        <div className="border-t px-6 py-3 rounded-t border-gray-200">
+                            <Button text="Cari Karyawan" showBorder={true} position="center" bgcolor={baseColor} color={'white'} handleAction={() => submitSearch()} />
+                        </div>
+                    </>
+                    }
                  </div>
             </Modal>
         )
-    }, [isModalFilterOpen, selectedValues]);
+    }, [isModalFilterOpen, selectedValues, searchInput, modalContent]);
 
     const subMenu = [
         {
@@ -551,11 +615,17 @@ const Approval = ({setIsLoading}) => {
                         <div style={{width: '85%'}}>
                             <div className="mb-3 flex flex-row justify-between">
                                 <div className="flex flex-row items-center justify-start w-full">
-                                    <MyDatePicker placeholder="Pilih Periode" isRange={true} setWidth="320px" startDateVal={startDateVal} setStartDateVal={setStartDateVal} endDateVal={endDateVal} setEndDateVal={setEndDateVal} />
+                                    <MyDatePicker placeholder="Pilih Periode" isRange={true} setWidth="250px" startDateVal={startDateVal} setStartDateVal={setStartDateVal} endDateVal={endDateVal} setEndDateVal={setEndDateVal} />
                                     <div className="mx-2" />
-                                    <Button setWidth="auto" bgcolor={'white'} icon={search} />
+                                    <Button setWidth="auto" bgcolor={'white'} icon={search} handleAction={() => {
+                                        setModalContent('search')
+                                        openModalFilter();
+                                    }} />
                                     <div className="mx-2" />
-                                    <Button setWidth="auto" bgcolor={'white'} icon={filterData} handleAction={openModalFilter} />
+                                    <Button setWidth="auto" bgcolor={'white'} icon={filterData} handleAction={() => {
+                                        setModalContent('filter')
+                                        openModalFilter();
+                                    }} />
                                 </div>
                                 <div className="flex flex-row items-center justify-end w-full">
                                     <Button setWidth="auto" bgcolor={'white'} isGray={true} icon={arrow_left_g} />
@@ -565,13 +635,13 @@ const Approval = ({setIsLoading}) => {
                                     <Button setWidth="auto" bgcolor={'white'} isGray={true} icon={arrow_right_g} />
                                 </div>
                             </div>
-                            <FilterContent isActive={isFilter} checkedValue={selectedValues} setCheckValue={setSelectedValues} />
+                            <FilterContent isActive={isFilter} listFilter={listFilter} checkedValue={selectedValues} setCheckValue={setSelectedValues} />
                             <DataTable dataTable={listData} showCheck={true} columns={tableColumn} actionClick={handleClick} rowActive={rowActive} />
                         </div>
                         <div className="mx-2" />
-                        {activeMenu === 'Ketidakhadiran' && <FormUnattendance userData={userData} showForm={showForm} dataObj={formData} setWidth={'45%'} listType={typeUnattendance}  listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnApprove={btnApprove} btnAction={false} handleAfterExecute={handleAfterExecute} inputLock={true} />}
-                        {activeMenu === 'Lembur' && <FormOvertime userData={userData} showForm={showForm} dataObj={formData} setWidth={'45%'} listType={typeOvt} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnApprove={btnApprove} btnAction={false} handleAfterExecute={handleAfterExecute} inputLock={true} /> }
-                        {activeMenu === 'Tukar Shift' && <FormShift userData={userData} showForm={showForm} setWidth={'45%'} dataObj={formData} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} inputLock={true} showLogs={false} listShift={listShift} btnApprove={btnApprove} btnAction={false} handleAfterExecute={handleAfterExecute}/> }
+                        {activeMenu === 'Ketidakhadiran' && <FormUnattendance userData={userData} showForm={showForm} dataObj={formData} setWidth={'50%'} listType={typeUnattendance}  listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnApprove={btnApprove} btnAction={false} handleAfterExecute={handleAfterExecute} inputLock={true} />}
+                        {activeMenu === 'Lembur' && <FormOvertime userData={userData} showForm={showForm} dataObj={formData} setWidth={'50%'} listType={typeOvt} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnApprove={btnApprove} btnAction={false} handleAfterExecute={handleAfterExecute} inputLock={true} /> }
+                        {activeMenu === 'Tukar Shift' && <FormShift userData={userData} showForm={showForm} setWidth={'50%'} dataObj={formData} listEmployee={listEmployee} handleChange={handleChange} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} inputLock={true} showLogs={false} listShift={listShift} btnApprove={btnApprove} btnAction={false} handleAfterExecute={handleAfterExecute}/> }
                     </div>
                     :
                     <div className="mt-20">

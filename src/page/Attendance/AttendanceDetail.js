@@ -53,8 +53,7 @@ const AttendanceDetail = ({setIsLoading}) => {
     });
 
     const [attendanceData, setAttendanceData] = useState({
-        date: '',
-        shiftName: ''
+        date: ''
     })
 
     const [unattendanceDetail, setUnattendanceDetail] = useState({
@@ -153,20 +152,6 @@ const AttendanceDetail = ({setIsLoading}) => {
     }
 
     const fetchAttendanceLog = useCallback(() => {
-        // loadData({url: 'Shifts', params: [{title: 'filter', value: `name:${attendanceData?.shiftName}`}]})?.then((res) => {
-        //     if(res?.data?.length > 0){
-        //         const data = res?.data[0];
-        //         setShiftDetail({
-        //             employeeID: getId,
-        //             clockIn: data?.startTime || null,
-        //             clockOut: data?.endTime || null,
-        //             clockInWeekend: data?.weekendStartTime ?? null,
-        //             clockOutWeekend: data?.weekendEndTime ?? null,
-        //             shiftName: data?.name
-        //         })
-        //     }
-        // })
-
         loadData({url: `Attendances/ListAttendance/${getId}/${convertDate(attendanceData?.date, 'input')}`})?.then((res) => {
             setAttendanceLog(res?.data?.sort((a, b) => new Date(a.clockIn) - new Date(b.clockIn)));
         })
@@ -235,7 +220,6 @@ const AttendanceDetail = ({setIsLoading}) => {
 
 
     const handleChange = (event) => {
-        console.log(event)
         setFormData({
           ...formData,
           [event.target.name]: event.target.value,
@@ -264,13 +248,9 @@ const AttendanceDetail = ({setIsLoading}) => {
 
     const handleClick = (data) => {
         const target = listData?.find((obj) => obj?.id === data?.id);
-        // setShowContent(target?.unattendance ? 'Unattendance' : 'Shift');
-
         let shiftData = showContent === 'Shift' ? listShift?.find(obj => obj?.label === target?.shiftCode) : {};
-        
         setAttendanceData({
-            date: target?.transDate,
-            shiftName: target?.shiftName
+            date: target?.transDate
         });
         setFormData(prev => ({
             ...prev,
@@ -281,10 +261,19 @@ const AttendanceDetail = ({setIsLoading}) => {
             hourDiff: 0,
             clockIn: shiftData?.clockIn || null,
             clockOut: shiftData?.clockOut || null,
+            startDate: data?.transDate,
+            endDate: data?.transDate,
           }));
         setUnattendanceDetail({employeeID: getId, unattendanceTypeID: target?.unattendance })
         setRowActive(data?.id);
-        setShowForm(true);
+        
+        if(showContent ==='Shift'){
+            setShowForm(true);
+        } else{
+            setIsAdd(false);
+            setIsEdit(false);
+            setShowForm(false);
+        }
         setBtnAction(true);
     }
 
@@ -327,7 +316,7 @@ const AttendanceDetail = ({setIsLoading}) => {
                 {!isLoadData ? 
                     <div className="flex flex-row justify-between pb-8">
                         {/* <Table dataTable={listData} rowSettings={rowSettings} setWidth={'85%'} actionClick={handleClick} /> */}
-                        <DataTable dataTable={listData} columns={setColumns} setWidth={'75%'} actionClick={handleClick} rowActive={rowActive} />
+                        <DataTable dataTable={listData} columns={setColumns} setWidth={'72%'} actionClick={handleClick} rowActive={rowActive} />
                         <div className="mx-2" />
                         <div className="flex flex-col w-[40%]">
                             <div className="w-full flex flex-row items-center mb-3">
@@ -335,6 +324,11 @@ const AttendanceDetail = ({setIsLoading}) => {
                                     setShowContent('Shift');
                                     setIsAdd(false);
                                     setIsEdit(false);
+                                    setRowActive(0);
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        employeeID: getId,
+                                    }))
                                 }} />
                                 <div className="mx-1" />
                                 <Button text="Ketidakhadiran" bgcolor={showContent === 'Unattendance' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => {
@@ -344,6 +338,11 @@ const AttendanceDetail = ({setIsLoading}) => {
                                     setBtnAction(true);
                                     setBtnCancel(false);
                                     fetchUnattendance();
+                                    setRowActive(0);
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        employeeID: getId,
+                                    }))
                                 }} />
                                 <div className="mx-1" />
                                 <Button text="Lembur" bgcolor={showContent === 'Overtime' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => {
@@ -353,6 +352,11 @@ const AttendanceDetail = ({setIsLoading}) => {
                                     setBtnAction(true);
                                     setBtnCancel(false);
                                     fetchOvertime();
+                                    setRowActive(0);
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        employeeID: getId,
+                                    }))
                                 }} />
                             </div>
                             {showContent === 'Shift' && <FormShift userData={userData} showForm={showForm} setWidth={'auto'} dataObj={formData} targetDate={attendanceData?.date} listLog={attendanceLog} listShift={listShift} handleChange={handleChange} handleChangeSelect={handleChangeSelect} isAdd={isAdd} isEdit={isEdit} setIsAdd={setIsAdd} setIsEdit={setIsEdit} btnAdd={true} btnAction={btnAction} setBtnAction={setBtnAction} btnCancel={btnCancel} inputLock={inputLock} handleAfterExecute={handleActionAfterExecute} /> }

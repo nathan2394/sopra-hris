@@ -22,6 +22,15 @@ const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit
     }, [dataObj?.startDate, dataObj?.endDate]);
 
 
+    const filteredList = listData?.filter(obj => {
+        if(targetDate){
+            const transDate = convertDate(obj?.startDate); // Assuming transDate is in a format that can be compared directly
+            const target = convertDate(targetDate); // Ensure targetDate is a valid date
+            
+            return transDate == target; // Adjust the condition based on how you want to compare
+        }
+        return obj;
+    });
 
     const handleSubmit = () => {
         const requestData = {
@@ -35,8 +44,11 @@ const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit
         }
 
         postData({url: 'Unattendances', formData: requestData})?.then((res) => {
-            // console.log(res);
-            navigate(0);
+            if(handleAfterExecute){
+                handleAfterExecute();
+            }else{
+                navigate(0);
+            }
         })
     }
 
@@ -64,7 +76,11 @@ const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit
 
     const handleCancel = () => {
         deleteData({url: `Unattendances`, id: dataObj?.id})?.then((res) => {
-            navigate(0);
+            if(handleAfterExecute){
+                handleAfterExecute();
+            }else{
+                navigate(0);
+            }
         })
     }
 
@@ -85,15 +101,15 @@ const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit
                 </div>
                 :
                 <>
-                    {listData?.length > 0 && <div className="text-xs mb-1">{'Data Cuti & Ijin'}</div>}
-                    {(!isAdd && !isEdit && listData?.length > 0) ? <>
+                    {filteredList?.length > 0 && <div className="text-xs mb-1">{'Data Cuti & Ijin'}</div>}
+                    {(!isAdd && !isEdit && filteredList?.length > 0) ? <>
                         <div className="flex flex-col w-full overflow-y-auto max-h-[400px] pt-1">
                             <div className={`flex flex-row justify-between items-center bg-[#f0f0f0] border border-[#d1d1d1] text-xs p-1`}>
                                 <div className={`w-[90px] text-center p-1`}>No. SKT</div>
                                 <div className="w-[200px] text-center p-1">Tgl Ketidakhadiran</div>
                                 <div className="w-[40px] text-center">Status</div> 
                             </div>
-                            {listData?.map((obj, idx) => (
+                            {filteredList?.map((obj, idx) => (
                                 <div className={`flex flex-row justify-between items-center ${idx%2 !== 0 ? 'bg-[#f0f0f0]' : 'bg-white'} border-b border-[#d1d1d1] hover:bg-[#379d0043] cursor-pointer text-xs p-1`} onClick={() => actionOpenDetail(obj, 'unattendance')}>
                                     <div className={`w-[90px] text-left text-[${baseColor}] underline p-1`}>{obj?.voucherNo}</div>
                                     <div className="w-[200px] text-center p-1">{`${convertDate(obj?.startDate)} - ${convertDate(obj?.endDate)}`}</div>
