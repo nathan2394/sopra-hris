@@ -68,7 +68,7 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                                 <Button text={'Export Data'} setWidth={'auto'} bgcolor={'white'} color={baseColor} icon={exportData} handleAction={handleExport} />
                             </>
                         }
-                        {(handleAdd && userData?.roleID !== 3) && 
+                        {(handleAdd) && 
                             <>
                                 <div className="bg-[#33333328] h-[30px] w-[1px] mx-4" />
                                 <Button text={'+ Tambah Data'} setWidth={'auto'} bgcolor={baseColor} color={'white'} handleAction={handleAdd} />

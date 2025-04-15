@@ -84,7 +84,7 @@ const FormShift = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listS
         const requestData = {
             "employeeID": dataObj?.employeeID,
             "shiftFromID": dataObj?.shiftFromID,
-            "shiftToID": dataObj?.shiftFromID,
+            "shiftToID": dataObj?.shiftToID,
             "transDate": dataObj?.transDate,
             "hourDiff": dataObj?.hourDiff,
             "remarks": "",
