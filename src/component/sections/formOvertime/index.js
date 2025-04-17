@@ -9,7 +9,7 @@ import { baseColor } from "../../../config/setting";
 import { useNavigate } from "react-router-dom";
 import { approve, empty, pending, reject } from "../../../config/icon";
 import IconImage from "../../icon_img";
-import { handleConfirmation } from "../../alertDialog";
+import { errorConfirmation, handleConfirmation } from "../../alertDialog";
 
 // const FormOvertime = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listEmployee = [], handleChange, handleChangeSelect, handleView, targetDate = null, showForm = false, setWidth = '100%', btnApprove = false, btnCancel = false, btnAction = true, handleAfterExecute, inputLock = false, btnAdd = false}) => {
 const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listData = [], listShift = [], listEmployee, targetDate = null, showForm = false, setWidth = '100%', handleChange, btnCancel = false, setBtnCancel, btnAction = true, setBtnAction, btnApprove = false, handleAfterExecute, actionOpenDetail, inputLock = false, btnAdd = false}) => {
@@ -158,19 +158,19 @@ const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, li
                 <div className="flex flex-row flex-wrap w-full">
                     {listEmployee?.length > 0 ? 
                     <>
-                        <SearchableSelect handleAction={handleChange} name={`employeeID`} setPosition={'bottom'} label={'Cari Karyawan'} placeHolder={'Pilih Karyawan'} setWidth="48%" options={listEmployee} value={dataObj?.employeeID} isDisabled={isEdit} />
+                        <SearchableSelect isRequierd={true} handleAction={handleChange} name={`employeeID`} setPosition={'bottom'} label={'Cari Karyawan'} placeHolder={'Pilih Karyawan'} setWidth="48%" options={listEmployee} value={dataObj?.employeeID} isDisabled={isEdit} />
                         <div className="mx-2" />
-                        <MyDatePicker handleAction={handleChange} label={'Tanggal Lembur'} name={'transDate'} setWidth="48%" value={targetDate ? targetDate : dataObj?.transDate} readOnly={inputLock} />
+                        <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Tanggal Lembur'} name={'transDate'} setWidth="48%" value={targetDate ? targetDate : dataObj?.transDate} readOnly={inputLock} />
                     </>
                     :
-                    <MyDatePicker handleAction={handleChange} label={'Tanggal Lembur'} name={'transDate'} value={targetDate ? targetDate : dataObj?.startDate || null} readOnly={targetDate ? true : dataObj?.transDate ? true : false} />
+                    <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Tanggal Lembur'} name={'transDate'} value={targetDate ? targetDate : dataObj?.startDate || null} readOnly={targetDate ? true : dataObj?.transDate ? true : false} />
                     }
-                    <MyDatePicker handleAction={handleChange} label={'Lembur Dari'} setWidth="48%" name={'startDate'} value={targetClockIn} isTimeOnly={true} readOnly={inputLock} />
+                    <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Lembur Dari'} setWidth="48%" name={'startDate'} value={targetClockIn} isTimeOnly={true} readOnly={inputLock} />
                     <div className="mx-2" />
-                    <MyDatePicker handleAction={handleChange} label={'Lembur Sampai'} setWidth="48%" name={'endDate'} value={targetClockOut} isTimeOnly={true} readOnly={true} />
+                    <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Lembur Sampai'} setWidth="48%" name={'endDate'} value={targetClockOut} isTimeOnly={true} readOnly={true} />
                     <Input textAlign={'left'} type={'number'} handleAction={handleChange} label={'Durasi Jam'} setWidth="48%" setName={"hourDiff"} value={`${dataObj?.hourDiff || 0}`} readOnly={inputLock} showBtnNum={true} />
                     <div className="mx-2" />
-                    <SearchableSelect handleAction={handleChange} name={`reasonID`} setPosition={'bottom'} label={'Keterangan Lembur'} placeHolder={'Keterangan Lembur'} setWidth="48%" options={listType} value={dataObj?.reasonID} isDisabled={inputLock} />
+                    <SearchableSelect isRequierd={true} handleAction={handleChange} name={`reasonID`} setPosition={'bottom'} label={'Keterangan Lembur'} placeHolder={'Keterangan Lembur'} setWidth="48%" options={listType} value={dataObj?.reasonID} isDisabled={inputLock} />
                     <Input handleAction={handleChange} label={'Notes'} setName={'description'} placeholder={'isi alasan'} content="textarea" value={dataObj?.description} readOnly={inputLock} />
                 </div>
                 :

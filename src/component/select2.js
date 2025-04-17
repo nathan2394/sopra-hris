@@ -14,6 +14,7 @@ const SearchableSelect = ({
   setWidth = "100%",
   handleAction = null,
   handleAfterExecute = null,
+  isRequierd = false,
   useSearchIcon = false, // Toggle for custom search icon
 }) => {
   const [selectedOption, setSelectedOption] = React.useState(null);
@@ -63,7 +64,7 @@ const SearchableSelect = ({
   return (
     <div className={label ? "mb-5" : ""} style={{ width: setWidth }}>
       {label && (
-        <label className="block mb-2 text-xs font-medium text-gray-900">
+        <label className={`block mb-2 text-xs font-medium text-gray-900 ${isRequierd ? 'required-label' : ''}`}>
           {label}
         </label>
       )}

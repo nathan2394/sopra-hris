@@ -147,3 +147,9 @@ input[type="number"]::-webkit-outer-spin-button {
   z-index: 9999 !important;
   border: 1px solid #369D00 !important;
 }
+
+.required-label::after {
+  content: " *"; /* Adds an asterisk after the label text */
+  color: red; /* Sets the color to red to highlight the required icon */
+  font-weight: bold;
+}

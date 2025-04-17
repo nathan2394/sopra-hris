@@ -18,3 +18,7 @@ export const handleConfirmation = (title, text, icon, handleActionSuccess) => {
       }
     });
 };
+
+export const errorConfirmation = (text) => {
+  Swal.fire('Error', text || 'Format Data tidak sesuai!', 'error');
+}

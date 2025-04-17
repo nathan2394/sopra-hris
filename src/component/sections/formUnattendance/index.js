@@ -97,12 +97,12 @@ const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit
                 <div className="flex flex-row flex-wrap w-full">
                     <>
                         {listEmployee && <SearchableSelect handleAction={handleChange} name={`employeeID`} setPosition={'bottom'} label={'Cari Karyawan'} placeHolder={'Pilih Karyawan'} setWidth="100%" options={listEmployee} value={dataObj?.employeeID} isDisabled={isEdit} /> }
-                        <MyDatePicker handleAction={handleChange} label={'Mulai Tanggal'} placeholder="Pilih Tanggal" name={'startDate'} setWidth="48%" value={dataObj?.startDate}  readOnly={inputLock} />
+                        <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Mulai Tanggal'} placeholder="Pilih Tanggal" name={'startDate'} setWidth="48%" value={dataObj?.startDate}  readOnly={inputLock} />
                         <div className="mx-2" />
-                        <MyDatePicker handleAction={handleChange} label={'Sampai Tanggal'} placeholder="Pilih Tanggal" name={'endDate'} setWidth="48%" value={dataObj?.endDate}  readOnly={inputLock} />
+                        <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Sampai Tanggal'} placeholder="Pilih Tanggal" name={'endDate'} setWidth="48%" value={dataObj?.endDate}  readOnly={inputLock} />
                         <Input label={'Durasi Hari'} placeholder={'Durasi Ketidakhadiran'} setWidth="48%" value={`${duration} Hari`} readOnly={true} />
                         <div className="mx-2" />
-                        <SearchableSelect handleAction={handleChange} name={`unattendanceTypeID`} setPosition={'bottom'} label={'Tipe Ketidakhadiran'} placeHolder={'Tipe Ketidakhadiran'} setWidth="48%" options={listType} value={dataObj?.unattendanceTypeID} isDisabled={inputLock} />
+                        <SearchableSelect isRequierd={true} handleAction={handleChange} name={`unattendanceTypeID`} setPosition={'bottom'} label={'Tipe Ketidakhadiran'} placeHolder={'Tipe Ketidakhadiran'} setWidth="48%" options={listType} value={dataObj?.unattendanceTypeID} isDisabled={inputLock} />
                     </>
                     <Input handleAction={handleChange} label={'Alasan'} subLabel={'(Opsional)'} setName={'description'} placeholder={'isi alasan'} content="textarea" value={dataObj?.description} readOnly={inputLock} />
                 </div>
