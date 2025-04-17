@@ -9,6 +9,7 @@ import { baseColor } from "../../../config/setting";
 import { useNavigate } from "react-router-dom";
 import { approve, empty, pending, reject } from "../../../config/icon";
 import IconImage from "../../icon_img";
+import { handleConfirmation } from "../../alertDialog";
 
 // const FormOvertime = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listEmployee = [], handleChange, handleChangeSelect, handleView, targetDate = null, showForm = false, setWidth = '100%', btnApprove = false, btnCancel = false, btnAction = true, handleAfterExecute, inputLock = false, btnAdd = false}) => {
 const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listData = [], listShift = [], listEmployee, targetDate = null, showForm = false, setWidth = '100%', handleChange, btnCancel = false, setBtnCancel, btnAction = true, setBtnAction, btnApprove = false, handleAfterExecute, actionOpenDetail, inputLock = false, btnAdd = false}) => {
@@ -104,13 +105,15 @@ const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, li
             "description": dataObj?.description,
         }
 
-        postData({url: 'Overtimes', formData: requestData})?.then((res) => {
-            if(handleAfterExecute){
-                handleAfterExecute();
-            }else{
-                navigate(0);
+        handleConfirmation('Apakah anda yakin?', 'Data akan disimpan kedalam sistem', 'warning', () => {
+            postData({url: 'Overtimes', formData: requestData})?.then((res) => {
+                if(handleAfterExecute){
+                    handleAfterExecute();
+                }else{
+                    navigate(0);
+                }
             }
-        })
+        )})
     }
 
     const handleApproveReject = (val) => {
@@ -125,23 +128,27 @@ const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, li
 
             requestData?.push(request)
 
-            postData({url: 'Overtimes/Approval', formData: requestData})?.then((res) => {
+            handleConfirmation('Apakah anda yakin?', 'Data akan disimpan kedalam sistem', 'warning', () => {
+                postData({url: 'Overtimes/Approval', formData: requestData})?.then((res) => {
+                    if(handleAfterExecute){
+                        handleAfterExecute();
+                    }else{
+                        navigate(0);
+                    }
+                })
+            })
+        }
+    }
+
+    const handleCancel = () => {
+        handleConfirmation('Apakah anda yakin?', 'Data akan dihapus dari sistem', 'warning', () => {
+            deleteData({url: `Overtimes`, id: dataObj?.id})?.then((res) => {
                 if(handleAfterExecute){
                     handleAfterExecute();
                 }else{
                     navigate(0);
                 }
             })
-        }
-    }
-
-    const handleCancel = () => {
-        deleteData({url: `Overtimes`, id: dataObj?.id})?.then((res) => {
-            if(handleAfterExecute){
-                handleAfterExecute();
-            }else{
-                navigate(0);
-            }
         })
     }
 

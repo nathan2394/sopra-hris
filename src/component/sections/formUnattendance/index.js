@@ -9,6 +9,7 @@ import { add_g, approve, empty, pending, reject } from "../../../config/icon";
 import { useAPI } from "../../../config/fetchApi";
 import { useNavigate } from "react-router-dom";
 import { baseColor } from "../../../config/setting";
+import { handleConfirmation } from "../../alertDialog";
 
 const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listData = [], listEmployee, targetDate = null, showForm = false, setWidth = '100%', handleChange, btnCancel = false, setBtnCancel, btnAction = true, setBtnAction, btnApprove = false, handleAfterExecute, actionOpenDetail, inputLock = false, btnAdd = false}) => {
     const navigate = useNavigate();
@@ -43,12 +44,14 @@ const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit
             "isApproved2": null
         }
 
-        postData({url: 'Unattendances', formData: requestData})?.then((res) => {
-            if(handleAfterExecute){
-                handleAfterExecute();
-            }else{
-                navigate(0);
-            }
+        handleConfirmation('Apakah anda yakin?', 'Data akan disimpan kedalam sistem', 'warning', () => {            
+            postData({url: 'Unattendances', formData: requestData})?.then((res) => {
+                if(handleAfterExecute){
+                    handleAfterExecute();
+                }else{
+                    navigate(0);
+                }
+            })
         })
     }
 
@@ -64,23 +67,27 @@ const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit
 
             requestData?.push(request);
 
-            postData({url: 'Unattendances/Approval', formData: requestData})?.then((res) => {
+            handleConfirmation('Apakah anda yakin?', 'Data akan disimpan kedalam sistem', 'warning', () => {            
+                postData({url: 'Unattendances/Approval', formData: requestData})?.then((res) => {
+                    if(handleAfterExecute){
+                        handleAfterExecute();
+                    }else{
+                        navigate(0);
+                    }
+                })
+            })
+        }
+    }
+
+    const handleCancel = () => {
+        handleConfirmation('Apakah anda yakin?', 'Data akan dihapus dari sistem', 'warning', () => {            
+            deleteData({url: `Unattendances`, id: dataObj?.id})?.then((res) => {
                 if(handleAfterExecute){
                     handleAfterExecute();
                 }else{
                     navigate(0);
                 }
             })
-        }
-    }
-
-    const handleCancel = () => {
-        deleteData({url: `Unattendances`, id: dataObj?.id})?.then((res) => {
-            if(handleAfterExecute){
-                handleAfterExecute();
-            }else{
-                navigate(0);
-            }
         })
     }
 

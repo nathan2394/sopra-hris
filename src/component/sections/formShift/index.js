@@ -9,6 +9,7 @@ import { add } from "../../../config/icon";
 import { useAPI } from "../../../config/fetchApi";
 import { useNavigate } from "react-router-dom";
 import SearchableSelect from "../../select2";
+import { handleConfirmation } from "../../alertDialog";
 
 const FormShift = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listShift = [], showLogs = true, listLog = [], targetDate = null, showForm = false, setWidth = '100%', handleChange, btnApprove = false, btnCancel = false, btnAction = true, handleAfterExecute, inputLock = false, btnAdd = false }) => {
     const navigate = useNavigate();
@@ -89,15 +90,16 @@ const FormShift = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listS
             "hourDiff": dataObj?.hourDiff,
             "remarks": "",
         }
-        console.log(requestData);
 
-        // postData({url: 'EmployeeTransferShifts', formData: requestData})?.then((res) => {
-        //     if(handleAfterExecute){
-        //         handleAfterExecute();
-        //     }else{
-        //         navigate(0);
-        //     }
-        // })
+        handleConfirmation('Apakah anda yakin?', 'Data akan disimpan kedalam sistem', 'warning', () => {
+            postData({url: 'EmployeeTransferShifts', formData: requestData})?.then((res) => {
+                if(handleAfterExecute){
+                    handleAfterExecute();
+                }else{
+                    navigate(0);
+                }
+            })
+        })
     }
 
     const handleApproveReject = (val) => {
@@ -112,12 +114,14 @@ const FormShift = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listS
 
             requestData?.push(request)
 
-            postData({url: 'EmployeeTransferShifts/Approval', formData: requestData})?.then((res) => {
-                if(handleAfterExecute){
-                    handleAfterExecute();
-                }else{
-                    navigate(0);
-                }
+            handleConfirmation('Apakah anda yakin?', 'Data akan dihapus dari sistem', 'warning', () => {            
+                postData({url: 'EmployeeTransferShifts/Approval', formData: requestData})?.then((res) => {
+                    if(handleAfterExecute){
+                        handleAfterExecute();
+                    }else{
+                        navigate(0);
+                    }
+                })
             })
         }
     }
