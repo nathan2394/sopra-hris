@@ -431,9 +431,9 @@ const EmployeeForm = ({setIsLoading}) => {
                             <div className="flex flex-row w-full mt-5">
                                 <MyDatePicker handleAction={handleChange} name={`startWorkingDate`} readOnly={isAdd ? false : isReadOnly}  label={'Tanggal Mulai Bekerja'} value={formData?.startWorkingDate}/>
                                 <div className="mx-2" />
-                                <SearchableSelect handleAction={handleChange}  name={`groupID`} label={'Grade'} placeHolder={'Select Grade'} options={listGroup} value={formData?.groupID} isDisabled={isAdd ? false : isReadOnly} />
+                                <MyDatePicker handleAction={handleChange} name={`startJointDate`} readOnly={isAdd ? false : isReadOnly}  label={'Tanggal Pengangkatan Kerja'} value={formData?.startJointDate}/>
                                 <div className="mx-2" />
-                                <SearchableSelect handleAction={handleChange}  name={`functionID`} label={'Fungsi'} placeHolder={'Select Function'} options={listFunc} value={formData?.functionID} isDisabled={isAdd ? false : isReadOnly} />
+                                <SearchableSelect handleAction={handleChange}  name={`employeeTypeID`} label={'Type'} placeHolder={'Select Type'} options={listType} value={formData?.employeeTypeID} isDisabled={isAdd ? false : isReadOnly} />
                             </div>
                             <div className="flex flex-row w-full">
                                 <SearchableSelect handleAction={handleChange}  name={`departmentID`} label={'Departemen'} placeHolder={'Select Departmen'} options={listDepart} value={formData?.departmentID} isDisabled={isAdd ? false : isReadOnly} />
@@ -444,9 +444,9 @@ const EmployeeForm = ({setIsLoading}) => {
                                 <SearchableSelect handleAction={handleChange}  name={`employeeJobTitleID`} label={'Job Title'} placeHolder={'Select Job Title'} options={listJobTitle} value={formData?.employeeJobTitleID} isDisabled={isAdd ? false : isReadOnly} />
                             </div>
                             <div className="flex flex-row w-full">
-                                <SearchableSelect handleAction={handleChange}  name={`employeeTypeID`} label={'Type'} placeHolder={'Select Type'} options={listType} value={formData?.employeeTypeID} isDisabled={isAdd ? false : isReadOnly} />
+                                <SearchableSelect handleAction={handleChange}  name={`groupID`} label={'Grade'} placeHolder={'Select Grade'} options={listGroup} value={formData?.groupID} isDisabled={isAdd ? false : isReadOnly} />
                                 <div className="mx-2" />
-                                <Input handleAction={handleChange} setName={`accountNo`} readOnly={isAdd ? false : isReadOnly} label={'Account No.'} type={'text'} value={formatText(formData?.accountNo)} />
+                                <SearchableSelect handleAction={handleChange}  name={`functionID`} label={'Fungsi'} placeHolder={'Select Function'} options={listFunc} value={formData?.functionID} isDisabled={isAdd ? false : isReadOnly} />
                                 <div className="mx-2" />
                                 <Input handleAction={handleChange} setName={`bank`} readOnly={isAdd ? false : isReadOnly} label={'Bank'} type={'text'} value={formatText(formData?.bank)} />
                             </div>
@@ -455,7 +455,7 @@ const EmployeeForm = ({setIsLoading}) => {
                                 <div className="mx-2" />
                                 <Input handleAction={handleChange} setName={`bpjskes`} readOnly={isAdd ? false : isReadOnly} label={'BPJSKES'} type={'text'} value={formatText(formData?.bpjskes)} />
                                 <div className="mx-2" />
-                                <Input handleAction={handleChange} setName={`basicSalary`} readOnly={isAdd ? false : isReadOnly} label={'Basic Salary'} type={'text'} value={formatText(formData?.basicSalary)} />
+                                <Input handleAction={handleChange} setName={`accountNo`} readOnly={isAdd ? false : isReadOnly} label={'Account No.'} type={'text'} value={formatText(formData?.accountNo)} />
                             </div>
                             <div className="flex flex-row w-full">
                                 <Input handleAction={handleChange} setName={`absentID`} readOnly={isAdd ? false : isReadOnly} label={'PIN'} type={'text'} value={formatText(formData?.absentID)} />
@@ -463,6 +463,9 @@ const EmployeeForm = ({setIsLoading}) => {
                                 <SearchableSelect handleAction={handleChange}  name={`shiftID`} label={'Shift'} placeHolder={'Select Type'} options={listShift} value={formData?.shiftID} isDisabled={isAdd ? false : isReadOnly} />
                                 <div className="mx-2" />
                                 <SearchableSelect handleAction={handleChange}  name={`groupShiftID`} label={'Group Shift'} placeHolder={'Select Type'} options={listGroupShift} value={formData?.groupShiftID} isDisabled={isAdd ? false : isReadOnly} />
+                            </div>
+                            <div className="flex flex-row w-full">
+                            <Input handleAction={handleChange} setName={`basicSalary`} setWidth="32%" readOnly={isAdd ? false : isReadOnly} label={'Basic Salary'} type={'text'} value={formatText(formData?.basicSalary)} />
                             </div>
                         </div>
                     </div>
@@ -515,7 +518,8 @@ const EmployeeForm = ({setIsLoading}) => {
                                 bpjs: masterPayroll?.length > 0 ? masterPayroll?.find(obj => obj?.year === getCurrentDate('year'))?.bpjs : 0,
                                 employeeId: getId,
                                 khusus: masterPayroll?.length > 0 ? masterPayroll?.find(obj => obj?.year === getCurrentDate('year'))?.utKhusus : 0,
-                                operational: masterPayroll?.length > 0 ? masterPayroll?.find(obj => obj?.year === getCurrentDate('year'))?.utOperational : 0
+                                operational: masterPayroll?.length > 0 ? masterPayroll?.find(obj => obj?.year === getCurrentDate('year'))?.utOperational : 0,
+                                startJointDate: formData?.startJointDate,
                             }))
                             navigate('/calculator');
                         }} />

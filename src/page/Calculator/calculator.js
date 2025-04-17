@@ -8,6 +8,7 @@ import Button from "../../component/button";
 import { baseColor } from "../../config/setting";
 import { formatText } from "../../config/helper";
 import { useAPI } from "../../config/fetchApi";
+import MyDatePicker from "../../component/date_picker";
 
 const Calculator = ({setIsLoading}) => {
     const { loadData, postData } = useAPI();
@@ -24,7 +25,8 @@ const Calculator = ({setIsLoading}) => {
         payrollType: calcLocaldata.payrollType?.toLowerCase() ?? "",
         bpjs: calcLocaldata.bpjs ?? 0,
         khusus: calcLocaldata.khusus ?? 0,
-        operational: calcLocaldata.operational ?? 0
+        operational: calcLocaldata.operational ?? 0,
+        startJointDate: calcLocaldata?.startJointDate ?? 0,
     });
     
     const [listGroup, setListGroup] = useState([]);
@@ -70,7 +72,8 @@ const Calculator = ({setIsLoading}) => {
             payrollType: "",
             bpjs: 0,
             khusus: 0,
-            operational: 0
+            operational: 0,
+            startJointDate: 0
         })
     }
 
@@ -126,19 +129,21 @@ const Calculator = ({setIsLoading}) => {
                 <div className="flex flex-row flex-wrap w-full min-h-[400px] pt-2">
                     <SearchableSelect handleAction={handleChangeSelect} name={`payrollType`} setWidth="48%" label={'Tipe Payroll'} placeHolder={'Select Payroll Type'} options={payrollListType} value={formData?.payrollType} />
                     <div className="mx-2" />
+                    <MyDatePicker handleAction={handleChange} name={`startJointDate`} setWidth="48%" label={'Tanggal Pengangkatan Kerja'} value={formData?.startJointDate}/>
                     <SearchableSelect handleAction={handleChangeSelect} name={`groupID`} setWidth="48%" label={'Grade'} placeHolder={'Select Grade'} options={listGroup} value={formData?.groupID} />
+                    <div className="mx-2" />
                     <Input textAlign={'right'} handleAction={handleChange} label={'Basic Salary'} setName={'basicSalary'} setWidth="48%" value={formData?.basicSalary} type={'number'} />
-                    <div className="mx-2" />
                     <Input textAlign={'right'} handleAction={handleChange} label={'HKS'} setName={'hks'} setWidth="48%" value={formData?.hks} type={'number'} />
+                    <div className="mx-2" />
                     <Input textAlign={'right'} handleAction={handleChange} label={'HKA'} setName={'hka'} setWidth="48%" value={formData?.hka} type={'number'} />
-                    <div className="mx-2" />
                     <Input textAlign={'right'} handleAction={handleChange} label={'ATT'} setName={'att'} setWidth="48%" value={formData?.att} type={'number'} />
+                    <div className="mx-2" />
                     <Input textAlign={'right'} handleAction={handleChange} label={'Meal'} setName={'meal'} setWidth="48%" value={formData?.meal} type={'number'} />
-                    <div className="mx-2" />
                     <Input textAlign={'right'} handleAction={handleChange} label={'OVT'} setName={'ovt'} setWidth="48%" value={formData?.ovt} type={'number'} />
-                    <Input textAlign={'right'} handleAction={handleChange} label={'BPJS'} setName={'bpjs'} setWidth="48%" value={formData?.bpjs} type={'number'} />
                     <div className="mx-2" />
+                    <Input textAlign={'right'} handleAction={handleChange} label={'BPJS'} setName={'bpjs'} setWidth="48%" value={formData?.bpjs} type={'number'} />
                     <Input textAlign={'right'} handleAction={handleChange} label={'Khusus'} setName={'khusus'} setWidth="48%" value={formData?.khusus} type={'number'} />
+                    <div className="mx-2" />
                     <Input textAlign={'right'} handleAction={handleChange} label={'Operational'} setName={'operational'} setWidth="48%" value={formData?.operational} type={'number'} />
                 </div>
                 <div className="bg-[#ddd] my-3 h-[1.5px]" />

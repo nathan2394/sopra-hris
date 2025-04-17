@@ -155,6 +155,16 @@ export const convertDate = (val, target = 'default') => {
     return '-';
 }
 
+export const addDays = (date, count) => {
+    let currentDate = new Date(date); // This gets the current date and time
+
+    // Add 1 day to currentDate
+    currentDate.setDate(currentDate.getDate() + count);
+
+    // Now currentDate holds the date with 1 day added
+    return currentDate;
+}
+
 export const getMonthName = (monthNumber) => {
     const months = [
         "January", "February", "March", "April", 
@@ -163,6 +173,23 @@ export const getMonthName = (monthNumber) => {
     ];
     
     return months[monthNumber - 1];
+}
+
+export const isValidTimeFormat = (time) => {
+    // Regex to match time in HH:mm:ss format
+    const regex = /^([01]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])$/;
+    return regex.test(time);
+}
+
+export const convertTime = (dateTime) => {
+    let dateStr = dateTime;
+    let date = new Date(dateStr);
+    date.setSeconds(0);  // Set seconds to 0
+    date.setMilliseconds(0);  // Set milliseconds to 0
+    
+    // Now format the time to 'HH:mm:ss'
+    let formattedTime = date.toTimeString().split(' ')[0];
+    return formattedTime;
 }
 
 export const formatHeader = (value) => {

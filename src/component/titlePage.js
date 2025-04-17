@@ -32,12 +32,6 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                                     </div>
                                 </Link>
                             }
-                            {/* <Link to={setNavigateBack}>
-                                <div className="flex flex-row items-center">
-                                    <IconImage size="small" source={source} />
-                                    <p className="font-bold text-sm pl-2">{label}</p>
-                                </div>
-                            </Link> */}
                             {label2 && <>
                                 <p className="font-bold text-sm px-2">{`>`}</p>
                                 <Link to={setNavigateBack2}>
@@ -93,7 +87,7 @@ const TitlePage = ({label, label2, subLabel = '', subMenu = [], source, type = '
                     <div className="flex flex-row w-full justify-end">
                         {subMenu?.map((data, idx) => (
                             <div className="ml-2" key={idx}>
-                                <Button bgcolor={subLabel === data?.title ? baseColor : '#33333340'} color={'white'} text={data?.title} handleAction={data?.navRoute ? () => navigate(data?.navRoute) : data?.handleAction} />
+                                <Button bgcolor={subLabel?.includes(data?.title) ? baseColor : '#33333340'} color={'white'} text={data?.title} handleAction={data?.navRoute ? () => navigate(data?.navRoute) : data?.handleAction} />
                             </div>
                         ))}
                     </div>
