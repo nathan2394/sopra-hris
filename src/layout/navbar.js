@@ -147,7 +147,7 @@ const Navbar = ({setAuth}) => {
         groupName: 'Upload Data',
         list: [
           {
-            title: 'Employee Meal',
+            title: 'Uang Makan Karyawan',
             navRoute: '/meal',
             icon: list_g,
             icon_b: list,

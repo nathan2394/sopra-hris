@@ -17,6 +17,7 @@ import SearchableSelect from "../../component/select2";
 import StartEndDatePick from "../../component/startEndDatePick";
 import { useAPI } from "../../config/fetchApi";
 import MyDatePicker from "../../component/date_picker";
+import DataTable from "../../component/dataTable";
 
 const ShiftEmployee = ({setIsLoading}) => {
     const navigate = useNavigate();
@@ -124,7 +125,7 @@ const ShiftEmployee = ({setIsLoading}) => {
           name: val?.name
         })) ?? [];
         //exportToExcel(combineArr, `Template_Shift_${todayDate}`, 'default');
-        generateExcel(combineArr, listOptions, listDatePeriod?.length, listOptions?.length, `Template_Shift_${todayDate}`);
+        generateExcel(combineArr, listOptions, listDatePeriod?.length, listOptions?.length, 68, `Template_Shift_${todayDate}`);
       });
     }
 
@@ -140,7 +141,8 @@ const ShiftEmployee = ({setIsLoading}) => {
             </div>
             <div>
                 {!isLoadData ? 
-                    <Table dataTable={dataUploadTable} isAction={true} detailPath={'/#'}  />
+                    // <Table dataTable={dataUploadTable} isAction={true} detailPath={'/#'}  />
+                    <DataTable dataTable={dataUploadTable} />
                     :
                     <div className="mt-20">
                         <LoadingIndicator position="bottom" label="Loading..." showText={true} size="large" />

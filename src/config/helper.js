@@ -55,7 +55,7 @@ export const exportToExcel = (dataTable, filename = 'data', template = 'default'
 }
 
 //add select options to the value
-export const generateExcel = (mainList, optionList, countColumn, countList, filename = 'data') => {
+export const generateExcel = (mainList, optionList, countColumn, countList, asciiNum, filename = 'data') => {
     const arr1 = mainList;
     const arr2 = optionList;
     
@@ -76,18 +76,20 @@ export const generateExcel = (mainList, optionList, countColumn, countList, file
         const sheet2 = workbook.sheet("Sheet2");
 
         // Define Dropdown List Source (Absolute Range)
-        const dropdownRange = `Sheet2!$A$2:$A$${countList}`; // Absolute reference to column A in Sheet2
+        const dropdownRange = `Sheet2!$A$3:$A$${countList}`; // Absolute reference to column A in Sheet2
 
-        arr1.forEach((_, rowIndex) => {
-            for (let index = 0; index < countColumn; index++) {
-                const colLetter = String.fromCharCode(68 + index); // 'D' = 68 (ASCII)
-                sheet1.cell(`${colLetter}${rowIndex + 2}`).dataValidation({
-                    type: "list",
-                    showDropDown: true,
-                    formula1: dropdownRange // Set dropdown list source
-                });
-            }
-        });
+        if(countColumn > 0){
+            arr1.forEach((_, rowIndex) => {
+                for (let index = 0; index < countColumn; index++) {
+                    const colLetter = String.fromCharCode(asciiNum + index); // 'D' = 68 (ASCII)
+                    sheet1.cell(`${colLetter}${rowIndex + 2}`).dataValidation({
+                        type: "list",
+                        showDropDown: true,
+                        formula1: dropdownRange // Set dropdown list source
+                    });
+                }
+            });
+        }
 
         // Step 6: Export the Updated Excel File
         return workbook.outputAsync().then(data => {

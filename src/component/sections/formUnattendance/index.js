@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import InputContent from "../inputContent";
 import Input from "../../input";
 import MyDatePicker from "../../date_picker";
-import { convertDate, formatText } from "../../../config/helper";
+import { convertDate, convertTime, formatText } from "../../../config/helper";
 import SearchableSelect from "../../select2";
 import IconImage from "../../icon_img";
 import { add_g, approve, empty, pending, reject } from "../../../config/icon";
@@ -18,7 +18,7 @@ const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit
 
     useEffect(() => {
         if(dataObj?.startDate && dataObj?.endDate){
-            setDuration(Math.ceil((new Date(dataObj?.endDate) - new Date(dataObj?.startDate)) / (1000 * 60 * 60 * 24)));
+            setDuration(Math.ceil((new Date(dataObj?.endDate) - new Date(dataObj?.startDate)) / (1000 * 60 * 60 * 24)) + 1);
         }
     }, [dataObj?.startDate, dataObj?.endDate]);
 
