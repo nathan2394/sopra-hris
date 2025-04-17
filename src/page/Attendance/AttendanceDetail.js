@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
 // import { deleteData, loadData } from "../../config/api";
 import { useAPI } from "../../config/fetchApi";
-import { convertDate, convertTime, exportToExcel, formatText, getCurrentDate, getQueryParam } from "../../config/helper";
+import { convertDate, getQueryParam } from "../../config/helper";
 import Button from "../../component/button";
 import { baseColor } from "../../config/setting";
 import TitlePage from "../../component/titlePage";
-import { add_g, employee, filter, kehadiran, list, reload } from "../../config/icon";
+import { kehadiran } from "../../config/icon";
 import LoadingIndicator from "../../component/loading_indicator";
 import DataTable from "../../component/dataTable";
 import FormShift from "../../component/sections/formShift";
@@ -48,7 +48,7 @@ const AttendanceDetail = ({setIsLoading}) => {
 
     const [btnAction, setBtnAction] = useState(false);
     const [btnCancel, setBtnCancel] = useState(false);
-    const [inputLock, setInputLock] = useState(false);
+    const [inputLock] = useState(false);
 
     const [formData, setFormData] = useState({
         attendanceID: 0,
@@ -61,31 +61,6 @@ const AttendanceDetail = ({setIsLoading}) => {
 
     const [attendanceData, setAttendanceData] = useState({
         date: ''
-    })
-
-    const [unattendanceDetail, setUnattendanceDetail] = useState({
-        employeeID: 0,
-        unattendanceTypeID: 0
-    })
-
-    const [ovtDetail, setOvtDetail] = useState({
-        employeeID: 0,
-        transDate: "",
-        startDate: "",
-        endDate: "",
-        reasonID: 0,
-        description: "",
-    })
-
-    const [shiftDetail, setShiftDetail] = useState({
-        employeeID: getId,
-        date: '',
-        clockIn: null,
-        clockOut: null,
-        clockInWeekend: null,
-        clockOutWeekend: null,
-        shiftName: '',
-        attendanceID: '',
     })
 
     const [employeeName, setEmployeeName] = useState(null);
@@ -241,14 +216,6 @@ const AttendanceDetail = ({setIsLoading}) => {
 
     const handleViewOvt = (id, listData) => {
         const target = listData?.find((obj) => obj?.id === id);
-        setOvtDetail({
-            employeeID: getId,
-            transDate: "",
-            startDate: target?.startDate,
-            endDate: target?.endDate,
-            reasonID: target?.reasonID,
-            description: target?.description,
-        });
         setIsEdit(true);
     }
 
@@ -270,7 +237,6 @@ const AttendanceDetail = ({setIsLoading}) => {
             startDate: showContent !== 'Overtime' ? data?.transDate : (`${convertDate(data?.transDate, 'input')} ${shiftData?.clockOut || "00:00"}`),
             endDate: showContent !== 'Overtime' ? data?.transDate : (`${convertDate(data?.transDate, 'input')} ${shiftData?.clockOut || "00:00"}`),
         }));
-        setUnattendanceDetail({employeeID: getId, unattendanceTypeID: target?.unattendance })
         setRowActive(data?.id);
         
         if(showContent ==='Shift'){

@@ -4,7 +4,7 @@ import { baseColor } from "../config/setting";
 import Button from "./button";
 import { minus, plus } from "../config/icon";
 
-const Input = ({label, subLabel, targetRef = null, content = 'input', isFocus = false, setName, type, placeholder, sufix, setWidth = '100%', handleKeyDown, handleAction, value = '', textAlign = 'left', readOnly = false, showBtnNum = false}) => {
+const Input = ({label, subLabel, targetRef = null, content = 'input', isFocus = false, isRequierd = false, setName, type, placeholder, sufix, setWidth = '100%', handleKeyDown, handleAction, value = '', textAlign = 'left', readOnly = false, showBtnNum = false}) => {
     const inputRef = useRef(null);
 
     const formatDate = (dateString, target) => {
@@ -44,7 +44,7 @@ const Input = ({label, subLabel, targetRef = null, content = 'input', isFocus = 
 
     return (
         <div className={`${label ? 'mb-5' : '' }`} style={{width: setWidth }}>
-            {label && <label className="block mb-2 text-xs font-medium text-gray-900">{label} <span className="text-xs text-gray-400">{subLabel || ''}</span> </label> }
+            {label && <label className={`block mb-2 text-xs font-medium text-gray-900 ${isRequierd ? 'required-label' : ''}`}>{label} <span className="text-xs text-gray-400">{subLabel || ''}</span> </label> }
             {sufix ? 
                 <div className="flex">
                     <span className="inline-flex items-center px-3 text-sm border border-gray-300 rounded-l-lg">

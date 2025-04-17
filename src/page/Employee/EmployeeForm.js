@@ -10,6 +10,7 @@ import SearchableSelect from "../../component/select2";
 import Button from "../../component/button";
 import { useAPI } from "../../config/fetchApi";
 import MyDatePicker from "../../component/date_picker";
+import { handleConfirmation } from "../../component/alertDialog";
 // import MyDatePicker from "../../component/date_picker";
 
 const EmployeeForm = ({setIsLoading}) => {
@@ -48,16 +49,12 @@ const EmployeeForm = ({setIsLoading}) => {
             setIsHovered(initialList);
         }
     }, [])
-
-    console.log(listData)
     
     const currentIndex = listData?.findIndex(obj => obj?.id === parseInt(getId)) ?? 0
     const prevId = listData[currentIndex-1]?.id || 0;
     const nextId = listData[currentIndex+1]?.id || 0;
     const prevDataId = listData[0]?.id;
     const lastDataId = listData[listData?.length-1]?.id;
-
-    console.log(prevId, ':prevId', nextId, ':nextId', prevDataId, ':prevDataId', lastDataId, ':lastDataId', getId, ':getId');
 
     const [formData, setFormData] = useState({
         name: '',
@@ -340,12 +337,16 @@ const EmployeeForm = ({setIsLoading}) => {
 
         if(formBody?.employeeID){
             if(isAdd && !getId){
-                postData({url: 'Employees', formData: formBody})?.then((res) => {
-                    navigate('/employee');
+                handleConfirmation('Apakah anda yakin?', 'Data akan disimpan kedalam sistem', 'warning', () => {
+                    postData({url: 'Employees', formData: formBody})?.then((res) => {
+                        navigate('/employee');
+                    })
                 })
             }else{
-                updateData({url: 'Employees', formData: formBody})?.then((res) => {
-                    fetchEmployeeDetail();
+                handleConfirmation('Apakah anda yakin?', 'Data akan disimpan kedalam sistem', 'warning', () => {                    
+                    updateData({url: 'Employees', formData: formBody})?.then((res) => {
+                        fetchEmployeeDetail();
+                    })
                 })
             }
         }

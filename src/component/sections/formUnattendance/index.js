@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import InputContent from "../inputContent";
 import Input from "../../input";
 import MyDatePicker from "../../date_picker";
-import { convertDate, formatText } from "../../../config/helper";
+import { convertDate, convertTime, formatText } from "../../../config/helper";
 import SearchableSelect from "../../select2";
 import IconImage from "../../icon_img";
 import { add_g, approve, empty, pending, reject } from "../../../config/icon";
 import { useAPI } from "../../../config/fetchApi";
 import { useNavigate } from "react-router-dom";
 import { baseColor } from "../../../config/setting";
+import { handleConfirmation } from "../../alertDialog";
 
 const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listData = [], listEmployee, targetDate = null, showForm = false, setWidth = '100%', handleChange, btnCancel = false, setBtnCancel, btnAction = true, setBtnAction, btnApprove = false, handleAfterExecute, actionOpenDetail, inputLock = false, btnAdd = false}) => {
     const navigate = useNavigate();
@@ -17,7 +18,7 @@ const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit
 
     useEffect(() => {
         if(dataObj?.startDate && dataObj?.endDate){
-            setDuration(Math.ceil((new Date(dataObj?.endDate) - new Date(dataObj?.startDate)) / (1000 * 60 * 60 * 24)));
+            setDuration(Math.ceil((new Date(dataObj?.endDate) - new Date(dataObj?.startDate)) / (1000 * 60 * 60 * 24)) + 1);
         }
     }, [dataObj?.startDate, dataObj?.endDate]);
 
@@ -43,12 +44,14 @@ const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit
             "isApproved2": null
         }
 
-        postData({url: 'Unattendances', formData: requestData})?.then((res) => {
-            if(handleAfterExecute){
-                handleAfterExecute();
-            }else{
-                navigate(0);
-            }
+        handleConfirmation('Apakah anda yakin?', 'Data akan disimpan kedalam sistem', 'warning', () => {            
+            postData({url: 'Unattendances', formData: requestData})?.then((res) => {
+                if(handleAfterExecute){
+                    handleAfterExecute();
+                }else{
+                    navigate(0);
+                }
+            })
         })
     }
 
@@ -64,23 +67,27 @@ const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit
 
             requestData?.push(request);
 
-            postData({url: 'Unattendances/Approval', formData: requestData})?.then((res) => {
+            handleConfirmation('Apakah anda yakin?', 'Data akan disimpan kedalam sistem', 'warning', () => {            
+                postData({url: 'Unattendances/Approval', formData: requestData})?.then((res) => {
+                    if(handleAfterExecute){
+                        handleAfterExecute();
+                    }else{
+                        navigate(0);
+                    }
+                })
+            })
+        }
+    }
+
+    const handleCancel = () => {
+        handleConfirmation('Apakah anda yakin?', 'Data akan dihapus dari sistem', 'warning', () => {            
+            deleteData({url: `Unattendances`, id: dataObj?.id})?.then((res) => {
                 if(handleAfterExecute){
                     handleAfterExecute();
                 }else{
                     navigate(0);
                 }
             })
-        }
-    }
-
-    const handleCancel = () => {
-        deleteData({url: `Unattendances`, id: dataObj?.id})?.then((res) => {
-            if(handleAfterExecute){
-                handleAfterExecute();
-            }else{
-                navigate(0);
-            }
         })
     }
 
@@ -90,12 +97,12 @@ const FormUnattendance = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit
                 <div className="flex flex-row flex-wrap w-full">
                     <>
                         {listEmployee && <SearchableSelect handleAction={handleChange} name={`employeeID`} setPosition={'bottom'} label={'Cari Karyawan'} placeHolder={'Pilih Karyawan'} setWidth="100%" options={listEmployee} value={dataObj?.employeeID} isDisabled={isEdit} /> }
-                        <MyDatePicker handleAction={handleChange} label={'Mulai Tanggal'} placeholder="Pilih Tanggal" name={'startDate'} setWidth="48%" value={dataObj?.startDate}  readOnly={inputLock} />
+                        <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Mulai Tanggal'} placeholder="Pilih Tanggal" name={'startDate'} setWidth="48%" value={dataObj?.startDate}  readOnly={inputLock} />
                         <div className="mx-2" />
-                        <MyDatePicker handleAction={handleChange} label={'Sampai Tanggal'} placeholder="Pilih Tanggal" name={'endDate'} setWidth="48%" value={dataObj?.endDate}  readOnly={inputLock} />
+                        <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Sampai Tanggal'} placeholder="Pilih Tanggal" name={'endDate'} setWidth="48%" value={dataObj?.endDate}  readOnly={inputLock} />
                         <Input label={'Durasi Hari'} placeholder={'Durasi Ketidakhadiran'} setWidth="48%" value={`${duration} Hari`} readOnly={true} />
                         <div className="mx-2" />
-                        <SearchableSelect handleAction={handleChange} name={`unattendanceTypeID`} setPosition={'bottom'} label={'Tipe Ketidakhadiran'} placeHolder={'Tipe Ketidakhadiran'} setWidth="48%" options={listType} value={dataObj?.unattendanceTypeID} isDisabled={inputLock} />
+                        <SearchableSelect isRequierd={true} handleAction={handleChange} name={`unattendanceTypeID`} setPosition={'bottom'} label={'Tipe Ketidakhadiran'} placeHolder={'Tipe Ketidakhadiran'} setWidth="48%" options={listType} value={dataObj?.unattendanceTypeID} isDisabled={inputLock} />
                     </>
                     <Input handleAction={handleChange} label={'Alasan'} subLabel={'(Opsional)'} setName={'description'} placeholder={'isi alasan'} content="textarea" value={dataObj?.description} readOnly={inputLock} />
                 </div>

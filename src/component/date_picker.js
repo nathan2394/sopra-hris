@@ -5,7 +5,7 @@ import { calendar, calendar_g, clock_g } from "../config/icon";
 import DatePicker from "react-datepicker";
 import { convertDate, formatText } from "../config/helper";
 
-const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', value, setValue, startDateVal, setStartDateVal, endDateVal, setEndDateVal, isRange = false, setList, isTimeOnly = false, isMinDateValidation = false, readOnly = false, handleAction}) => {
+const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', value, setValue, startDateVal, setStartDateVal, endDateVal, setEndDateVal, isRange = false, setList, isTimeOnly = false, isRequierd = false, isMinDateValidation = false, readOnly = false, handleAction}) => {
   const ref = useRef(null);
   const parseDate = (val) => {
     if (!val) return null;
@@ -101,7 +101,7 @@ const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', va
 
   return (
     <div className={`${label ? "mb-5" : ""}`} style={{width: setWidth}}>
-      {label && <label className="block mb-2 text-xs font-medium text-gray-900">{label}</label> }
+      {label && <label className={`block mb-2 text-xs font-medium text-gray-900 ${isRequierd ? 'required-label' : ''}`}>{label}</label> }
       <div className={`relative border border-gray-300 text-gray-900 rounded-lg flex w-full py-[3.5px] ${readOnly ? 'pointer-events-none bg-[#f4f2f2cc]' : 'bg-white'}`}  onClick={openDatePicker}>
         <DatePicker
             selected={isRange ? startDate : date}

@@ -15,6 +15,7 @@ import LoadingIndicator from "../../component/loading_indicator";
 import CollapseMenu from "../../component/collapse_menu";
 import AlertPopUp from "../../component/popupAlert";
 import DataTable from "../../component/dataTable";
+import SearchableSelect from "../../component/select2";
 
 const AttendanceData = ({setIsLoading}) => {
     const { deleteData, loadData } = useAPI();
@@ -22,6 +23,7 @@ const AttendanceData = ({setIsLoading}) => {
 
     const userData = JSON.parse(localStorage.getItem('userdata'));
     const localSetPeriod = JSON.parse(localStorage?.getItem('setPeriod'));
+    const localFilter = JSON.parse(localStorage?.getItem('filterEmpl'));
 
     const [isSubmit, setIsSubmit] = useState(false);
     const [listData, setListData] = useState([]);
@@ -36,6 +38,10 @@ const AttendanceData = ({setIsLoading}) => {
     const [checkedValue, setCheckValue] = useState({});
     const [selectedValues, setSelectedValues] = useState({});
 
+    const [listSearch, setlistSearch] = useState({
+        name: [],
+    })
+    const [firstLoad, setFirstLoad] = useState(false);
     // const [endDate, setEndDate] = useState(localSetPeriod?.endDate || convertDate(currentDate, 'input'));
     // const [startDate, setStartDate] = useState(localSetPeriod?.startDate || convertDate(currentDate.setDate(currentDate.getDate() - 30), 'input'));
 
@@ -46,7 +52,7 @@ const AttendanceData = ({setIsLoading}) => {
     const [startDate, setStartDate] = useState(localSetPeriod?.startDate || convertDate(prevMonthDate, 'input'));
 
     const [searchForm, setSearchForm] = useState({
-        name    : '',
+        name    : localFilter?.name ?? '',
         nik     : '',
         ktp     : '',
         group   : 0,
@@ -175,6 +181,13 @@ const AttendanceData = ({setIsLoading}) => {
                         index: idx
                     }
                 ))));
+
+                if(!firstLoad){
+                    setlistSearch({
+                        name: res.data.map((obj) => ({label: obj?.employeeName, value: obj?.employeeName})),
+                    })
+                    setFirstLoad(true);
+                }
             }else{
                 setListData([]);
                 setIsLoadData(false);
@@ -207,6 +220,9 @@ const AttendanceData = ({setIsLoading}) => {
 
     const submitSearch = () => {
         fetchAttendanceData();
+        localStorage?.setItem('filterEmpl', JSON.stringify({
+            name    : searchForm?.name,
+        }))
         
         let arr = [];
         if(searchInput?.name) arr?.push(`name: ${searchInput?.name}`);
@@ -228,17 +244,10 @@ const AttendanceData = ({setIsLoading}) => {
         });
     };
 
-    const handleKeyDown = (event) => {
-        if (event.key === "Enter") {
-            submitSearch();
-        }
-      };
-
     const removeFilters = (target) => {
         if(target){
             const arrFilter = listFilter?.filter(val => !val?.includes(target))
             setListFilter(arrFilter);
-            //console.log(target?.toLowerCase()?.includes('name'))
             if(target?.toLowerCase()?.includes('name')) {
                 setSearchForm({...searchForm, name: ''}) 
                 setSearchInput({...searchInput, name: ''}) 
@@ -253,19 +262,6 @@ const AttendanceData = ({setIsLoading}) => {
             }
         }
     }
-
-    const removeFilter = (label, itemId) => {
-        setCheckValue((prev) => {
-          const newValues = { ...prev };
-          newValues[label] = newValues[label].filter((v) => v.id !== itemId);
-    
-          if (newValues[label].length === 0) {
-            delete newValues[label];
-          }
-    
-          return newValues;
-        });
-    };
 
     const renderModal = () => (
         <Modal isOpen={isModalOpen} onClose={closeModal}>
@@ -284,9 +280,8 @@ const AttendanceData = ({setIsLoading}) => {
                 </div>
                 {/* <!-- Modal body --> */}
                 <div className="p-6">
-                    <div className="flex flex-col">
-                        <Input label={'Name'} isFocus={true} setName='name' value={searchInput.name} type={'text'} placeholder={"Search Employee Name..."} handleKeyDown={handleKeyDown} handleAction={handleChange} />
-                        <div className="mx-2" />
+                    <div className="flex flex-row items-center w-full pb-4">
+                        <SearchableSelect handleAction={handleChange} isFocus={true} name={'name'} value={searchInput['name']} options={listSearch['name']} useSearchIcon={true} placeHolder={`Search Employee name...`} setPosition="bottom" />
                     </div>
                     <div className="flex flex-row w-full">
                         <Button text="Tutup" showBorder={true} position="center" bgcolor={'white'} color={baseColor} handleAction={() => closeModal()} />
