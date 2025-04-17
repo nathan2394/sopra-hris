@@ -113,6 +113,13 @@ const Navbar = ({setAuth}) => {
             role_eligible: [1,2,3,4]
           },
           {
+            title: 'Uang Makan Karyawan',
+            navRoute: '/meal',
+            icon: employee_g,
+            icon_b: employee,
+            role_eligible: [1,2,3,4]
+          },
+          {
             title: 'Cuti & Ijin',
             navRoute: '/unattendance',
             icon: list_g,
@@ -142,19 +149,6 @@ const Navbar = ({setAuth}) => {
           }
         ],
         role_eligible: [1,2,3,4]
-      },
-      {
-        groupName: 'Upload Data',
-        list: [
-          {
-            title: 'Uang Makan Karyawan',
-            navRoute: '/meal',
-            icon: list_g,
-            icon_b: list,
-            role_eligible: [1,2,3]
-          },
-        ],
-        role_eligible: [1,2,3]
       },
       {
         groupName: 'Report',
