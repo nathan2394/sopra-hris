@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import InputContent from "../inputContent";
 import Input from "../../input";
 import MyDatePicker from "../../date_picker";
-import { convertDate, formatText } from "../../../config/helper";
+import { addDays, convertDate, convertTime, formatText, isValidTimeFormat } from "../../../config/helper";
 import SearchableSelect from "../../select2";
 import { useAPI } from "../../../config/fetchApi";
 import { baseColor } from "../../../config/setting";
@@ -11,16 +11,78 @@ import { approve, empty, pending, reject } from "../../../config/icon";
 import IconImage from "../../icon_img";
 
 // const FormOvertime = ({dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listEmployee = [], handleChange, handleChangeSelect, handleView, targetDate = null, showForm = false, setWidth = '100%', btnApprove = false, btnCancel = false, btnAction = true, handleAfterExecute, inputLock = false, btnAdd = false}) => {
-const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listData = [], listEmployee, targetDate = null, showForm = false, setWidth = '100%', handleChange, btnCancel = false, setBtnCancel, btnAction = true, setBtnAction, btnApprove = false, handleAfterExecute, actionOpenDetail, inputLock = false, btnAdd = false}) => {
+const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listType = [], listData = [], listShift = [], listEmployee, targetDate = null, showForm = false, setWidth = '100%', handleChange, btnCancel = false, setBtnCancel, btnAction = true, setBtnAction, btnApprove = false, handleAfterExecute, actionOpenDetail, inputLock = false, btnAdd = false}) => {
     const navigate = useNavigate();
     const [duration, setDuration] = useState(dataObj?.duration || 0);
     const { deleteData, postData, loadData, updateData } = useAPI();
+    const [targetClockIn, setTargetClockIn] = useState(null);
+    const [targetClockOut, setTargetClockOut] = useState(null);
+
+    function getHourDifference(startTime, endTime) {
+        const [startHour, startMinute, startSecond] = convertTime(startTime).split(":").map(Number);
+        const [endHour, endMinute, endSecond] = convertTime(endTime).split(":").map(Number);
+        
+        // Create Date objects for the start and end time (arbitrary date, just for time comparison)
+        const startDate = new Date(1970, 0, 1, startHour, startMinute, startSecond);
+        const endDate = new Date(1970, 0, 1, endHour, endMinute, endSecond);
+        
+        // If the end time is earlier in the day (crosses midnight), add 24 hours to the end date
+        if (endDate < startDate) {
+          endDate.setDate(endDate.getDate() + 1); // Add 1 day to the end time
+        }
+        
+        // Calculate the difference in milliseconds
+        const diffMillis = endDate - startDate;
+        
+        // Convert milliseconds to hours
+        const diffHours = diffMillis / (1000 * 60 * 60);
+        // console.log(diffHours);
+        return diffHours;
+    }
+
+    function adjustTime(timeStr, difHour) {
+        if(timeStr && difHour !== null){
+            const [hours, minutes, seconds] = timeStr?.split(":")?.map(Number);
+            // Create a date object with today's date and given time
+            const date = new Date();
+            date.setHours(hours);
+            date.setMinutes(minutes);
+            date.setSeconds(seconds);
+
+            
+            // Adjust the hour
+            date.setHours(date.getHours() + parseInt(difHour));
+            
+            // Format it back to HH:MM:SS
+            const pad = (num) => String(num).padStart(2, "0");
+            if(!isNaN(pad(date.getHours()))){
+                const newTime = `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+                return newTime;
+            }
+        }
+    }
 
     useEffect(() => {
-        if(dataObj?.startDate && dataObj?.endDate){
-            setDuration((new Date(dataObj?.endDate) - new Date(dataObj?.startDate)) / (1000 * 60 * 60));
+        let differenceInHours = 0;
+        if(dataObj?.startDate){
+            setTargetClockIn(dataObj?.startDate);
+            setTargetClockOut(dataObj?.startDate);
+            if(isValidTimeFormat(dataObj?.startDate)){
+                console.log('2')
+            }
+            differenceInHours = getHourDifference(dataObj?.startDate, dataObj?.endDate);
+            handleChange({ target: { name: 'hourDiff', value: differenceInHours } });
+
         }
+        
     }, [dataObj?.startDate, dataObj?.endDate]);
+
+    useEffect(() => {
+        if(dataObj?.startDate){
+            let endTime = adjustTime(convertTime(dataObj?.startDate), dataObj?.hourDiff);
+            setTargetClockOut(endTime);
+        }
+    }, [dataObj?.hourDiff])
 
     const filteredList = listData?.filter(obj => {
         if(targetDate){
@@ -36,8 +98,8 @@ const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, li
         const requestData = {
             "employeeID": dataObj?.employeeID,
             "transDate": dataObj?.transDate,
-            "startDate": convertDate(dataObj?.transDate, 'input') + ' ' +  convertDate(dataObj?.startDate, 'time'),
-            "endDate": convertDate(dataObj?.transDate, 'input') + ' ' +  convertDate(dataObj?.endDate, 'time'),
+            "startDate": convertDate(dataObj?.transDate, 'input') + ' ' +  convertTime(targetClockIn),
+            "endDate": convertTime(targetClockIn) > targetClockOut ? convertDate(addDays(dataObj?.transDate, 1), 'input') + ' ' +  targetClockOut : convertDate(dataObj?.transDate, 'input') + ' ' +  targetClockOut,
             "reasonID": dataObj?.reasonID,
             "description": dataObj?.description,
         }
@@ -87,19 +149,19 @@ const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, li
         <InputContent userData={userData} showForm={showForm} handleAction={handleSubmit} handleApproveReject={handleApproveReject} isAdd={isAdd} setIsAdd={setIsAdd} isEdit={isEdit} setIsEdit={setIsEdit} setWidth={setWidth}  btnLabel="Tambah Data Lembur" showBtnApprove={btnApprove} showBtnAction={btnAction} setBtnAction={setBtnAction} showBtnCancel={btnCancel} setBtnCancel={setBtnCancel} handleCancel={handleCancel} showBtnAdd={btnAdd} showBtnBack={listData?.length > 0}>
             {(isAdd || isEdit) ?          
                 <div className="flex flex-row flex-wrap w-full">
-                    {/* <Input textAlign={'left'} handleAction={handleChange} label={'Mulai Tanggal'} setName={'startDate'} setWidth="48%" value={null} type={'date'} /> */}
-                    {listEmployee?.length > 0 ? <>
+                    {listEmployee?.length > 0 ? 
+                    <>
                         <SearchableSelect handleAction={handleChange} name={`employeeID`} setPosition={'bottom'} label={'Cari Karyawan'} placeHolder={'Pilih Karyawan'} setWidth="48%" options={listEmployee} value={dataObj?.employeeID} isDisabled={isEdit} />
                         <div className="mx-2" />
-                        <MyDatePicker handleAction={handleChange} label={'Tanggal Lembur'} name={'startDate'} setWidth="48%" value={targetDate ? targetDate : dataObj?.startDate} readOnly={inputLock} />
+                        <MyDatePicker handleAction={handleChange} label={'Tanggal Lembur'} name={'transDate'} setWidth="48%" value={targetDate ? targetDate : dataObj?.transDate} readOnly={inputLock} />
                     </>
                     :
-                    <MyDatePicker handleAction={handleChange} label={'Tanggal Lembur'} name={'startDate'} value={targetDate ? targetDate : dataObj?.startDate} readOnly={true} />
+                    <MyDatePicker handleAction={handleChange} label={'Tanggal Lembur'} name={'transDate'} value={targetDate ? targetDate : dataObj?.startDate || null} readOnly={targetDate ? true : dataObj?.transDate ? true : false} />
                     }
-                    <MyDatePicker handleAction={handleChange} label={'Lembur Dari'} setWidth="48%" name={'startDate'} value={dataObj?.startDate} isTimeOnly={true} readOnly={inputLock} />
+                    <MyDatePicker handleAction={handleChange} label={'Lembur Dari'} setWidth="48%" name={'startDate'} value={targetClockIn} isTimeOnly={true} readOnly={inputLock} />
                     <div className="mx-2" />
-                    <MyDatePicker handleAction={handleChange} label={'Lembur Sampai'} setWidth="48%" name={'endDate'} value={dataObj?.endDate} isTimeOnly={true} readOnly={inputLock} />
-                    <Input textAlign={'left'} handleAction={handleChange} label={'Durasi Jam'} setWidth="48%" value={`${formatText(duration)} Jam`} readOnly={true} />
+                    <MyDatePicker handleAction={handleChange} label={'Lembur Sampai'} setWidth="48%" name={'endDate'} value={targetClockOut} isTimeOnly={true} readOnly={true} />
+                    <Input textAlign={'left'} type={'number'} handleAction={handleChange} label={'Durasi Jam'} setWidth="48%" setName={"hourDiff"} value={`${dataObj?.hourDiff || 0}`} readOnly={inputLock} showBtnNum={true} />
                     <div className="mx-2" />
                     <SearchableSelect handleAction={handleChange} name={`reasonID`} setPosition={'bottom'} label={'Keterangan Lembur'} placeHolder={'Keterangan Lembur'} setWidth="48%" options={listType} value={dataObj?.reasonID} isDisabled={inputLock} />
                     <Input handleAction={handleChange} label={'Notes'} setName={'description'} placeholder={'isi alasan'} content="textarea" value={dataObj?.description} readOnly={inputLock} />

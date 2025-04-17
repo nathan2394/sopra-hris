@@ -89,14 +89,15 @@ const FormShift = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listS
             "hourDiff": dataObj?.hourDiff,
             "remarks": "",
         }
+        console.log(requestData);
 
-        postData({url: 'EmployeeTransferShifts', formData: requestData})?.then((res) => {
-            if(handleAfterExecute){
-                handleAfterExecute();
-            }else{
-                navigate(0);
-            }
-        })
+        // postData({url: 'EmployeeTransferShifts', formData: requestData})?.then((res) => {
+        //     if(handleAfterExecute){
+        //         handleAfterExecute();
+        //     }else{
+        //         navigate(0);
+        //     }
+        // })
     }
 
     const handleApproveReject = (val) => {
@@ -138,7 +139,7 @@ const FormShift = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, listS
             <div className="flex flex-row flex-wrap w-full">
                 <SearchableSelect handleAction={handleChange} name={`shiftToID`} setPosition={'bottom'} label={'Shift Tujuan'} setWidth="48%" options={listShift} value={dataObj?.shiftToID} isDisabled={inputLock} />
                 <div className="mx-2" />
-                <Input textAlign={'left'} handleAction={handleChange} label={'Pergeresan Durasi'} setName={'hourDiff'} setWidth="48%" value={dataObj?.shiftFromID === dataObj?.shiftToID ? dataObj?.hourDiff : 0} type={'number'} readOnly={inputLock ? inputLock : dataObj?.shiftFromID !== dataObj?.shiftToID} showBtnNum={dataObj?.shiftFromID === dataObj?.shiftToID} />
+                <Input textAlign={'left'} handleAction={handleChange} label={'Pergeresan Durasi'} setName={'hourDiff'} setWidth="48%" value={dataObj?.shiftFromID === dataObj?.shiftToID ? dataObj?.hourDiff : 0} type={'number'} readOnly={inputLock ? true : dataObj?.shiftToID === 0 ? true : dataObj?.shiftFromID !== dataObj?.shiftToID} showBtnNum={true} />
                 <MyDatePicker label={'Jam Masuk'} placeholder="Pilih Jam" setWidth="48%" value={targetClockIn} isTimeOnly={true} readOnly={true} />
                 <div className="mx-2" />
                 <MyDatePicker label={'Jam Keluar'} placeholder="Pilih Jam" setWidth="48%" value={targetClockOut} isTimeOnly={true} readOnly={true} />

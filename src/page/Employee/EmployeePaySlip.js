@@ -29,8 +29,11 @@ const EmployeePaySlip = ({}) => {
         uJabatan: '',
         uFunctional: '',
         utKhusus: '',
+        uhKhusus: '',
         utOperational: '',
+        uhOperational: '',
         uLembur: '',
+        uhLembur: '',
         uMasaKerja: '',
         bpjs: '',
         thp: '',
@@ -103,8 +106,11 @@ const EmployeePaySlip = ({}) => {
                     uJabatan: res?.data?.uJabatan,
                     uFunctional: res?.data?.uFunctional,
                     utKhusus: res?.data?.utKhusus,
+                    uhKhusus: res?.data?.uhKhusus,
                     utOperational: res?.data?.utOperational,
+                    uhOperational: res?.data?.uhOperational,
                     uLembur: res?.data?.uLembur,
+                    uhLembur: res?.data?.uhLembur,
                     uMasaKerja: res?.data?.uMasaKerja,
                     bpjs: res?.data?.bpjs,
                     thp: res?.data?.thp,
@@ -142,7 +148,8 @@ const EmployeePaySlip = ({}) => {
     const AllowanceDeducationContent = ({type}) => {
         const data = (type === 'Allowance' || type === 'Pendapatan') ? [
             {
-                label: 'Gaji Dibayar',
+                label: `Gaji Dibayar`,
+                subLabel: `(${formData?.payrollType === "HARIAN" ? `${formData?.att} Hari x Rp. ${formatText(formData?.basicSalary)}` : `(${formData?.hka} hari / ${formData?.hks} hari) x Rp. ${formatText(formData?.basicSalary)}`})`,
                 value: formData?.paidSalary
             },
             {
@@ -150,11 +157,12 @@ const EmployeePaySlip = ({}) => {
                 value: formData?.uJabatan
             },
             {
-                label: 'Tunjangan Khusus',
+                label: `Tunjangan Khusus`,
+                subLabel: formData?.uhKhusus > 0 ? `(${formData?.att} hari x Rp. ${formatText(formData?.uhKhusus)})` : '',
                 value: formData?.utKhusus
             },
             {
-                label: 'Tunjangan Operational',
+                label: formData?.uhOperational > 0 ? `Tunjangan Operational (${formData?.att} hari x Rp. ${formatText(formData?.uhOperational)})` : 'Tunjangan Operational',
                 value: formData?.utOperational
             },
             {
@@ -166,15 +174,18 @@ const EmployeePaySlip = ({}) => {
                 value: formData?.uMasaKerja
             },
             {
-                label: 'Lembur',
+                label: `Lembur`,
+                subLabel: formData?.uhLembur > 0 ? `(${formData?.ovt} jam x Rp. ${formatText(formData?.uhLembur)})` : '',
                 value: formData?.uLembur
             },
             {
-                label: `Transport (${formData?.att} hari x Rp. ${formatText(formData?.uHransport)})`,
+                label: `Transport`,
+                subLabel: formData?.uHransport > 0 ? `(${formData?.att} hari x Rp. ${formatText(formData?.uHransport)})` : '',
                 value: formData?.uTransport
             },
             {
-                label: `U Makan (${formData?.meal} hari x Rp. ${formatText(formData?.uhMakan)})`,
+                label: `U Makan`,
+                subLabel: formData?.uhMakan > 0 ? `(${formData?.meal} hari x Rp. ${formatText(formData?.uhMakan)})` : '',
                 value: formData?.uMakan
             },
             {
@@ -201,7 +212,11 @@ const EmployeePaySlip = ({}) => {
                 <div className="py-1" />
                 {data?.map((value, idx) => (
                     <div className="flex flex-row justify-between mb-2 w-full" key={idx}>
-                        <p className="text-xs w-full">{value?.label}</p>
+                        <div className="w-full">
+                            <p className="text-xs">
+                                {value?.label} <span className="font-[600] pl-1">{value?.subLabel}</span>
+                            </p>
+                        </div>
                         <p className="text-xs w-[20%] text-end">: Rp.</p>
                         <p className="text-xs w-full text-end">{formatText(value?.value)}</p>
                     </div>

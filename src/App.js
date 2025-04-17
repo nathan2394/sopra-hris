@@ -22,6 +22,7 @@ import Overtime from "./page/Attendance/Overtime";
 import { AuthProvider, AuthContext } from "./context/authContext"; // ✅ Import AuthContext
 import { NavigationProvider } from "./context/navigationContext";
 import Approval from "./page/Attendance/Approval";
+import MealEmployee from "./page/Meal/MealEmployee";
 
 const App = () => { // ✅ Use Context instead of state
   const [isLoading, setIsLoading] = useState(false);
@@ -141,6 +142,14 @@ const App = () => { // ✅ Use Context instead of state
               element={
                 <ProtectedRoute>
                   <Calculator setIsLoading={setIsLoading} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/meal"
+              element={
+                <ProtectedRoute>
+                  <MealEmployee setIsLoading={setIsLoading} />
                 </ProtectedRoute>
               }
             />

@@ -128,7 +128,7 @@ const Approval = ({setIsLoading}) => {
 
         loadData({url: 'Shifts'})?.then((res) => {
             if(res?.data?.length > 0){
-                setListShift(res?.data?.map((data) => (
+                const updatedShifts = res?.data?.map((data) => (
                     {
                         value: data?.shiftID,
                         label: data?.code,
@@ -137,7 +137,8 @@ const Approval = ({setIsLoading}) => {
                         clockInWeekend: data?.weekendStartTime ?? null,
                         clockOutWeekend: data?.weekendEndTime ?? null,
                     }
-                )))
+                ));
+                setListShift([{ value: 0, label: 'OFF', clockIn: "00:00:00", clockOut: "00:00:00" }, ...updatedShifts]);
             }
         })
     }, [])
@@ -423,7 +424,6 @@ const Approval = ({setIsLoading}) => {
     }, [searchInput])
 
     const handleSearchChange = (event) => {
-        console.log(event.target.name, event.target.value)
         setSearchInput((prev) => ({
           ...prev,
           [event.target.name]: event.target.value,
@@ -489,6 +489,7 @@ const Approval = ({setIsLoading}) => {
         if(activeMenu === 'Tukar Shift'){
             shiftData = listShift?.find(obj => obj?.value === targetData?.shiftFromID);
             targetShiftData = listShift?.find(obj => obj?.value === targetData?.shiftToID);
+            console.log(targetData?.shiftFromID);
         }
 
         setFormData({
@@ -497,8 +498,8 @@ const Approval = ({setIsLoading}) => {
             transDate: targetData?.transDate,
             duration: targetData?.duration,
             unattendanceTypeID: targetData?.unattendanceTypeID,
-            startDate: targetData?.startDate,
-            endDate: targetData?.endDate,
+            startDate: activeMenu !== 'Lembur' ? targetData?.startDate : (`${convertDate(targetData?.startDate, 'input')} ${convertDate(targetData?.startDate, 'time')}`),
+            endDate: activeMenu !== 'Lembur' ? targetData?.endDate : (`${convertDate(targetData?.endDate, 'input')} ${convertDate(targetData?.endDate, 'time')}`),
             reasonID: targetData?.reasonID,
             description: targetData?.description,
             shiftFromID: targetData?.shiftFromID,

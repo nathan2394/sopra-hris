@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { data, Link, useNavigate } from 'react-router-dom';
 // import { deleteData, loadData } from "../../config/api";
 import { useAPI } from "../../config/fetchApi";
-import { convertDate, exportToExcel, formatText, getCurrentDate, getQueryParam } from "../../config/helper";
+import { convertDate, convertTime, exportToExcel, formatText, getCurrentDate, getQueryParam } from "../../config/helper";
 import Button from "../../component/button";
 import { baseColor } from "../../config/setting";
 import TitlePage from "../../component/titlePage";
@@ -30,7 +30,14 @@ const AttendanceDetail = ({setIsLoading}) => {
 
     const [listData, setListData] = useState([]);
     const [listUnattendanceType, setUnattendanceType] = useState([]);
-    const [listShift, setListShift] = useState([]);
+    const [listShift, setListShift] = useState([
+        {
+            value: 0,
+            label: 'OFF',
+            clockIn: "00:00:00",
+            clockOut: "00:00:00",
+        }
+    ]);
 
     const [listUnattendance, setListUnattendance] = useState([]);
     const [listOvertime, setListOvertime] = useState([]);
@@ -100,16 +107,15 @@ const AttendanceDetail = ({setIsLoading}) => {
 
         loadData({url: 'Shifts'})?.then((res) => {
             if(res?.data?.length > 0){
-                setListShift(res?.data?.map((data) => (
-                    {
-                        value: data?.shiftID,
-                        label: data?.code,
-                        clockIn: data?.startTime || null,
-                        clockOut: data?.endTime || null,
-                    }
-                )))
+                const updatedShifts = res?.data?.map((data) => ({
+                    value: data?.shiftID,
+                    label: data?.code,
+                    clockIn: data?.startTime || null,
+                    clockOut: data?.endTime || null,
+                }));
+                setListShift([{ value: 0, label: 'OFF', clockIn: "00:00:00", clockOut: "00:00:00" }, ...updatedShifts]);
             }
-        })
+        });
 
     }, []);
 
@@ -248,7 +254,7 @@ const AttendanceDetail = ({setIsLoading}) => {
 
     const handleClick = (data) => {
         const target = listData?.find((obj) => obj?.id === data?.id);
-        let shiftData = showContent === 'Shift' ? listShift?.find(obj => obj?.label === target?.shiftCode) : {};
+        let shiftData = listShift?.find(obj => obj?.label === target?.shiftCode);
         setAttendanceData({
             date: target?.transDate
         });
@@ -256,36 +262,34 @@ const AttendanceDetail = ({setIsLoading}) => {
             ...prev,
             employeeID: getId,
             transDate: data?.transDate,
-            shiftFromID: shiftData?.value,
-            shiftToID: null,
+            shiftFromID: shiftData?.value || 0,
+            shiftToID: 0,
             hourDiff: 0,
-            clockIn: shiftData?.clockIn || null,
-            clockOut: shiftData?.clockOut || null,
-            startDate: data?.transDate,
-            endDate: data?.transDate,
-          }));
+            clockIn: shiftData?.value ? shiftData?.clockIn : "00:00:00",
+            clockOut: shiftData?.value ? shiftData?.clockOut : "00:00:00",
+            startDate: showContent !== 'Overtime' ? data?.transDate : (`${convertDate(data?.transDate, 'input')} ${shiftData?.clockOut || "00:00"}`),
+            endDate: showContent !== 'Overtime' ? data?.transDate : (`${convertDate(data?.transDate, 'input')} ${shiftData?.clockOut || "00:00"}`),
+        }));
         setUnattendanceDetail({employeeID: getId, unattendanceTypeID: target?.unattendance })
         setRowActive(data?.id);
         
         if(showContent ==='Shift'){
             setShowForm(true);
-        } else{
-            setIsAdd(false);
-            setIsEdit(false);
-            setShowForm(false);
-        }
+        } 
         setBtnAction(true);
     }
 
     const actionOpenDetail = (obj, target) => {
+        console.log(obj)
         setFormData({
             id: obj?.id,
             employeeID: obj?.employeeID,
             duration: obj?.duration,
-            unattendanceTypeID: obj?.unattendanceTypeID,
+            transDate: obj?.transDate,
+            unattendanceTypeID: obj?.reasonID,
             reasonID: obj?.reasonID,
-            startDate: obj?.startDate,
-            endDate: obj?.endDate,
+            startDate: showContent !== 'Overtime' ? obj?.startDate : (`${convertDate(obj?.startDate, 'input')} ${convertDate(obj?.startDate, 'time')}`),
+            endDate: showContent !== 'Overtime' ? obj?.endDate : (`${convertDate(obj?.endDate, 'input')} ${convertDate(obj?.endDate, 'time')}`),
             description: obj?.description,
             isApproved1: obj?.isApproved1, 
             isApproved2: obj?.isApproved2,
@@ -316,18 +320,21 @@ const AttendanceDetail = ({setIsLoading}) => {
                 {!isLoadData ? 
                     <div className="flex flex-row justify-between pb-8">
                         {/* <Table dataTable={listData} rowSettings={rowSettings} setWidth={'85%'} actionClick={handleClick} /> */}
-                        <DataTable dataTable={listData} columns={setColumns} setWidth={'72%'} actionClick={handleClick} rowActive={rowActive} />
+                        <DataTable dataTable={listData} columns={setColumns} setWidth={'75%'} actionClick={handleClick} rowActive={rowActive} />
                         <div className="mx-2" />
                         <div className="flex flex-col w-[40%]">
                             <div className="w-full flex flex-row items-center mb-3">
                                 <Button text="Shift" bgcolor={showContent === 'Shift' ? baseColor : '#9d9d9d'} color={'white'} handleAction={() => {
                                     setShowContent('Shift');
+                                    setShowForm(false);
                                     setIsAdd(false);
                                     setIsEdit(false);
                                     setRowActive(0);
                                     setFormData(prev => ({
                                         ...prev,
                                         employeeID: getId,
+                                        startDate: null,
+                                        endDate: null
                                     }))
                                 }} />
                                 <div className="mx-1" />
@@ -342,6 +349,8 @@ const AttendanceDetail = ({setIsLoading}) => {
                                     setFormData(prev => ({
                                         ...prev,
                                         employeeID: getId,
+                                        startDate: null,
+                                        endDate: null
                                     }))
                                 }} />
                                 <div className="mx-1" />
@@ -356,6 +365,8 @@ const AttendanceDetail = ({setIsLoading}) => {
                                     setFormData(prev => ({
                                         ...prev,
                                         employeeID: getId,
+                                        startDate: null,
+                                        endDate: null
                                     }))
                                 }} />
                             </div>

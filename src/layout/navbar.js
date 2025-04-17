@@ -10,7 +10,6 @@ const Navbar = ({setAuth}) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const userData = JSON.parse(localStorage.getItem('userdata'));
-  console.log(userData?.roleID);
   const listContentMenu = JSON.parse(localStorage.getItem('listContentMenu'));
   const { logout } = useContext(AuthContext);
   const sidebarRef = useRef(null);
@@ -143,6 +142,19 @@ const Navbar = ({setAuth}) => {
           }
         ],
         role_eligible: [1,2,3,4]
+      },
+      {
+        groupName: 'Upload Data',
+        list: [
+          {
+            title: 'Employee Meal',
+            navRoute: '/meal',
+            icon: list_g,
+            icon_b: list,
+            role_eligible: [1,2,3]
+          },
+        ],
+        role_eligible: [1,2,3]
       },
       {
         groupName: 'Report',
