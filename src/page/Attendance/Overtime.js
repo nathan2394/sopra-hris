@@ -133,8 +133,8 @@ const Overtime = ({setIsLoading}) => {
             id: 0,
             employeeID: 0,
             transDate: new Date(),
-            startDate: new Date(),
-            endDate: new Date(),
+            startDate: null,
+            endDate: null,
             reasonID: 0,
             description: "",
         })
