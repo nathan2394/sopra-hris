@@ -4,7 +4,7 @@ import { baseColor } from "../config/setting";
 import Button from "./button";
 import { minus, plus } from "../config/icon";
 
-const Input = ({label, subLabel, targetRef = null, content = 'input', isFocus = false, isRequierd = false, setName, type, placeholder, sufix, setWidth = '100%', handleKeyDown, handleAction, value = '', textAlign = 'left', readOnly = false, showBtnNum = false}) => {
+const Input = ({label, subLabel, targetRef = null, content = 'input', isFocus = false, isRequierd = false, setName, type, placeholder, sufix, setWidth = '100%', handleKeyDown, handleAction, value = '', textAlign = 'left', readOnly = false, showBtnNum = false, setCount = 1}) => {
     const inputRef = useRef(null);
 
     const formatDate = (dateString, target) => {
@@ -21,17 +21,17 @@ const Input = ({label, subLabel, targetRef = null, content = 'input', isFocus = 
 
     const handleIncrement = () => {
         if (type === 'number' && !readOnly) {
-            if(parseFloat(value) + 1 <= 4){
-                handleAction({ target: { name: setName, value: parseFloat(value) + 1 } });
+            if(parseFloat(value) + setCount <= 4){
+                handleAction({ target: { name: setName, value: parseFloat(value) + setCount } });
             }
         }
     };
 
     const handleDecrement = () => {
         if (type === 'number' && !readOnly) {
-            if(parseFloat(value) - 1 >= -4){
+            if(parseFloat(value) - setCount >= -4){
                 console.log(parseFloat(value) - 1);
-                handleAction({ target: { name: setName, value: parseFloat(value) - 1 } });
+                handleAction({ target: { name: setName, value: parseFloat(value) - setCount } });
             }
         }
     };
