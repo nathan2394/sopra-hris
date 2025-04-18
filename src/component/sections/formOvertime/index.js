@@ -20,62 +20,58 @@ const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, li
     const [targetClockOut, setTargetClockOut] = useState(null);
 
     function getHourDifference(startTime, endTime) {
-        const [startHour, startMinute, startSecond] = convertTime(startTime).split(":").map(Number);
-        const [endHour, endMinute, endSecond] = convertTime(endTime).split(":").map(Number);
-        
-        // Create Date objects for the start and end time (arbitrary date, just for time comparison)
-        const startDate = new Date(1970, 0, 1, startHour, startMinute, startSecond);
-        const endDate = new Date(1970, 0, 1, endHour, endMinute, endSecond);
-        
-        // If the end time is earlier in the day (crosses midnight), add 24 hours to the end date
-        if (endDate < startDate) {
-          endDate.setDate(endDate.getDate() + 1); // Add 1 day to the end time
+        if(startTime, endTime){
+            const [startHour, startMinute, startSecond] = convertTime(startTime).split(":").map(Number);
+            const [endHour, endMinute, endSecond] = convertTime(endTime).split(":").map(Number);
+            
+            // Create Date objects for the start and end time (arbitrary date, just for time comparison)
+            const startDate = new Date(1970, 0, 1, startHour, startMinute, startSecond);
+            const endDate = new Date(1970, 0, 1, endHour, endMinute, endSecond);
+            
+            // If the end time is earlier in the day (crosses midnight), add 24 hours to the end date
+            if (endDate < startDate) {
+              endDate.setDate(endDate.getDate() + 1); // Add 1 day to the end time
+            }
+            
+            // Calculate the difference in milliseconds
+            const diffMillis = endDate - startDate;
+            
+            // Convert milliseconds to hours
+            const diffHours = diffMillis / (1000 * 60 * 60);
+            // console.log(diffHours);
+            return diffHours;
+        }else{
+            return 0;
         }
-        
-        // Calculate the difference in milliseconds
-        const diffMillis = endDate - startDate;
-        
-        // Convert milliseconds to hours
-        const diffHours = diffMillis / (1000 * 60 * 60);
-        // console.log(diffHours);
-        return diffHours;
     }
 
     function adjustTime(timeStr, difHour) {
-        if(timeStr && difHour !== null){
-            const [hours, minutes, seconds] = timeStr?.split(":")?.map(Number);
-            // Create a date object with today's date and given time
+        if (timeStr && difHour !== null) {
+            const [hours, minutes, seconds] = timeStr?.split(":").map(Number);
             const date = new Date();
             date.setHours(hours);
             date.setMinutes(minutes);
             date.setSeconds(seconds);
-
-            
-            // Adjust the hour
-            date.setHours(date.getHours() + parseInt(difHour));
-            
-            // Format it back to HH:MM:SS
+    
+            // Add hour difference (supports decimal)
+            date.setTime(date.getTime() + difHour * 60 * 60 * 1000);
+    
             const pad = (num) => String(num).padStart(2, "0");
             if(!isNaN(pad(date.getHours()))){
                 const newTime = `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
                 return newTime;
             }
         }
-    }
+    }    
 
     useEffect(() => {
         let differenceInHours = 0;
         if(dataObj?.startDate){
             setTargetClockIn(dataObj?.startDate);
             setTargetClockOut(dataObj?.startDate);
-            if(isValidTimeFormat(dataObj?.startDate)){
-                console.log('2')
-            }
             differenceInHours = getHourDifference(dataObj?.startDate, dataObj?.endDate);
             handleChange({ target: { name: 'hourDiff', value: differenceInHours } });
-
         }
-        
     }, [dataObj?.startDate, dataObj?.endDate]);
 
     useEffect(() => {
@@ -98,9 +94,9 @@ const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, li
     const handleSubmit = () => {
         const requestData = {
             "employeeID": dataObj?.employeeID,
-            "transDate": dataObj?.transDate,
-            "startDate": convertDate(dataObj?.transDate, 'input') + ' ' +  convertTime(targetClockIn),
-            "endDate": convertTime(targetClockIn) > targetClockOut ? convertDate(addDays(dataObj?.transDate, 1), 'input') + ' ' +  targetClockOut : convertDate(dataObj?.transDate, 'input') + ' ' +  targetClockOut,
+            "transDate": dataObj?.transDate || convertDate(targetDate, 'input'),
+            "startDate": convertDate(dataObj?.transDate || targetDate, 'input') + ' ' +  convertTime(targetClockIn),
+            "endDate": convertTime(targetClockIn) > targetClockOut ? convertDate(addDays(dataObj?.transDate || targetDate, 1), 'input') + ' ' +  targetClockOut : convertDate(dataObj?.transDate || targetDate, 'input') + ' ' +  targetClockOut,
             "reasonID": dataObj?.reasonID,
             "description": dataObj?.description,
         }
@@ -165,10 +161,10 @@ const FormOvertime = ({userData, dataObj, isAdd, setIsAdd, isEdit, setIsEdit, li
                     :
                     <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Tanggal Lembur'} name={'transDate'} value={targetDate ? targetDate : dataObj?.startDate || null} readOnly={targetDate ? true : dataObj?.transDate ? true : false} />
                     }
-                    <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Lembur Dari'} setWidth="48%" name={'startDate'} value={targetClockIn} isTimeOnly={true} readOnly={inputLock} />
+                    <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Lembur Dari'} setWidth="48%" name={'startDate'} value={targetClockIn} isTimeOnly={true} timeIntervals={30} readOnly={inputLock} />
                     <div className="mx-2" />
-                    <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Lembur Sampai'} setWidth="48%" name={'endDate'} value={targetClockOut} isTimeOnly={true} readOnly={true} />
-                    <Input textAlign={'left'} type={'number'} handleAction={handleChange} label={'Durasi Jam'} setWidth="48%" setName={"hourDiff"} value={`${dataObj?.hourDiff || 0}`} readOnly={inputLock} showBtnNum={true} />
+                    <MyDatePicker isRequierd={true} handleAction={handleChange} label={'Lembur Sampai'} setWidth="48%" name={'endDate'} value={targetClockOut} isTimeOnly={true} timeIntervals={30} readOnly={true} />
+                    <Input textAlign={'left'} type={'number'} setCount={0.5} handleAction={handleChange} label={'Durasi Jam'} setWidth="48%" setName={"hourDiff"} value={`${dataObj?.hourDiff || 0}`} readOnly={inputLock} showBtnNum={true} />
                     <div className="mx-2" />
                     <SearchableSelect isRequierd={true} handleAction={handleChange} name={`reasonID`} setPosition={'bottom'} label={'Keterangan Lembur'} placeHolder={'Keterangan Lembur'} setWidth="48%" options={listType} value={dataObj?.reasonID} isDisabled={inputLock} />
                     <Input handleAction={handleChange} label={'Notes'} setName={'description'} placeholder={'isi alasan'} content="textarea" value={dataObj?.description} readOnly={inputLock} />

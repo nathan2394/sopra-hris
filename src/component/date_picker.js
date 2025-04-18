@@ -5,7 +5,7 @@ import { calendar, calendar_g, clock_g } from "../config/icon";
 import DatePicker from "react-datepicker";
 import { convertDate, formatText } from "../config/helper";
 
-const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', value, setValue, startDateVal, setStartDateVal, endDateVal, setEndDateVal, isRange = false, setList, isTimeOnly = false, isRequierd = false, isMinDateValidation = false, readOnly = false, handleAction}) => {
+const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', value, setValue, startDateVal, setStartDateVal, endDateVal, setEndDateVal, isRange = false, setList, isTimeOnly = false, isRequierd = false, isMinDateValidation = false, readOnly = false, timeIntervals = 60, handleAction}) => {
   const ref = useRef(null);
   const parseDate = (val) => {
     if (!val) return null;
@@ -119,7 +119,7 @@ const MyDatePicker = ({label, name, placeholder = 'Pilih', setWidth = '100%', va
             calendarClassName="border border-gray-300 rounded-lg shadow-lg z-10"
             popperClassName="z-50"
             ref={datePickerRef}
-            timeIntervals={60}
+            timeIntervals={timeIntervals}
             startDate={isRange ? startDate : date}
             minDate={isMinDateValidation ? new Date() : null}
             endDate={isRange ? endDate : date}

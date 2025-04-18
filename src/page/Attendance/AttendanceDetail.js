@@ -60,7 +60,7 @@ const AttendanceDetail = ({setIsLoading}) => {
     });
 
     const [attendanceData, setAttendanceData] = useState({
-        date: ''
+        date: new Date()
     })
 
     const [employeeName, setEmployeeName] = useState(null);
